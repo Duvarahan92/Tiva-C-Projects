@@ -26,7 +26,7 @@ extern uint32_t _ebss;
 
 int main(void);
 
-void __libc_init_array(void);
+
 
 //Function prototypes of TM4C system exception and IRQ handlers
 
@@ -336,7 +336,7 @@ void Reset_Handler(void)
     *dst++ = 0;
     }
 
-__libc_init_array();
+
   main();
 }
 
