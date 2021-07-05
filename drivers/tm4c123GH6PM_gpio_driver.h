@@ -1,4 +1,4 @@
-/* tm4c123GH6PM_gpio_driver.h */
+/*tm4c123GH6PM_gpio_driver.h*/
 
 #ifndef INC_TM4C123GH6PM_GPIO_DRIVER_H_
 #define INC_TM4C123GH6PM_GPIO_DRIVER_H_
