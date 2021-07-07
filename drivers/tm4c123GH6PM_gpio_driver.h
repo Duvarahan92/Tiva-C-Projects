@@ -1,4 +1,5 @@
 /*tm4c123GH6PM_gpio_driver.h*/
+#include "tm4c123gh6pm.h"
 
 #ifndef INC_TM4C123GH6PM_GPIO_DRIVER_H_
 #define INC_TM4C123GH6PM_GPIO_DRIVER_H_
@@ -137,6 +138,7 @@ typedef struct
  */
 #define GPIO_ICR_GPIO_M         0x000000FF  // GPIO Interrupt Clear
 #define GPIO_ICR_GPIO_S         0
+
 /*
  * @GPIO_LOCK
  * The following are defines for the bit fields in the GPIO_O_LOCK register.
@@ -386,10 +388,11 @@ typedef struct
 **********************************************************************************/
 
 /*
- * Peripheral Clock setup
+ * Peripheral setup
  *
  */
 uint8_t GPIO_CLK_CTRL(GPIO_RegDef_t *pGPIOx, uint8_t Ctrl);
+uint8_t GPIO_EnableBus(GPIO_RegDef_t *pGPIOx);
 
 /*
  * Init and DeInit
@@ -397,6 +400,7 @@ uint8_t GPIO_CLK_CTRL(GPIO_RegDef_t *pGPIOx, uint8_t Ctrl);
  */
 uint8_t GPIO_Init(GPIO_Handle_t *pGPIOHandle);
 uint8_t GPIO_DeInit(GPIO_RegDef_t *pGPIOx);
+
 
 /*
  * Data read and write

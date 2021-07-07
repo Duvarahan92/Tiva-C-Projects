@@ -12,7 +12,7 @@ MODULES = Applications/$(TARGET) libs drivers
 SRC = $(foreach m, $(MODULES), $(wildcard $(m)/*.c))
 OBJ = $(addprefix obj/,$(notdir $(SRC:%.c=%.o)))
 BIN = bin/
-INC = -I inc
+INC = -I inc -I drivers
 
 # Linker script
 LINKER_SCRIPT = ld/$(MCU).ld

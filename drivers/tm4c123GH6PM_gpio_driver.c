@@ -1,5 +1,5 @@
 
-#include "tm4c123gh6pm.h"
+//#include "tm4c123gh6pm.h"
 #include "tm4c123GH6PM_gpio_driver.h"
 
 /*
@@ -88,6 +88,67 @@ uint8_t GPIO_CLK_CTRL(GPIO_RegDef_t *pGPIOx, uint8_t Ctrl)
 
     }
     
+    return FALSE;
+}
+
+/********************************************************************************
+ * @fn                     - GPIO_EnableBus
+ *
+ * @brief                  - This function enables bus AHB or APB
+ * 
+ * @param[in]              - base address of the gpio peripheral
+ * @param[in]              - Bus to enable macros
+ * 
+ * @return                 - TRUE or FALSE macros
+ * 
+ * @Note                   - none
+ */
+
+uint8_t GPIO_EnableBus(GPIO_RegDef_t *pGPIOx)
+{
+    
+    if (!GPIO_Check_Port(pGPIOx))
+        return FALSE;
+    
+    switch ((uint32_t) pGPIOx)
+    {
+    case (uint32_t) GPIOA:
+        SYSCTL -> GPIOHBCTL &= ~(SYSCTL_GPIOHBCTL_PORTA);
+        return TRUE;
+    case (uint32_t) GPIOB:
+        SYSCTL -> GPIOHBCTL &= ~(SYSCTL_GPIOHBCTL_PORTB);
+        return TRUE;
+    case (uint32_t) GPIOC:
+        SYSCTL -> GPIOHBCTL &= ~(SYSCTL_GPIOHBCTL_PORTC);
+        return TRUE;
+    case (uint32_t) GPIOD:
+        SYSCTL -> GPIOHBCTL &= ~(SYSCTL_GPIOHBCTL_PORTD);
+        return TRUE;
+    case (uint32_t) GPIOE:
+        SYSCTL -> GPIOHBCTL &= ~(SYSCTL_GPIOHBCTL_PORTE);
+        return TRUE;
+    case (uint32_t) GPIOF:
+        SYSCTL -> GPIOHBCTL &= ~(SYSCTL_GPIOHBCTL_PORTF);
+        return TRUE;
+    case (uint32_t) GPIOA_AHB:
+        SYSCTL -> GPIOHBCTL |= SYSCTL_GPIOHBCTL_PORTA;
+        return TRUE;
+    case (uint32_t) GPIOB_AHB:
+        SYSCTL -> GPIOHBCTL |= SYSCTL_GPIOHBCTL_PORTB;
+        return TRUE;
+    case (uint32_t) GPIOC_AHB:
+        SYSCTL -> GPIOHBCTL |= SYSCTL_GPIOHBCTL_PORTC;
+        return TRUE;
+    case (uint32_t) GPIOD_AHB:
+        SYSCTL -> GPIOHBCTL |= SYSCTL_GPIOHBCTL_PORTD;
+        return TRUE;
+    case (uint32_t) GPIOE_AHB:
+        SYSCTL -> GPIOHBCTL |= SYSCTL_GPIOHBCTL_PORTE;
+        return TRUE;
+    case (uint32_t) GPIOF_AHB:
+        SYSCTL -> GPIOHBCTL |= SYSCTL_GPIOHBCTL_PORTF;
+        return TRUE;
+    }
     return FALSE;
 }
 
@@ -261,7 +322,7 @@ uint8_t GPIO_ReadInputPort(GPIO_RegDef_t *pGPIOx)
     if(!GPIO_Check_Port(pGPIOx))
         return -1;
     
-    return pGPIOx -> GPIODATA_BITS[255];
+    return pGPIOx -> GPIODATA;
 }
 
 /********************************************************************************
@@ -310,7 +371,7 @@ uint8_t GPIO_WriteOutputPort(GPIO_RegDef_t *pGPIOx, uint8_t Value){
     if (!GPIO_Check_Port(pGPIOx))
         return FALSE;
 
-    pGPIOx-> GPIODATA_BITS[255] = Value;
+    pGPIOx-> GPIODATA = Value;
     return TRUE;
 }
 
@@ -364,15 +425,12 @@ uint8_t GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
     if(!GPIO_Check_Pin(pGPIOx, PinNumber))
         return FALSE;
 
-    //address bit associated with that data
-    uint8_t address = 1 << PinNumber;
-
-    pGPIOx->GPIODATA_BITS[address] ^= address;
+    pGPIOx->GPIODATA ^= 1 << PinNumber;
     return TRUE;
 }
 
 /********************************************************************************
- * @fn                     - GPIO_CLK_CTRL
+ * @fn                     - GPIO_IRQConfig
  *
  * @brief                  - This function enbales or disables peripheral clock for the given GPIO port
  * 
@@ -386,7 +444,7 @@ uint8_t GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
 void GPIO_IRQConfig(uint8_t IRQn, uint8_t IRQPriority, uint8_t ctrl);
 
 /********************************************************************************
- * @fn                     - GPIO_CLK_CTRL
+ * @fn                     - GPIO_IRQHandling
  *
  * @brief                  - This function enbales or disables peripheral clock for the given GPIO port
  * 
