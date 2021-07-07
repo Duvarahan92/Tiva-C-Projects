@@ -54,7 +54,7 @@ uint8_t GPIO_CLK_CTRL(GPIO_RegDef_t *pGPIOx, uint8_t Ctrl)
             return TRUE;
         }else if (pGPIOx == GPIOF || pGPIOx == GPIOF_AHB)
         {
-            SYSCTL -> RCGCGPIO |= SYSCTL_RCGCGPIO_R5;
+	  SYSCTL -> RCGCGPIO |= SYSCTL_RCGCGPIO_R5;
             return TRUE;
         }
 
@@ -169,83 +169,99 @@ uint8_t GPIO_Init(GPIO_Handle_t *pGPIOHandle){
 
     //Check if port and pin number is valid
     if(!GPIO_Check_Pin(pGPIOHandle->GPIOx, pGPIOHandle->GPIO_PinConfig.GPIO_PinDir))
-        return FALSE; 
+      return FALSE; 
 
     //1. Configure GPIO direction
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinDir << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+    temp = 0;
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinDir << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
+    pGPIOHandle -> GPIOx -> GPIODIR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIODIR |= temp;
 
     //2. Confgure Alternate function
     temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_AFSEL << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_AFSEL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
+    pGPIOHandle -> GPIOx -> GPIOAFSEL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOAFSEL |= temp;
 
     //3. Confgure 2mA drive
     temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DR2R << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DR2R << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
+    pGPIOHandle -> GPIOx -> GPIODR2R &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIODR2R |= temp;
 
     //4. Confgure 4mA drive
     temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DR4R << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DR4R << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
+    pGPIOHandle -> GPIOx -> GPIODR4R &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIODR4R |= temp;
 
     //5. Confgure 8mA drive
     temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DR8R << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DR8R << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
+    //pGPIOHandle -> GPIOx -> GPIODR8R &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); 
     pGPIOHandle -> GPIOx -> GPIODR8R |= temp;
 
     //6. Confgure open drain
     temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_OODR << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_OODR << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
+    //pGPIOHandle -> GPIOx -> GPIOODR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOODR |= temp;
 
     //7. Confgure pull up
     temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_PUR << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_PUR << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
+    // pGPIOHandle -> GPIOx -> GPIOPUR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOPUR |= temp;
 
     //8. Confgure pull down
     temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_PDR << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_PDR << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
+    //pGPIOHandle -> GPIOx -> GPIOPDR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOPDR |= temp;
 
     //9. Confgure slew rate
     temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_SLR << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_SLR << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
+    //pGPIOHandle -> GPIOx -> GPIOSLR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOSLR |= temp;
 
     //10. Confgure digital function
     temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DEN << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DEN << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
+    pGPIOHandle -> GPIOx -> GPIODEN &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIODEN |= temp;
 
     //11. Confgure Lock
-    pGPIOHandle -> GPIOx -> GPIOLOCK |= pGPIOHandle -> GPIO_PinConfig.GPIO_LOCK;
+    pGPIOHandle -> GPIOx -> GPIOLOCK = pGPIOHandle->GPIO_PinConfig.GPIO_LOCK;
 
     //12. Confgure commit
     temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_CR << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_CR << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
+    //pGPIOHandle -> GPIOx -> GPIOCR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOCR |= temp;
 
     //13. Confgure analog funtion
     temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_AMSEL << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_AMSEL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
+    //pGPIOHandle -> GPIOx -> GPIOAMSEL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); 
     pGPIOHandle -> GPIOx -> GPIOAMSEL |= temp;
 
     //14. Confgure port control
     temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_PCTL << (4 * pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber);
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_PCTL << (4 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+    //pGPIOHandle -> GPIOx -> GPIOPCTL &= ~(0xF << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOPCTL |= temp;
 
     //15. Confgure adc trigger
     temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_ADCCTL << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_ADCCTL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
+    // pGPIOHandle -> GPIOx -> GPIOADCCTL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOADCCTL |= temp;
 
     //16. Confgure dma trigger
     temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DMACTL << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DMACTL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
+    // pGPIOHandle -> GPIOx -> GPIODMACTL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIODMACTL |= temp;
 
     return TRUE;

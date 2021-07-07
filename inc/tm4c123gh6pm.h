@@ -152,12 +152,12 @@ typedef struct
 #define GPIOE_BASEADDR          (APB_BASEADDR + 0x24000)
 #define GPIOF_BASEADDR          (APB_BASEADDR + 0x25000)
 
-#define GPIOA_AHB_BASEADDR          (AHB_BASEADDR + 0x8000)
-#define GPIOB_AHB_BASEADDR          (AHB_BASEADDR + 0x9000)
-#define GPIOC_AHB_BASEADDR          (AHB_BASEADDR + 0xA000)
-#define GPIOD_AHB_BASEADDR          (AHB_BASEADDR + 0xB000)
-#define GPIOE_AHB_BASEADDR          (AHB_BASEADDR + 0xC000)
-#define GPIOF_AHB_BASEADDR          (AHB_BASEADDR + 0xD000)
+#define GPIOA_AHB_BASEADDR          (AHB_BASEADDR + 0x58000)
+#define GPIOB_AHB_BASEADDR          (AHB_BASEADDR + 0x59000)
+#define GPIOC_AHB_BASEADDR          (AHB_BASEADDR + 0x5A000)
+#define GPIOD_AHB_BASEADDR          (AHB_BASEADDR + 0x5B000)
+#define GPIOE_AHB_BASEADDR          (AHB_BASEADDR + 0x5C000)
+#define GPIOF_AHB_BASEADDR          (AHB_BASEADDR + 0x5D000)
 
 //*****************************************************************************
 //
@@ -1253,27 +1253,28 @@ typedef struct
   volatile uint32_t DC1;                     /*!< Device Capabilities 1                                                        Addresses offset: 0x010 */
   volatile uint32_t DC2;                     /*!< Device Capabilities 2                                                        Addresses offset: 0x014 */
   volatile uint32_t DC3;                     /*!< Device Capabilities 3                                                        Addresses offset: 0x01C */
+  volatile uint32_t DC4;                     /*!< Device Capabilities 3                                                        Addresses offset: 0x01C */
   volatile uint32_t DC5;                     /*!< Device Capabilities 5                                                        Addresses offset: 0x020 */
   volatile uint32_t DC6;                     /*!< Device Capabilities 6                                                        Addresses offset: 0x024 */
   volatile uint32_t DC7;                     /*!< Device Capabilities 7                                                        Addresses offset: 0x028 */
   volatile uint32_t DC8;                     /*!< Device Capabilities 8                                                        Addresses offset: 0x02C */
   volatile uint32_t PBORCTL;                 /*!< Brown-Out Reset Control                                                      Addresses offset: 0x030 */
-  volatile uint32_t RESERVED2[3];
+  volatile uint32_t RESERVED1[3];
   volatile uint32_t SRCR0;                   /*!< Software Reset Control 0                                                     Addresses offset: 0x040 */
   volatile uint32_t SRCR1;                   /*!< Software Reset Control 1                                                     Addresses offset: 0x044 */
   volatile uint32_t SRCR2;                   /*!< Software Reset Control 2                                                     Addresses offset: 0x048 */
-  volatile uint32_t RESERVED3;
+  volatile uint32_t RESERVED2;
   volatile uint32_t RIS;                     /*!< Raw Interrupt Status                                                         Addresses offset: 0x050 */
   volatile uint32_t IMC;                     /*!< Interrupt Mask Control                                                       Addresses offset: 0x054 */
   volatile uint32_t MISC;                    /*!< Masked Interrupt Status and Clear                                            Addresses offset: 0x058 */
   volatile uint32_t RESC;                    /*!< Reset Cause                                                                  Addresses offset: 0x05C */
   volatile uint32_t RCC;                     /*!< Run-Mode Clock Configuration                                                 Addresses offset: 0x060 */
-  volatile uint32_t RESERVED4[2];
+  volatile uint32_t RESERVED3[2];
   volatile uint32_t GPIOHBCTL;               /*!< GPIO High-Performance Bus Control                                            Addresses offset: 0x06C */
   volatile uint32_t RCC2;                    /*!< Run-Mode Clock Configuration 2                                               Addresses offset: 0x070 */
-  volatile uint32_t RESERVED5[2];
+  volatile uint32_t RESERVED4[2];
   volatile uint32_t MOSCCTL;                 /*!< Main Oscillator Control                                                      Addresses offset: 0x07C */
-  volatile uint32_t RESERVED[32];
+  volatile uint32_t RESERVED5[32];
   volatile uint32_t RCGC0;                   /*!< Run Mode Clock Gating Control Register 0                                     Addresses offset: 0x100 */
   volatile uint32_t RCGC1;                   /*!< Run Mode Clock Gating Control Register 1                                     Addresses offset: 0x104 */
   volatile uint32_t RCGC2;                   /*!< Run Mode Clock Gating Control Register 2                                     Addresses offset: 0x108 */
@@ -1303,12 +1304,9 @@ typedef struct
   volatile uint32_t NVMSTAT;                 /*!< Non-Volatile Memory Information                                              Addresses offset: 0x1A0 */
   volatile uint32_t RESERVED13[4];
   volatile uint32_t LDOSPCTL;                /*!< LDO Sleep Power Control                                                      Addresses offset: 0x1B4 */
-  volatile uint32_t LDOSPCAL;                /*!< LDO Sleep Power Calibration                                                  Addresses offset: 0x1B8 */
-  volatile uint32_t LDODPCTL;                /*!< LDO Deep-Sleep Power Control                                                 Addresses offset: 0x1BC */
-  volatile uint32_t LDODPCAL;                /*!< LDO Deep-Sleep Power Calibration                                             Addresses offset: 0x1C0 */
-  volatile uint32_t RESERVED14[2];
-  volatile uint32_t SDPMST;                  /*!< Sleep / Deep-Sleep Power Mode Status                                         Addresses offset: 0x1CC */
-  volatile uint32_t RESERVED15[76];
+  volatile uint32_t RESERVED14;
+  volatile uint32_t LDODPCTL;                /*!< LDO Sleep Power Calibration                                                  Addresses offset: 0x1B8 */
+  volatile uint32_t RESERVED15[80];
   volatile uint32_t PPWD;                    /*!< Watchdog Timer Peripheral Present                                            Addresses offset: 0x300 */
   volatile uint32_t PPTIMER;                 /*!< 16/32-Bit General-Purpose Timer Peripheral Present                           Addresses offset: 0x304 */
   volatile uint32_t PPGPIO;                  /*!< General-Purpose Input/Output Peripheral Present                              Addresses offset: 0x308 */
@@ -1350,86 +1348,88 @@ typedef struct
   volatile uint32_t RESERVED24[4];
   volatile uint32_t SREEPROM;                /*!< EEPROM Software Reset                                                        Addresses offset: 0x558 */
   volatile uint32_t SRWTIMER;                /*!< 32/64-Bit Wide General-Purpose Timer Software Reset                          Addresses offset: 0x55C */
+  volatile uint32_t RESERVED25[40];
   volatile uint32_t RCGCWD;                  /*!< Watchdog Timer Run Mode Clock Gating Control                                 Addresses offset: 0x600 */
   volatile uint32_t RCGCTIMER;               /*!< 16/32-Bit General-Purpose Timer Run Mode Clock GatingControl                 Addresses offset: 0x604 */
   volatile uint32_t RCGCGPIO;                /*!< General-Purpose Input/Output Run Mode Clock GatingControl                    Addresses offset: 0x608 */
   volatile uint32_t RCGCDMA;                 /*!< Micro Direct Memory Access Run Mode Clock GatingControl                      Addresses offset: 0x60C */
-  volatile uint32_t RESERVED25;
+  volatile uint32_t RESERVED26;
   volatile uint32_t RCGCHIB;                 /*!< Hibernation Run Mode Clock Gating Control                                    Addresses offset: 0x614 */
   volatile uint32_t RCGCUART;                /*!< Universal Asynchronous Receiver/Transmitter Run ModeClock Gating Control     Addresses offset: 0x618 */
   volatile uint32_t RCGCSSI;                 /*!< Synchronous Serial Interface Run Mode Clock GatingControl                    Addresses offset: 0x61C */
   volatile uint32_t RCGCI2C;                 /*!< Inter-Integrated Circuit Run Mode Clock Gating Control                       Addresses offset: 0x620 */
-  volatile uint32_t RESERVED26;
+  volatile uint32_t RESERVED27;
   volatile uint32_t RCGCUSB;                 /*!< Universal Serial Bus Run Mode Clock Gating Control                           Addresses offset: 0x628 */
-  volatile uint32_t RESERVED27[2];
+  volatile uint32_t RESERVED28[2];
   volatile uint32_t RCGCCAN;                 /*!< Controller Area Network Run Mode Clock Gating Control                        Addresses offset: 0x634 */
   volatile uint32_t RCGCADC;                 /*!< Analog-to-Digital Converter Run Mode Clock GatingControl                     Addresses offset: 0x638 */
   volatile uint32_t RCGCACMP;                /*!< Analog Comparator Run Mode Clock Gating Control                              Addresses offset: 0x63C */
   volatile uint32_t RCGCPWM;                 /*!< Pulse Width Modulator Run Mode Clock Gating Control                          Addresses offset: 0x640 */
   volatile uint32_t RCGCQEI;                 /*!< Quadrature Encoder Interface Run Mode Clock GatingControl                    Addresses offset: 0x644 */
-  volatile uint32_t RESERVED28[4];
+  volatile uint32_t RESERVED29[4];
   volatile uint32_t RCGCEEPROM;              /*!< EEPROM Run Mode Clock Gating Control                                         Addresses offset: 0x658 */
   volatile uint32_t RCGCWTIMER;              /*!< 32/64-Bit Wide General-Purpose Timer Run Mode ClockGating Control            Addresses offset: 0x65C */
-  volatile uint32_t RESERVED29[40];
+  volatile uint32_t RESERVED30[40];
   volatile uint32_t SCGCWD;                  /*!< Watchdog Timer Sleep Mode Clock Gating Control                               Addresses offset: 0x700 */
   volatile uint32_t SCGCTIMER;               /*!< 16/32-Bit General-Purpose Timer Sleep Mode ClockGating Control               Addresses offset: 0x704 */
   volatile uint32_t SCGCGPIO;                /*!< General-Purpose Input/Output Sleep Mode Clock GatingControl                  Addresses offset: 0x708 */
   volatile uint32_t SCGCDMA;                 /*!< Micro Direct Memory Access Sleep Mode Clock GatingControl                    Addresses offset: 0x70C */
-  volatile uint32_t RESERVED30;
+  volatile uint32_t RESERVED31;
   volatile uint32_t SCGCHIB;                 /*!< Hibernation Sleep Mode Clock Gating Control                                  Addresses offset: 0x714 */
   volatile uint32_t SCGCUART;                /*!< Universal Asynchronous Receiver/Transmitter SleepMode Clock Gating Control   Addresses offset: 0x718 */
   volatile uint32_t SCGCSSI;                 /*!< Synchronous Serial Interface Sleep Mode Clock GatingControl                  Addresses offset: 0x71C */
   volatile uint32_t SCGCI2C;                 /*!< Inter-Integrated Circuit Sleep Mode Clock Gating Control                     Addresses offset: 0x720 */
-  volatile uint32_t RESERVED31;
+  volatile uint32_t RESERVED32;
   volatile uint32_t SCGCUSB;                 /*!< Universal Serial Bus Sleep Mode Clock Gating Control                         Addresses offset: 0x728 */
-  volatile uint32_t RESERVED32[2];
+  volatile uint32_t RESERVED33[2];
   volatile uint32_t SCGCCAN;                 /*!< Controller Area Network Sleep Mode Clock GatingControl                       Addresses offset: 0x734 */
   volatile uint32_t SCGCADC;                 /*!< Analog-to-Digital Converter Sleep Mode Clock GatingControl                   Addresses offset: 0x738 */
   volatile uint32_t SCGCACMP;                /*!< Analog Comparator Sleep Mode Clock Gating Control                            Addresses offset: 0x73C */
   volatile uint32_t SCGCPWM;                 /*!< Pulse Width Modulator Sleep Mode Clock Gating Control                        Addresses offset: 0x740 */
   volatile uint32_t SCGCQEI;                 /*!< Quadrature Encoder Interface Sleep Mode Clock GatingControl                  Addresses offset: 0x744 */
-  volatile uint32_t RESERVED33[4];
+  volatile uint32_t RESERVED34[4];
   volatile uint32_t SCGCEEPROM;              /*!< EEPROM Sleep Mode Clock Gating Control                                       Addresses offset: 0x758 */
   volatile uint32_t SCGCWTIMER;              /*!< 32/64-Bit Wide General-Purpose Timer Sleep Mode ClockGating Control          Addresses offset: 0x75C */
+  volatile uint32_t RESERVED35[40];
   volatile uint32_t DCGCWD;                  /*!< Watchdog Timer Deep-Sleep Mode Clock Gating Control                          Addresses offset: 0x800 */
   volatile uint32_t DCGCTIMER;               /*!< 16/32-Bit General-Purpose Timer Deep-Sleep ModeClock Gating Control          Addresses offset: 0x804 */
   volatile uint32_t DCGCGPIO;                /*!< General-Purpose Input/Output Deep-Sleep Mode ClockGating Control             Addresses offset: 0x808 */
   volatile uint32_t DCGCDMA;                 /*!< Micro Direct Memory Access Deep-Sleep Mode ClockGating Control               Addresses offset: 0x80C */
-  volatile uint32_t RESERVED34;
+  volatile uint32_t RESERVED36;
   volatile uint32_t DCGCHIB;                 /*!< Hibernation Deep-Sleep Mode Clock Gating Control                             Addresses offset: 0x814 */
   volatile uint32_t DCGCUART;             /*!< Universal Asynchronous Receiver/TransmitterDeep-Sleep Mode Clock Gating Control Addresses offset: 0x818 */
   volatile uint32_t DCGCSSI;                 /*!< Synchronous Serial Interface Deep-Sleep Mode ClockGating Control             Addresses offset: 0x81C */
   volatile uint32_t DCGCI2C;                 /*!< Inter-Integrated Circuit Deep-Sleep Mode Clock GatingControl                 Addresses offset: 0x820 */
-  volatile uint32_t RESERVED35;
+  volatile uint32_t RESERVED37;
   volatile uint32_t DCGCUSB;                 /*!< Universal Serial Bus Deep-Sleep Mode Clock GatingControl                     Addresses offset: 0x828 */
-  volatile uint32_t RESERVED36[2];
+  volatile uint32_t RESERVED38[2];
   volatile uint32_t DCGCCAN;                 /*!< Controller Area Network Deep-Sleep Mode Clock GatingControl                  Addresses offset: 0x834 */
   volatile uint32_t DCGCADC;                 /*!< Analog-to-Digital Converter Deep-Sleep Mode ClockGating Control              Addresses offset: 0x838 */
   volatile uint32_t DCGCACMP;                /*!< Analog Comparator Deep-Sleep Mode Clock GatingControl                        Addresses offset: 0x83C */
   volatile uint32_t DCGCPWM;                 /*!< Pulse Width Modulator Deep-Sleep Mode Clock GatingControl                    Addresses offset: 0x840 */
   volatile uint32_t DCGCQEI;                 /*!< Quadrature Encoder Interface Deep-Sleep Mode ClockGating Control             Addresses offset: 0x844 */
-  volatile uint32_t RESERVED37[4];
+  volatile uint32_t RESERVED39[4];
   volatile uint32_t DCGCEEPROM;              /*!< EEPROM Deep-Sleep Mode Clock Gating Control                                  Addresses offset: 0x858 */
   volatile uint32_t DCGCWTIMER;              /*!< 32/64-Bit Wide General-Purpose Timer Deep-Sleep ModeClock Gating Control     Addresses offset: 0x85C */
-  volatile uint32_t RESERVED38[104];
+  volatile uint32_t RESERVED40[104];
   volatile uint32_t PRWD;                    /*!< Watchdog Timer Peripheral Ready                                              Addresses offset: 0xA00 */
   volatile uint32_t PRTIMER;                 /*!< 16/32-Bit General-Purpose Timer Peripheral Ready                             Addresses offset: 0xA04 */
   volatile uint32_t PRGPIO;                  /*!< General-Purpose Input/Output Peripheral Ready                                Addresses offset: 0xA08 */
   volatile uint32_t PRDMA;                   /*!< Micro Direct Memory Access Peripheral Ready                                  Addresses offset: 0xA0C */
-  volatile uint32_t RESERVED39;
+  volatile uint32_t RESERVED41;
   volatile uint32_t PRHIB;                   /*!< Hibernation Peripheral Ready                                                 Addresses offset: 0xA14 */
   volatile uint32_t PRUART;                  /*!< Universal Asynchronous Receiver/Transmitter PeripheralReady                  Addresses offset: 0xA18 */
   volatile uint32_t PRSSI;                   /*!< Synchronous Serial Interface Peripheral Ready                                Addresses offset: 0xA1C */
   volatile uint32_t PRI2C;                   /*!< Inter-Integrated Circuit Peripheral Ready                                    Addresses offset: 0xA20 */
-  volatile uint32_t RESERVED40;
+  volatile uint32_t RESERVED42;
   volatile uint32_t PRUSB;                   /*!< Universal Serial Bus Peripheral Ready                                        Addresses offset: 0xA28 */
-  volatile uint32_t RESERVED41[2];
+  volatile uint32_t RESERVED43[2];
   volatile uint32_t PRCAN;                   /*!< Controller Area Network Peripheral Ready                                     Addresses offset: 0xA34 */
   volatile uint32_t PRADC;                   /*!< Analog-to-Digital Converter Peripheral Ready                                 Addresses offset: 0xA38 */
   volatile uint32_t PRACMP;                  /*!< Analog Comparator Peripheral Ready                                           Addresses offset: 0xA3C */
   volatile uint32_t PRPWM;                   /*!< Pulse Width Modulator Peripheral Ready                                       Addresses offset: 0xA40 */
   volatile uint32_t PRQEI;                   /*!< Quadrature Encoder Interface Peripheral Ready                                Addresses offset: 0xA44 */
-  volatile uint32_t RESERVED42[4];
+  volatile uint32_t RESERVED44[4];
   volatile uint32_t PREEPROM;                /*!< EEPROM Peripheral Ready                                                      Addresses offset: 0xA58 */
   volatile uint32_t PRWTIMER;                /*!< 32/64-Bit Wide General-Purpose Timer Peripheral Ready                        Addresses offset: 0xA5C */
 }SYSCTL_RegDef_t;
