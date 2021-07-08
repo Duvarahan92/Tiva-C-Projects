@@ -26,12 +26,13 @@ int main(void)
   GPIO_DeInit(GPIOF);
   GPIO_CLK_CTRL(GPIOF, ENABLE);
  
-  GPIOLed.GPIO_PinConfig.GPIO_PinNumber = 3;
+  GPIOLed.GPIO_PinConfig.GPIO_PinNumber = 2;
   GPIOLed.GPIO_PinConfig.GPIO_PinDir = GPIO_OUT;
   GPIOLed.GPIO_PinConfig.GPIO_DEN = GPIO_DEN_SET;
   GPIOLed.GPIO_PinConfig.GPIO_OODR = 0;
   GPIOLed.GPIO_PinConfig.GPIO_PUR = 0;
   GPIOLed.GPIO_PinConfig.GPIO_PDR = 0;
+  GPIOLed.GPIO_PinConfig.GPIO_AFSEL = 0;
   
   GPIO_Init(&GPIOLed);
 
