@@ -198,31 +198,31 @@ uint8_t GPIO_Init(GPIO_Handle_t *pGPIOHandle){
     //5. Confgure 8mA drive
     temp = 0;
     temp = pGPIOHandle->GPIO_PinConfig.GPIO_DR8R << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    //pGPIOHandle -> GPIOx -> GPIODR8R &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); 
+    pGPIOHandle -> GPIOx -> GPIODR8R &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); 
     pGPIOHandle -> GPIOx -> GPIODR8R |= temp;
 
     //6. Confgure open drain
     temp = 0;
     temp = pGPIOHandle->GPIO_PinConfig.GPIO_OODR << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    //pGPIOHandle -> GPIOx -> GPIOODR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+    pGPIOHandle -> GPIOx -> GPIOODR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOODR |= temp;
 
     //7. Confgure pull up
     temp = 0;
     temp = pGPIOHandle->GPIO_PinConfig.GPIO_PUR << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    // pGPIOHandle -> GPIOx -> GPIOPUR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+    pGPIOHandle -> GPIOx -> GPIOPUR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOPUR |= temp;
 
     //8. Confgure pull down
     temp = 0;
     temp = pGPIOHandle->GPIO_PinConfig.GPIO_PDR << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    //pGPIOHandle -> GPIOx -> GPIOPDR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+    pGPIOHandle -> GPIOx -> GPIOPDR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOPDR |= temp;
 
     //9. Confgure slew rate
     temp = 0;
     temp = pGPIOHandle->GPIO_PinConfig.GPIO_SLR << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    //pGPIOHandle -> GPIOx -> GPIOSLR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+    pGPIOHandle -> GPIOx -> GPIOSLR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOSLR |= temp;
 
     //10. Confgure digital function
@@ -231,37 +231,28 @@ uint8_t GPIO_Init(GPIO_Handle_t *pGPIOHandle){
     pGPIOHandle -> GPIOx -> GPIODEN &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIODEN |= temp;
 
-    //11. Confgure Lock
-    pGPIOHandle -> GPIOx -> GPIOLOCK = pGPIOHandle->GPIO_PinConfig.GPIO_LOCK;
-
-    //12. Confgure commit
-    temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_CR << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    //pGPIOHandle -> GPIOx -> GPIOCR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIOCR |= temp;
-
-    //13. Confgure analog funtion
+    //12. Confgure analog funtion
     temp = 0;
     temp = pGPIOHandle->GPIO_PinConfig.GPIO_AMSEL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    //pGPIOHandle -> GPIOx -> GPIOAMSEL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); 
+    pGPIOHandle -> GPIOx -> GPIOAMSEL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); 
     pGPIOHandle -> GPIOx -> GPIOAMSEL |= temp;
 
-    //14. Confgure port control
+    //13. Confgure port control
     temp = 0;
     temp = pGPIOHandle->GPIO_PinConfig.GPIO_PCTL << (4 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    //pGPIOHandle -> GPIOx -> GPIOPCTL &= ~(0xF << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+    pGPIOHandle -> GPIOx -> GPIOPCTL &= ~(0xF << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOPCTL |= temp;
 
-    //15. Confgure adc trigger
+    //14. Confgure adc trigger
     temp = 0;
     temp = pGPIOHandle->GPIO_PinConfig.GPIO_ADCCTL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    // pGPIOHandle -> GPIOx -> GPIOADCCTL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+    pGPIOHandle -> GPIOx -> GPIOADCCTL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOADCCTL |= temp;
 
-    //16. Confgure dma trigger
+    //15. Confgure dma trigger
     temp = 0;
     temp = pGPIOHandle->GPIO_PinConfig.GPIO_DMACTL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    // pGPIOHandle -> GPIOx -> GPIODMACTL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+    pGPIOHandle -> GPIOx -> GPIODMACTL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIODMACTL |= temp;
 
     return TRUE;
@@ -278,6 +269,7 @@ uint8_t GPIO_Init(GPIO_Handle_t *pGPIOHandle){
  * 
  * @Note                   - none
  */
+
 uint8_t GPIO_DeInit(GPIO_RegDef_t *pGPIOx)
 {
 
@@ -318,6 +310,71 @@ uint8_t GPIO_DeInit(GPIO_RegDef_t *pGPIOx)
     
     return FALSE;
 
+}
+
+/********************************************************************************
+ * @fn                     - GPIO_DeInit
+ *
+ * @brief                  - This function reset the GPIO peripheral
+ * 
+ * @param[in]              - base address of the gpio peripheral
+ * 
+ * @return                 - TRUE or FALSE macros
+ * 
+ * @Note                   - none
+ */
+
+uint8_t GPIO_InterruptInit(GPIO_Handle_t *pGPIOHandle)
+{
+    uint32_t temp;
+
+    if(!GPIO_Check_Pin(pGPIOHandle->GPIOx, pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber))
+        return FALSE;
+
+
+
+    // Prevent false interrupts on edge sensitive detection
+    if(pGPIOHandle->GPIO_PinConfig.GPIO_IS == GPIO_IS_EDGE)
+    {   
+        // Mask GPIOM register
+        pGPIOHandle -> GPIOx -> GPIOIM &= GPIO_IM_GPIO_S;
+        
+        // Configure Interrupt sense
+        temp = 0;
+        temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IS << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+        pGPIOHandle -> GPIOx -> GPIOIS |= temp;
+        
+        // Configure Interrupt both edge
+        temp = 0;
+        temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IBE << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+        pGPIOHandle -> GPIOx -> GPIOIBE |= temp;
+        
+        // Clear GPIORIS
+        pGPIOHandle -> GPIOx-> GPIOICR = GPIO_ICR_GPIO_M;
+
+        // Unmask the port
+        pGPIOHandle -> GPIOx -> GPIOIM |= GPIO_IM_GPIO_M;
+
+        // Configure Interrupt Event
+        temp = 0;
+        temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IEV << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
+        pGPIOHandle -> GPIOx -> GPIOIEV |= temp;
+        
+    }
+
+    temp = 0;
+    temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IS << pGPIOHandle ->GPIO_PinConfig.GPIO_PinNumber;
+    pGPIOHandle -> GPIOx -> GPIOIS |= temp;
+
+    temp = 0;
+    temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IBE << pGPIOHandle ->GPIO_PinConfig.GPIO_PinNumber;
+    pGPIOHandle -> GPIOx -> GPIOIBE |= temp;
+
+    temp = 0;
+    temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IEV << pGPIOHandle ->GPIO_PinConfig.GPIO_PinNumber;
+    pGPIOHandle -> GPIOx -> GPIOIEV |= temp;
+
+    return TRUE;
 }
 
 /********************************************************************************
@@ -446,14 +503,60 @@ uint8_t GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
 }
 
 /********************************************************************************
- * @fn                     - GPIO_IRQConfig
+ * @fn                     - GPIO_Lock
  *
- * @brief                  - This function enbales or disables peripheral clock for the given GPIO port
+ * @brief                  - This function locks the GPIOCR register for write access
  * 
  * @param[in]              - base address of the gpio peripheral
- * @param[in]              - ENABLE or DISABLE macros
+ * @param[in]              - GPIO pin number
  * 
  * @return                 - TRUE or FALSE macros
+ * 
+ * @Note                   - none
+ */
+
+uint8_t GPIO_Lock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
+{
+   if(!GPIO_Check_Pin(pGPIOx, PinNumber))
+        return FALSE;
+   
+    pGPIOx -> GPIOLOCK = GPIO_LOCK_M;
+    pGPIOx -> GPIOCR = (0 << PinNumber);
+    return TRUE;
+}
+
+/********************************************************************************
+ * @fn                     - GPIO_Unlock
+ *
+ * @brief                  - This function unlocks the GPIOCR register for write access
+ * 
+ * @param[in]              - base address of the gpio peripheral
+ * @param[in]              - GPIO pin number
+ * 
+ * @return                 - TRUE or FALSE macros
+ * 
+ * @Note                   - none
+ */
+
+uint8_t GPIO_UNlock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
+{
+    if (!GPIO_Check_Pin(pGPIOx, PinNumber))
+        return FALSE;
+    
+    pGPIOx -> GPIOLOCK = GPIO_LOCK_KEY;
+    pGPIOx -> GPIOCR |= (1 << PinNumber);
+    return TRUE;
+}
+
+/********************************************************************************
+ * @fn                     - GPIO_IRQConfig
+ *
+ * @brief                  - This function enbales or disables interrupt from processor side
+ * @param[in]              - IRQ number
+ * @param[in]              - IRQ priority
+ * @param[in]              - ENABLE or DISABLE macros
+ * 
+ * @return                 - none
  * 
  * @Note                   - none
  */

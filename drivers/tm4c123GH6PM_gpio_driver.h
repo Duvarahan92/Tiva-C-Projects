@@ -22,15 +22,13 @@ typedef struct
   uint8_t GPIO_PDR;                     /*!< Possible values at @GPIO_CONFIG >*/
   uint8_t GPIO_SLR;                     /*!< Possible values at @GPIO_DRIVE_SLEW >*/
   uint8_t GPIO_DEN;                     /*!< Possible values at @GPIO_DEN >*/
-  uint32_t GPIO_LOCK;                   /*!< Possible values at @GPIO_LOCK >*/
-  uint8_t GPIO_CR;                      /*!< Possible values at @GPIO_LOCK >*/
   uint8_t GPIO_AMSEL;                   /*!< Possible values at @GPIO_Pin_Mode >*/
   uint32_t GPIO_PCTL;                   /*!< Possible values at @GPIO_PORT_CTRLX >*/
   uint8_t GPIO_ADCCTL;                  /*!< Possible values at @GPIO_Pin_Mode >*/
   uint8_t GPIO_DMACTL;                  /*!< Possible values at @GPIO_Pin_Mode >*/
   uint8_t GPIO_IS;                      /*!< Possible values at @GPIO_INTERRUPT >*/
   uint8_t GPIO_IBE;                     /*!< Possible values at @GPIO_INTERRUPT >*/
-  uint8_t GPIO_EV;                      /*!< Possible values at @GPIO_INTERRUPT >*/
+  uint8_t GPIO_IEV;                      /*!< Possible values at @GPIO_INTERRUPT >*/
 
 }GPIO_PinConfig_t;
 
@@ -78,8 +76,8 @@ typedef struct
  * @GPIO_INTERRUPT
  * GPIO possible interrupt mode
  */
-#define GPIO_IS_EDGE            1                 // The pin is edge-sensitive
-#define GPIO_IS_LEVEL           ~(GPIO_IS_EDGE)   // The pin is level-sensitive
+#define GPIO_IS_LEVEL           1                 // The pin is edge-sensitive
+#define GPIO_IS_EDGE           ~(GPIO_IS_LEVEL)   // The pin is level-sensitive
 #define GPIO_IBE_SET            1                 // The pin is sensitive on both edges
 #define GPIO_IBE_CLEAR          ~(GPIO_IBE_SET)   // Interrupt is controlled by GPIO_EV
 #define GPIO_EV_SET             1                 // A falling edge or low level trigger interrupt on the pin
@@ -414,9 +412,18 @@ uint8_t GPIO_WriteOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber, uint8_t Va
 uint8_t GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
 
 /*
+ * Locks and  unlocks pin
+ *
+ */
+
+uint8_t GPIO_Lock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
+uint8_t GPIO_UNlock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
+
+/*
  * IRQ Configuration and ISR handling
  *
  */
+uint8_t GPIO_InterruptInit(GPIO_Handle_t *pGPIOHandle);
 void GPIO_IRQConfig(uint8_t IRQn, uint8_t IRQPriority, uint8_t ctrl);
 void GPIO_IRQHandling(uint8_t PinNumber);
 
