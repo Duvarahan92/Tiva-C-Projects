@@ -45,7 +45,7 @@
 #define INT_SYSCTL              44          // System Control
 #define INT_FLASH               45          // Flash Memory Control and EEPROM
                                             // Control
-#define INT_GPIOF               46          // GPIO Port F
+#define INT_GPIOF               30          // GPIO Port F
 #define INT_UART2               49          // UART2
 #define INT_SSI1                50          // SSI1
 #define INT_TIMER3A             51          // 16/32-Bit Timer 3A
@@ -1539,7 +1539,7 @@ typedef struct
 #define NVIC_ACTIVE2_R          (*((volatile uint32_t *)0xE000E308))
 #define NVIC_ACTIVE3_R          (*((volatile uint32_t *)0xE000E30C))
 #define NVIC_ACTIVE4_R          (*((volatile uint32_t *)0xE000E310))
-#define NVIC_PRI0_R             (*((volatile uint32_t *)0xE000E400))
+#define NVIC_PRI0_R               ((volatile uint32_t *)0xE000E400)
 #define NVIC_PRI1_R             (*((volatile uint32_t *)0xE000E404))
 #define NVIC_PRI2_R             (*((volatile uint32_t *)0xE000E408))
 #define NVIC_PRI3_R             (*((volatile uint32_t *)0xE000E40C))

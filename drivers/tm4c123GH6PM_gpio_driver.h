@@ -55,57 +55,57 @@ typedef struct
  * GPIO digital enable or disable
  */
 #define GPIO_DEN_SET            1                  // Enable digital function for the pin
-#define GPIO_DEN_CLEAR          ~(GPIO_DEN_SET)    // Disable digital function for the pin
+#define GPIO_DEN_CLEAR          0                  // Disable digital function for the pin
 
 /* 
  * @GPIO_Pin_Mode
  * GPIO possible pin modes
  */
 #define GPIO_OUT                1                  // Sets the GPIO pin as output
-#define GPIO_IN                 ~(GPIO_OUT)        // Sets the GPIO pin as input
+#define GPIO_IN                 0                  // Sets the GPIO pin as input
 #define GPIO_AFSEL_SET          1                  // Enable alternate hardware function for the pin
-#define GPIO_AFSEL_CLEAR        ~(GPIO_AFSEL_SET)  // Disable alternate hardware function for the pin
+#define GPIO_AFSEL_CLEAR        0                  // Disable alternate hardware function for the pin
 #define GPIO_AMSEL_SET          1                  // Enable analog function for the pin
-#define GPIO_AMSEL_CLEAR        ~(GPIO_AMSEL_SET)  // Disable analog function for the pin
+#define GPIO_AMSEL_CLEAR        0                  // Disable analog function for the pin
 #define GPIO_ADCCTL_SET         1                  // Enable pin to be used as ADC trigger
-#define GPIO_ADCCTL_CLEAR       ~(GPIO_ADCCTL_SET) // Disable pin to be used as ADC trigger
+#define GPIO_ADCCTL_CLEAR       0                  // Disable pin to be used as ADC trigger
 #define GPIO_DMACTL_SET         1                  // Enable pin to be used as uDMA trigger
-#define GPIO_DMACTL_CLEAR       ~(GPIO_DMACTL_SET) // Disable pin to be used as uDMA trigger
+#define GPIO_DMACTL_CLEAR       0                  // Disable pin to be used as uDMA trigger
 
 /* 
  * @GPIO_INTERRUPT
  * GPIO possible interrupt mode
  */
 #define GPIO_IS_LEVEL           1                 // The pin is edge-sensitive
-#define GPIO_IS_EDGE           ~(GPIO_IS_LEVEL)   // The pin is level-sensitive
+#define GPIO_IS_EDGE            0                 // The pin is level-sensitive
 #define GPIO_IBE_SET            1                 // The pin is sensitive on both edges
-#define GPIO_IBE_CLEAR          ~(GPIO_IBE_SET)   // Interrupt is controlled by GPIO_EV
-#define GPIO_EV_SET             1                 // A falling edge or low level trigger interrupt on the pin
-#define GPIO_EV_CLEAR           ~(GPIO_EV_SET)    // A rising edge or high level trigger interrupt on the pin
+#define GPIO_IBE_CLEAR          0                 // Interrupt is controlled by GPIO_EV
+#define GPIO_IEV_SET             1                 // A falling edge or low level trigger interrupt on the pin
+#define GPIO_IEV_CLEAR           0                 // A rising edge or high level trigger interrupt on the pin
 
 /* 
  * @GPIO_DRIVE_SLEW
  * GPIO output pin drive and slew rate config
  */
 #define GPIO_DR2R_SET            1                // Enable 2mA drive on the pin
-#define GPIO_DR2R_CLEAR          ~(GPIO_DR2R_SET) // Disable 2mA drive on the pin   
+#define GPIO_DR2R_CLEAR          0                // Disable 2mA drive on the pin   
 #define GPIO_DR4R_SET            1                // Enable 4mA drive on the pin
-#define GPIO_DR4R_CLEAR          ~(GPIO_DR4R_SET) // Disable 4mA drive on the pin
+#define GPIO_DR4R_CLEAR          0                // Disable 4mA drive on the pin
 #define GPIO_DR8R_SET            1                // Enable 8mA drive on the pin
-#define GPIO_DR8R_CLEAR          ~(GPIO_DR8R_SET) // Disable 2mA drive on the pin
+#define GPIO_DR8R_CLEAR          0                // Disable 2mA drive on the pin
 #define GPIO_SLR_SET             1                // Enable slew rate control on the pin
-#define GPIO_SLR_CLEAR           ~(GPIO_SLR_SET)  // Disable slew rate control on the pin
+#define GPIO_SLR_CLEAR           0                // Disable slew rate control on the pin
 
 /* 
  * @GPIO_CONFIG
  * GPIO pin config
  */
 #define GPIO_ODR_SET             1                 // Pin is configured as open drain
-#define GPIO_ODR_CLEAR           ~(GPIO_ODR_SET)   // Disable open drain configuration
+#define GPIO_ODR_CLEAR           0                 // Disable open drain configuration
 #define GPIO_PUR_SET             1                 // Weak pull-up is enabled on pin
-#define GPIO_PUR_CLEAR           ~(GPIO_PUR_SET)   // Weak pull-up is disables on pin
+#define GPIO_PUR_CLEAR           0                 // Weak pull-up is disables on pin
 #define GPIO_PDR_SET             1                 // Weak pull-down is enables on pin
-#define GPIO_PDR_CLEAR           ~(GPIO_PDR_SET)   // Weak pull-down is disabled on pin
+#define GPIO_PDR_CLEAR           0                 // Weak pull-down is disabled on pin
 
 
 /*
@@ -417,15 +417,16 @@ uint8_t GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
  */
 
 uint8_t GPIO_Lock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
-uint8_t GPIO_UNlock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
+uint8_t GPIO_Unlock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
 
 /*
  * IRQ Configuration and ISR handling
  *
  */
 uint8_t GPIO_InterruptInit(GPIO_Handle_t *pGPIOHandle);
-void GPIO_IRQConfig(uint8_t IRQn, uint8_t IRQPriority, uint8_t ctrl);
-void GPIO_IRQHandling(uint8_t PinNumber);
+void GPIO_IRQConfig(uint8_t IRQn, uint8_t Ctrl);
+void GPIO_IRQPriorityConfig(uint8_t IRQn, uint32_t IRQPriority);
+void GPIO_IRQHandling(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
 
 
 

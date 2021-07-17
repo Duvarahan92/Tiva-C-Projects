@@ -337,7 +337,7 @@ uint8_t GPIO_InterruptInit(GPIO_Handle_t *pGPIOHandle)
     if(pGPIOHandle->GPIO_PinConfig.GPIO_IS == GPIO_IS_EDGE)
     {   
         // Mask GPIOM register
-        pGPIOHandle -> GPIOx -> GPIOIM &= GPIO_IM_GPIO_S;
+        pGPIOHandle -> GPIOx -> GPIOIM &= GPIO_IM_GPIO_M;
         
         // Configure Interrupt sense
         temp = 0;
@@ -353,14 +353,15 @@ uint8_t GPIO_InterruptInit(GPIO_Handle_t *pGPIOHandle)
         pGPIOHandle -> GPIOx-> GPIOICR = GPIO_ICR_GPIO_M;
 
         // Unmask the port
-        pGPIOHandle -> GPIOx -> GPIOIM |= GPIO_IM_GPIO_M;
+        pGPIOHandle -> GPIOx -> GPIOIM |= GPIO_IM_GPIO_S;
 
         // Configure Interrupt Event
         temp = 0;
         temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IEV << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
         pGPIOHandle -> GPIOx -> GPIOIEV |= temp;
-        
     }
+
+    pGPIOHandle -> GPIOx -> GPIOIM &= GPIO_IM_GPIO_S;
 
     temp = 0;
     temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IS << pGPIOHandle ->GPIO_PinConfig.GPIO_PinNumber;
@@ -373,6 +374,13 @@ uint8_t GPIO_InterruptInit(GPIO_Handle_t *pGPIOHandle)
     temp = 0;
     temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IEV << pGPIOHandle ->GPIO_PinConfig.GPIO_PinNumber;
     pGPIOHandle -> GPIOx -> GPIOIEV |= temp;
+
+    //Clear interrupt
+    pGPIOHandle -> GPIOx -> GPIOICR |= GPIO_ICR_GPIO_M;
+
+    // Unmask the port
+    pGPIOHandle -> GPIOx -> GPIOIM |= (1 << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber);
+    
 
     return TRUE;
 }
@@ -538,7 +546,7 @@ uint8_t GPIO_Lock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
  * @Note                   - none
  */
 
-uint8_t GPIO_UNlock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
+uint8_t GPIO_Unlock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
 {
     if (!GPIO_Check_Pin(pGPIOx, PinNumber))
         return FALSE;
@@ -560,7 +568,49 @@ uint8_t GPIO_UNlock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
  * 
  * @Note                   - none
  */
-void GPIO_IRQConfig(uint8_t IRQn, uint8_t IRQPriority, uint8_t ctrl);
+void GPIO_IRQConfig(uint8_t IRQn, uint8_t Ctrl)
+{
+    if (Ctrl == ENABLE)
+    {
+        if (IRQn <= 31)
+        {
+            NVIC_EN0_R |= (1 << IRQn);
+        }else if (IRQn > 31 && IRQn < 64)
+        {
+            NVIC_EN1_R |= (1 << (IRQn % 32));
+        }
+    }else
+    {
+        if (IRQn <= 31)
+        {
+            NVIC_DIS0_R |= (1 << IRQn);
+        }else if (IRQn > 31 && IRQn < 64)
+        {
+            NVIC_DIS1_R |= (1 << (IRQn % 32));
+        }
+    }
+}
+
+/********************************************************************************
+ * @fn                     - GPIO_IRQPriorityConfig
+ *
+ * @brief                  - This function sets interrupt priority from processor side
+ * 
+ * @param[in]              - IRQ priority
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+
+void GPIO_IRQPriorityConfig(uint8_t IRQn, uint32_t IRQPriority)
+{
+    uint8_t iprx = IRQn / 4;
+    uint8_t sections = IRQn % 4;
+
+    uint8_t Shift_amount = (8 * sections) + 5;
+    *(NVIC_PRI0_R + iprx) = (IRQPriority << Shift_amount);
+}
 
 /********************************************************************************
  * @fn                     - GPIO_IRQHandling
@@ -574,7 +624,13 @@ void GPIO_IRQConfig(uint8_t IRQn, uint8_t IRQPriority, uint8_t ctrl);
  * 
  * @Note                   - none
  */
-void GPIO_IRQHandling(uint8_t PinNumber);
+void GPIO_IRQHandling(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
+{
+    // Check if interrupt occurd on the pin
+    if (pGPIOx -> GPIORIS & (1 << PinNumber))
+        // Clear interrupt on the pin
+        pGPIOx -> GPIOICR |= (1 << PinNumber);
+}
 
 /*********************************************************************************
 *                        Internal functions

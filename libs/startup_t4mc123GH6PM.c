@@ -236,7 +236,7 @@ uint32_t const vector[]__attribute__ ((section(".isr_vector"))) =
   (uint32_t)UART4_IRQHandler,                 // UART4 Rx and Tx
   (uint32_t)UART5_IRQHandler,                 // UART5 Rx and Tx
   (uint32_t)UART6_IRQHandler,                 // UART6 Rx and Tx
-  (uint32_t) UART7_IRQHandler,                // UART7 Rx and Tx
+  (uint32_t)UART7_IRQHandler,                // UART7 Rx and Tx
     0,                                        // Reserved
     0,                                        // Reserved
     0,                                        // Reserved

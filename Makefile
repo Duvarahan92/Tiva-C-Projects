@@ -3,7 +3,7 @@
 #Makefile, for tm4c programming 
 
 # Target name:
-TARGET = blinky
+TARGET = interrupt
 
 # Target type
 MCU = tm4c123GH6PM
@@ -44,8 +44,8 @@ erase:
 	-c "init; reset halt; stellaris mass_erase 0; exit"	
 
 debug:	clean compile
-	xterm -e openocd -f board/ti_ek-tm4c123gxl.cfg &
-	gdb-multiarch $(BIN)$(TARGET).bin
+	openocd -f board/ti_ek-tm4c123gxl.cfg 
+	#gdb-multiarch $(BIN)$(TARGET).bin
 
 clean:
 	rm -rf obj bin
