@@ -4,8 +4,6 @@
 #ifndef INC_TM4C123GH6PM_GPIO_DRIVER_H_
 #define INC_TM4C123GH6PM_GPIO_DRIVER_H_
 
-//#include "tm4c123gh6pm.h"
-
 /*
 / This is a Confiuration structure for a GPIO pin
 */
@@ -80,8 +78,8 @@ typedef struct
 #define GPIO_IS_EDGE            0                 // The pin is level-sensitive
 #define GPIO_IBE_SET            1                 // The pin is sensitive on both edges
 #define GPIO_IBE_CLEAR          0                 // Interrupt is controlled by GPIO_EV
-#define GPIO_IEV_SET             1                 // A falling edge or low level trigger interrupt on the pin
-#define GPIO_IEV_CLEAR           0                 // A rising edge or high level trigger interrupt on the pin
+#define GPIO_IEV_SET            1                 // A falling edge or low level trigger interrupt on the pin
+#define GPIO_IEV_CLEAR          0                 // A rising edge or high level trigger interrupt on the pin
 
 /* 
  * @GPIO_DRIVE_SLEW
@@ -430,4 +428,4 @@ void GPIO_IRQHandling(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
 
 
 
-#endif // __TM4C123GH6PM_GPIO_DRIVER_H__
+#endif  // __TM4C123GH6PM_GPIO_DRIVER_H__

@@ -1,9 +1,7 @@
-
-//#include "tm4c123gh6pm.h"
 #include "tm4c123GH6PM_gpio_driver.h"
 
 /*
- *Internal Protype functions
+ *Internal Protype
  *
  */
 
@@ -695,4 +693,3 @@ uint8_t GPIO_Check_Pin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
     }
     return valid;
 }
-
