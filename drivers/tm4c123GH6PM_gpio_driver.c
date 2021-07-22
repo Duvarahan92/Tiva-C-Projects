@@ -1,154 +1,250 @@
 #include "tm4c123GH6PM_gpio_driver.h"
+#include "tm4c123gh6pm.h"
 
-/*
- *Internal Protype
+/*********************************************************************************
+*                        Internal functions and variables
+*
+**********************************************************************************/
+
+static GPIO_RegDef_t* MapGPIOBaseAddress[12] =
+{
+    GPIOA, GPIOA_AHB,
+    GPIOB, GPIOB_AHB,
+    GPIOC, GPIOC_AHB,
+    GPIOD, GPIOD_AHB,
+    GPIOE, GPIOE_AHB,
+    GPIOF, GPIOF_AHB
+};
+
+/********************************************************************************
+ * @fn                     - GPIO_Get_Port
  *
+ * @brief                  - This function gets the struct ptr to a port
+ * 
+ * @param[in]              - GPIO port enum
+ * 
+ * @return                 - Struct ptr to a port
+ * 
+ * @Note                   - none
+ */
+ static GPIO_RegDef_t* GPIO_Get_Port(uint8_t GPIO_Port)
+ {
+     return MapGPIOBaseAddress[GPIO_Port];
+ }
+
+/********************************************************************************
+ * @fn                     - GPIO_Check_Port
+ *
+ * @brief                  - This function check if GPIO port is valid
+ * 
+ * @param[in]              - base address of the gpio peripheral
+ * 
+ * @return                 - TRUE or FALSE macros
+ * 
+ * @Note                   - none
+ */
+static uint8_t GPIO_Check_Port(uint8_t GPIOPort)
+{
+    for (int i = GPIOA_P; i <= GPIOF_AHB_P; i++)
+    {
+        if (i == GPIOPort)
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
+/********************************************************************************
+ * @fn                     - GPIO_Check_Pin
+ *
+ * @brief                  - This function check if pin number is valid
+ * 
+ * @param[in]              - base address of the GPIO port
+ * @param[in]              - pin number of the GPIO port
+ * 
+ * @return                 - TRUE or FALSE macros
+ * 
+ * @Note                   - none
+ */
+static uint8_t GPIO_Check_Pin(uint8_t GPIOx, uint8_t PinNumber)
+{
+    uint8_t valid = GPIO_Check_Port(GPIOx);
+    GPIO_RegDef_t *pGPIOx = GPIO_Get_Port(GPIOx);
+
+    if (pGPIOx == GPIOA ||pGPIOx == GPIOB ||pGPIOx == GPIOC || pGPIOx == GPIOD ||
+        pGPIOx == GPIOA_AHB || pGPIOx == GPIOB_AHB || pGPIOx == GPIOC_AHB || pGPIOx == GPIOD_AHB)
+    {
+        if (PinNumber >= 0 && PinNumber <= 7)
+            valid &= TRUE;
+        else
+            valid &= FALSE;
+    }else if (pGPIOx == GPIOE ||pGPIOx == GPIOE_AHB)
+    {
+        if (PinNumber >= 0 && PinNumber <= 5)
+            valid &= TRUE;
+        else
+            valid &= FALSE;
+    }else if (pGPIOx == GPIOF ||pGPIOx == GPIOF_AHB)
+    {
+        if (PinNumber >= 0 && PinNumber <= 4)
+            valid &= TRUE;
+        else
+            valid &= FALSE;
+    }
+    return valid;
+}
+
+/*********************************************************************************
+*                           API functions
+*
+**********************************************************************************/ 
+
+/********************************************************************************
+ * @fn                     - GPIO_EnableClk
+ *
+ * @brief                  - This function enbales peripheral clock for the given GPIO port
+ * 
+ * @param[in]              - GPIO port to enable
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void GPIOEnableClk(uint8_t SYSCTL_RCGCGPIO_MODULE)
+{
+    SYSCTL -> RCGCGPIO |= SYSCTL_RCGCGPIO_MODULE;        
+}
+
+/********************************************************************************
+ * @fn                     - GPIO_DisableClk
+ *
+ * @brief                  - This function disbales peripheral clock for the given GPIO port
+ * 
+ * @param[in]              - GPIO port to disable clk
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void GPIODisableClk(uint8_t SYSCTL_RCGCGPIO_Portx)
+ {
+     SYSCTL -> RCGCGPIO &= ~(SYSCTL_RCGCGPIO_Portx);
+ }
+
+/********************************************************************************
+ * @fn                     - GPIO_SelectBus
+ *
+ * @brief                  - This function selects between bus AHB or APB
+ * 
+ * @param[in]              - GPIO port
+ * @param[in]              - AHB or APB macros
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
  */
 
-uint8_t GPIO_Check_Port(GPIO_RegDef_t *pGPIOx);
-uint8_t GPIO_Check_Pin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
-
+void GPIOSelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus)
+{
+    if (Bus == AHB)
+        SYSCTL -> GPIOHBCTL |= Bus;
+     SYSCTL -> GPIOHBCTL &= ~(Bus);
   
- 
-
-
-/********************************************************************************
- * @fn                     - GPIO_CLK_CTRL
- *
- * @brief                  - This function enbales or disables peripheral clock for the given GPIO port
- * 
- * @param[in]              - base address of the gpio peripheral
- * @param[in]              - ENABLE or DISABLE macros
- * 
- * @return                 - TRUE or FALSE macros
- * 
- * @Note                   - none
- */
-uint8_t GPIO_CLK_CTRL(GPIO_RegDef_t *pGPIOx, uint8_t Ctrl)
-{
-    if (!GPIO_Check_Port(pGPIOx))
-        return FALSE;
-    if (Ctrl == ENABLE)
-    {
-        if (pGPIOx == GPIOA || pGPIOx == GPIOA_AHB)
-        {
-            SYSCTL -> RCGCGPIO |= SYSCTL_RCGCGPIO_R0;
-            return TRUE;
-        }else if (pGPIOx == GPIOB || pGPIOx == GPIOB_AHB)
-        {
-            SYSCTL -> RCGCGPIO |= SYSCTL_RCGCGPIO_R1;
-            return TRUE;
-        }else if (pGPIOx == GPIOC || pGPIOx == GPIOC_AHB)
-        {
-            SYSCTL -> RCGCGPIO |= SYSCTL_RCGCGPIO_R2;
-            return TRUE;
-        }else if (pGPIOx == GPIOD || pGPIOx == GPIOD_AHB)
-        {
-            SYSCTL -> RCGCGPIO |= SYSCTL_RCGCGPIO_R3;
-            return TRUE;
-        }else if (pGPIOx == GPIOE || pGPIOx == GPIOE_AHB)
-        {
-            SYSCTL -> RCGCGPIO |= SYSCTL_RCGCGPIO_R4;
-            return TRUE;
-        }else if (pGPIOx == GPIOF || pGPIOx == GPIOF_AHB)
-        {
-	  SYSCTL -> RCGCGPIO |= SYSCTL_RCGCGPIO_R5;
-            return TRUE;
-        }
-
-    }else if (Ctrl == DISABLE)
-    {
-        if (pGPIOx == GPIOA || pGPIOx == GPIOA_AHB)
-        {
-            SYSCTL -> RCGCGPIO &= ~(SYSCTL_RCGCGPIO_R0);
-            return TRUE;
-        }else if (pGPIOx == GPIOB || pGPIOx == GPIOB_AHB)
-        {
-            SYSCTL -> RCGCGPIO &= ~(SYSCTL_RCGCGPIO_R1);
-            return TRUE;
-        }else if (pGPIOx == GPIOC || pGPIOx == GPIOC_AHB)
-        {
-            SYSCTL -> RCGCGPIO &= ~(SYSCTL_RCGCGPIO_R2);
-            return TRUE;
-        }else if (pGPIOx == GPIOD || pGPIOx == GPIOD_AHB)
-        {
-            SYSCTL -> RCGCGPIO &=  ~(SYSCTL_RCGCGPIO_R3);
-            return TRUE;
-        }else if (pGPIOx == GPIOE || pGPIOx == GPIOE_AHB)
-        {
-            SYSCTL -> RCGCGPIO &= ~(SYSCTL_RCGCGPIO_R4);
-            return TRUE;
-        }else if (pGPIOx == GPIOF || pGPIOx == GPIOF_AHB)
-        {
-            SYSCTL -> RCGCGPIO &= ~(SYSCTL_RCGCGPIO_R5);
-            return TRUE;
-        }
-
-    }
-    
-    return FALSE;
 }
 
 /********************************************************************************
- * @fn                     - GPIO_EnableBus
+ * @fn                     - GPIOModeSet
  *
- * @brief                  - This function enables bus AHB or APB
+ * @brief                  - This function set mode for the GPIO pin(s)
  * 
- * @param[in]              - base address of the gpio peripheral
- * @param[in]              - Bus to enable macros
+ * @param[in]              -  GPIO port
+ * @param[in]              -  GPIO pin(s)
+ * @param[in]              -  GPIO mode
  * 
- * @return                 - TRUE or FALSE macros
+ * @return                 - none
  * 
  * @Note                   - none
  */
+ void GPIOModeSet(uint8_t GPIOx, uint8_t Pinx, uint8_t PinIO)
+ {
+     // Get pointer to GPIO port
+     GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
 
-uint8_t GPIO_EnableBus(GPIO_RegDef_t *pGPIOx)
-{
-    
-    if (!GPIO_Check_Port(pGPIOx))
-        return FALSE;
-    
-    switch ((uint32_t) pGPIOx)
-    {
-    case (uint32_t) GPIOA:
-        SYSCTL -> GPIOHBCTL &= ~(SYSCTL_GPIOHBCTL_PORTA);
-        return TRUE;
-    case (uint32_t) GPIOB:
-        SYSCTL -> GPIOHBCTL &= ~(SYSCTL_GPIOHBCTL_PORTB);
-        return TRUE;
-    case (uint32_t) GPIOC:
-        SYSCTL -> GPIOHBCTL &= ~(SYSCTL_GPIOHBCTL_PORTC);
-        return TRUE;
-    case (uint32_t) GPIOD:
-        SYSCTL -> GPIOHBCTL &= ~(SYSCTL_GPIOHBCTL_PORTD);
-        return TRUE;
-    case (uint32_t) GPIOE:
-        SYSCTL -> GPIOHBCTL &= ~(SYSCTL_GPIOHBCTL_PORTE);
-        return TRUE;
-    case (uint32_t) GPIOF:
-        SYSCTL -> GPIOHBCTL &= ~(SYSCTL_GPIOHBCTL_PORTF);
-        return TRUE;
-    case (uint32_t) GPIOA_AHB:
-        SYSCTL -> GPIOHBCTL |= SYSCTL_GPIOHBCTL_PORTA;
-        return TRUE;
-    case (uint32_t) GPIOB_AHB:
-        SYSCTL -> GPIOHBCTL |= SYSCTL_GPIOHBCTL_PORTB;
-        return TRUE;
-    case (uint32_t) GPIOC_AHB:
-        SYSCTL -> GPIOHBCTL |= SYSCTL_GPIOHBCTL_PORTC;
-        return TRUE;
-    case (uint32_t) GPIOD_AHB:
-        SYSCTL -> GPIOHBCTL |= SYSCTL_GPIOHBCTL_PORTD;
-        return TRUE;
-    case (uint32_t) GPIOE_AHB:
-        SYSCTL -> GPIOHBCTL |= SYSCTL_GPIOHBCTL_PORTE;
-        return TRUE;
-    case (uint32_t) GPIOF_AHB:
-        SYSCTL -> GPIOHBCTL |= SYSCTL_GPIOHBCTL_PORTF;
-        return TRUE;
-    }
-    return FALSE;
+     // Set the pin mode
+    pGPIO -> GPIODIR = ((PinIO & 1) ? (pGPIO -> GPIODIR | Pinx) : (pGPIO -> GPIODIR & ~(Pinx)));
+    pGPIO -> GPIOAFSEL = ((PinIO & 2) ? (pGPIO -> GPIOAFSEL | Pinx) : (pGPIO -> GPIOAFSEL & ~(Pinx)));
+    pGPIO -> GPIOADCCTL = ((PinIO & 3) ? (pGPIO -> GPIOADCCTL | Pinx) : (pGPIO -> GPIOADCCTL & ~(Pinx)));
+    pGPIO -> GPIODMACTL = ((PinIO & 4) ? (pGPIO -> GPIODMACTL | Pinx) : (pGPIO -> GPIODMACTL & ~(Pinx)));
+ }
+
+ /********************************************************************************
+ * @fn                     - GPIOPadConfig
+ *
+ * @brief                  - This function config GPIO pad(s)
+ * 
+ * @param[in]              -  GPIO port
+ * @param[in]              -  GPIO pin(s)
+ * @param[in]              -  GPIO type
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+ void GPIOPadConfig(uint8_t GPIOx, uint8_t Pinx, uint8_t Strength, uint8_t PinType)
+ {
+     // Get pointer to GPIO port
+     GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
+
+      // Set drive strength
+      pGPIO -> GPIODR2R = ((Strength & 1) ? (pGPIO -> GPIODR2R | Pinx) : (pGPIO -> GPIODR2R & ~(Pinx)));
+      pGPIO -> GPIODR4R = ((Strength & 2) ? (pGPIO -> GPIODR4R | Pinx) : (pGPIO -> GPIODR4R & ~(Pinx)));
+      pGPIO -> GPIODR8R = ((Strength & 3) ? (pGPIO -> GPIODR8R | Pinx) : (pGPIO -> GPIODR8R & ~(Pinx)));
+
+      // Set pin type
+      pGPIO -> GPIOODR = ((PinType & 1) ? (pGPIO -> GPIOODR | Pinx) : (pGPIO -> GPIOODR & ~(Pinx)));
+      pGPIO -> GPIOPUR = ((PinType & 2) ? (pGPIO -> GPIOPUR| Pinx) : (pGPIO -> GPIOPUR & ~(Pinx)));
+      pGPIO -> GPIOPDR = ((PinType & 4) ? (pGPIO -> GPIOPDR | Pinx) : (pGPIO -> GPIOPDR & ~(Pinx)));
+      pGPIO -> GPIODEN = ((PinType & 8) ? (pGPIO -> GPIODEN | Pinx) : (pGPIO -> GPIODEN & ~(Pinx)));
+      pGPIO -> GPIOAMSEL = ((PinType == 0) ? (pGPIO -> GPIOAMSEL | Pinx) : (pGPIO -> GPIOAMSEL & ~(Pinx)));
 }
+
+/********************************************************************************
+ * @fn                     - GPIOEnableSLR
+ *
+ * @brief                  - This function enables slew rate control on the pin
+ * 
+ * @param[in]              - GPIO port
+ * @param[in]              - GPIO pin
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - 8-mA drive only
+ */
+ void GPIOEnableSLR(uint8_t GPIOx, uint8_t Pinx)
+ {
+      GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
+      
+      pGPIO -> GPIOSLR |= Pinx;
+ }
+
+ /********************************************************************************
+ * @fn                     - GPIODisableSLR
+ *
+ * @brief                  - This function disables slew rate control on the pin
+ * 
+ * @param[in]              - GPIO port
+ * @param[in]              - GPIO pin
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - 8-mA drive only
+ */
+ void GPIODisableSLR(uint8_t GPIOx, uint8_t Pinx)
+ {
+     GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
+      
+    pGPIO -> GPIOSLR &= ~(Pinx);
+ }
 
 /********************************************************************************
  * @fn                     - GPIO_Init
@@ -163,14 +259,14 @@ uint8_t GPIO_EnableBus(GPIO_RegDef_t *pGPIOx)
  */
 uint8_t GPIO_Init(GPIO_Handle_t *pGPIOHandle){
     
-    uint32_t temp;
+    uint8_t temp;
 
     //Check if port and pin number is valid
-    if(!GPIO_Check_Pin(pGPIOHandle->GPIOx, pGPIOHandle->GPIO_PinConfig.GPIO_PinDir))
-      return FALSE; 
+  /*  if(!GPIO_Check_Pin(pGPIOHandle->GPIOx, pGPIOHandle->GPIO_PinConfig.GPIO_PinDir))
+      return FALSE; */
 
     //1. Configure GPIO direction
-    temp = 0;
+   /* temp = 0;
     temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinDir << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
     pGPIOHandle -> GPIOx -> GPIODIR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIODIR |= temp;
@@ -217,12 +313,6 @@ uint8_t GPIO_Init(GPIO_Handle_t *pGPIOHandle){
     pGPIOHandle -> GPIOx -> GPIOPDR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOPDR |= temp;
 
-    //9. Confgure slew rate
-    temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_SLR << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIOSLR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIOSLR |= temp;
-
     //10. Confgure digital function
     temp = 0;
     temp = pGPIOHandle->GPIO_PinConfig.GPIO_DEN << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
@@ -233,7 +323,7 @@ uint8_t GPIO_Init(GPIO_Handle_t *pGPIOHandle){
     temp = 0;
     temp = pGPIOHandle->GPIO_PinConfig.GPIO_AMSEL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
     pGPIOHandle -> GPIOx -> GPIOAMSEL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); 
-    pGPIOHandle -> GPIOx -> GPIOAMSEL |= temp;
+    pGPIOHandle -> GPIOx -> GPIOAMSEL |= temp; */
 
     //13. Confgure port control
     temp = 0;
@@ -241,7 +331,7 @@ uint8_t GPIO_Init(GPIO_Handle_t *pGPIOHandle){
     pGPIOHandle -> GPIOx -> GPIOPCTL &= ~(0xF << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
     pGPIOHandle -> GPIOx -> GPIOPCTL |= temp;
 
-    //14. Confgure adc trigger
+  /*  //14. Confgure adc trigger
     temp = 0;
     temp = pGPIOHandle->GPIO_PinConfig.GPIO_ADCCTL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
     pGPIOHandle -> GPIOx -> GPIOADCCTL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
@@ -251,7 +341,7 @@ uint8_t GPIO_Init(GPIO_Handle_t *pGPIOHandle){
     temp = 0;
     temp = pGPIOHandle->GPIO_PinConfig.GPIO_DMACTL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
     pGPIOHandle -> GPIOx -> GPIODMACTL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIODMACTL |= temp;
+    pGPIOHandle -> GPIOx -> GPIODMACTL |= temp;*/
 
     return TRUE;
 }
@@ -261,59 +351,24 @@ uint8_t GPIO_Init(GPIO_Handle_t *pGPIOHandle){
  *
  * @brief                  - This function reset the GPIO peripheral
  * 
- * @param[in]              - base address of the gpio peripheral
+ * @param[in]              - GPIO port
  * 
- * @return                 - TRUE or FALSE macros
+ * @return                 - none
  * 
  * @Note                   - none
  */
 
-uint8_t GPIO_DeInit(GPIO_RegDef_t *pGPIOx)
+void GPIO_Reset(uint8_t SYSCTL_SRGPIO)
 {
-
-    if (!GPIO_Check_Port(pGPIOx))
-        return FALSE;
-
-    if (pGPIOx == GPIOA || pGPIOx == GPIOA_AHB)
-        {
-            SYSCTL -> SRGPIO |= SYSCTL_SRGPIO_R0;
-            SYSCTL -> SRGPIO &= ~(SYSCTL_SRGPIO_R0);
-            return TRUE;
-        }else if (pGPIOx == GPIOB || pGPIOx == GPIOB_AHB)
-        {
-            SYSCTL -> SRGPIO |= SYSCTL_SRGPIO_R1;
-            SYSCTL -> SRGPIO &= ~(SYSCTL_SRGPIO_R1);
-            return TRUE;
-        }else if (pGPIOx == GPIOC || pGPIOx == GPIOC_AHB)
-        {
-            SYSCTL -> SRGPIO |= SYSCTL_SRGPIO_R2;
-            SYSCTL -> SRGPIO &= ~(SYSCTL_SRGPIO_R2);
-            return TRUE;
-        }else if (pGPIOx == GPIOD || pGPIOx == GPIOD_AHB)
-        {
-            SYSCTL -> SRGPIO |= SYSCTL_SRGPIO_R3;
-            SYSCTL -> SRGPIO &= ~(SYSCTL_SRGPIO_R3);
-            return TRUE;
-        }else if (pGPIOx == GPIOE || pGPIOx == GPIOE_AHB)
-        {
-            SYSCTL -> SRGPIO |= SYSCTL_SRGPIO_R4;
-            SYSCTL -> SRGPIO &= ~(SYSCTL_SRGPIO_R4);
-            return TRUE;
-        }else if (pGPIOx == GPIOF || pGPIOx == GPIOF_AHB)
-        {
-            SYSCTL -> SRGPIO |= SYSCTL_SRGPIO_R5;
-            SYSCTL -> SRGPIO &= ~(SYSCTL_SRGPIO_R5);
-            return TRUE;
-        }
-    
-    return FALSE;
+    SYSCTL -> SRGPIO |= SYSCTL_SRGPIO;
+    SYSCTL -> SRGPIO &= ~(SYSCTL_SRGPIO);
 
 }
 
 /********************************************************************************
- * @fn                     - GPIO_DeInit
+ * @fn                     - GPIO_InterruptInit
  *
- * @brief                  - This function reset the GPIO peripheral
+ * @brief                  - This function initialize GPIO interrupt
  * 
  * @param[in]              - base address of the gpio peripheral
  * 
@@ -325,11 +380,6 @@ uint8_t GPIO_DeInit(GPIO_RegDef_t *pGPIOx)
 uint8_t GPIO_InterruptInit(GPIO_Handle_t *pGPIOHandle)
 {
     uint32_t temp;
-
-    if(!GPIO_Check_Pin(pGPIOHandle->GPIOx, pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber))
-        return FALSE;
-
-
 
     // Prevent false interrupts on edge sensitive detection
     if(pGPIOHandle->GPIO_PinConfig.GPIO_IS == GPIO_IS_EDGE)
@@ -388,20 +438,17 @@ uint8_t GPIO_InterruptInit(GPIO_Handle_t *pGPIOHandle)
  *
  * @brief                  - This function reads the GPIO port
  * 
- * @param[in]              - base address of the gpio port
+ * @param[in]              - GPIO port
  * 
- * @return                 - reads values from 0 to 255 in binary. Return -1 if non valid port
+ * @return                 - reads values from 0 to 255 in binary.
  * 
  * @Note                   - none
  */
 
-uint8_t GPIO_ReadInputPort(GPIO_RegDef_t *pGPIOx) 
+uint8_t GPIO_ReadInputPort(uint8_t GPIOx) 
 {
-    //Check if port is valid
-    if(!GPIO_Check_Port(pGPIOx))
-        return -1;
-    
-    return pGPIOx -> GPIODATA;
+    GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx); 
+    return pGPIO -> GPIODATA;
 }
 
 /********************************************************************************
@@ -409,23 +456,17 @@ uint8_t GPIO_ReadInputPort(GPIO_RegDef_t *pGPIOx)
  *
  * @brief                  - This function reads from GPIO pin
  * 
- * @param[in]              - base address of the gpio peripheral
+ * @param[in]              - GPIO port
  * @param[in]              - GPIO pin number
  * 
- * @return                 - reads 1 or 0, if port and/or pin is nor valid return -1
+ * @return                 - reads 1 or 0 
  * 
  * @Note                   - none
  */
-uint8_t GPIO_ReadInputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
+uint8_t GPIO_ReadInputPin(uint8_t GPIOx, uint8_t Pinx)
 {
-    //Check if port and pin number is valid
-    if(!GPIO_Check_Pin(pGPIOx, PinNumber))
-        return -1;
-    
-    // Address bit associated with the data bit
-    uint8_t address = 1 << PinNumber;
-    
-    return pGPIOx->GPIODATA_BITS[address];
+    GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
+    return pGPIO->GPIODATA_BITS[Pinx];
 }
 
 /********************************************************************************
@@ -433,25 +474,17 @@ uint8_t GPIO_ReadInputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
  *
  * @brief                  - This function write to GPIO port
  * 
- * @param[in]              - base address of the gpio peripheral
+ * @param[in]              - GPIO port
  * @param[in]              - write value from 0 to 255
  * 
- * @return                 - TRUE or FALSE macros
+ * @return                 - none
  * 
  * @Note                   - none
  */
-uint8_t GPIO_WriteOutputPort(GPIO_RegDef_t *pGPIOx, uint8_t Value){
+void GPIO_WriteOutputPort(uint8_t GPIOx, uint8_t Value){
+    GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
 
-    //Check if Value is valid
-    if (!(Value >= 0 && Value <= 255))
-        return FALSE;
-    
-    //Check if port is valid
-    if (!GPIO_Check_Port(pGPIOx))
-        return FALSE;
-
-    pGPIOx-> GPIODATA = Value;
-    return TRUE;
+    pGPIO-> GPIODATA = Value;
 }
 
 /********************************************************************************
@@ -468,22 +501,22 @@ uint8_t GPIO_WriteOutputPort(GPIO_RegDef_t *pGPIOx, uint8_t Value){
  * @Note                   - none
  */
 
-uint8_t GPIO_WriteOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber, uint8_t Value) {
+void GPIO_WriteOutputPin(uint8_t GPIOx, uint8_t Pinx, uint8_t Value) {
 
-    //Check if Value is valid
-    if (!(Value >= 0 && Value <= 255))
-        return FALSE;
-    
-    //Check if pin is valid
-    if (!GPIO_Check_Pin(pGPIOx, PinNumber))
-        return FALSE;
+    GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
 
-    //address bit associated with that data
-    uint8_t address = 1 << PinNumber;
-    uint8_t data = Value << PinNumber;
+    // find the physical pins 
+    uint8_t PinNumber = Pinx;
+    uint8_t count = 0; 
+    while (PinNumber > 1)
+    {
+        PinNumber >>= 1;
+        count++;
+    }
 
-    pGPIOx -> GPIODATA_BITS[address] = data;
-    return TRUE;
+    uint8_t data = Value << count;
+
+    pGPIO -> GPIODATA_BITS[Pinx] = data;
 }
 
 /********************************************************************************
@@ -498,14 +531,10 @@ uint8_t GPIO_WriteOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber, uint8_t Va
  * 
  * @Note                   - none
  */
-uint8_t GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
+void GPIO_ToggleOutputPin(uint8_t GPIOx, uint8_t Pinx)
 {
-    //Check if port and pin is valid
-    if(!GPIO_Check_Pin(pGPIOx, PinNumber))
-        return FALSE;
-
-    pGPIOx->GPIODATA ^= 1 << PinNumber;
-    return TRUE;
+    GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
+    pGPIO->GPIODATA ^= Pinx;
 }
 
 /********************************************************************************
@@ -521,14 +550,12 @@ uint8_t GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
  * @Note                   - none
  */
 
-uint8_t GPIO_Lock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
+void GPIO_Lock(uint8_t GPIOx, uint8_t Pinx)
 {
-   if(!GPIO_Check_Pin(pGPIOx, PinNumber))
-        return FALSE;
+    GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
    
-    pGPIOx -> GPIOLOCK = GPIO_LOCK_M;
-    pGPIOx -> GPIOCR = (0 << PinNumber);
-    return TRUE;
+    pGPIO -> GPIOLOCK = GPIO_LOCK_M;
+    pGPIO -> GPIOCR &= ~(Pinx);
 }
 
 /********************************************************************************
@@ -544,14 +571,12 @@ uint8_t GPIO_Lock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
  * @Note                   - none
  */
 
-uint8_t GPIO_Unlock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
+void GPIO_Unlock(uint8_t GPIOx, uint8_t Pinx)
 {
-    if (!GPIO_Check_Pin(pGPIOx, PinNumber))
-        return FALSE;
+    GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
     
-    pGPIOx -> GPIOLOCK = GPIO_LOCK_KEY;
-    pGPIOx -> GPIOCR |= (1 << PinNumber);
-    return TRUE;
+    pGPIO -> GPIOLOCK = GPIO_LOCK_KEY;
+    pGPIO -> GPIOCR |= Pinx;
 }
 
 /********************************************************************************
@@ -630,66 +655,3 @@ void GPIO_IRQHandling(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
         pGPIOx -> GPIOICR |= (1 << PinNumber);
 }
 
-/*********************************************************************************
-*                        Internal functions
-*
-**********************************************************************************/
-
-/********************************************************************************
- * @fn                     - GPIO_Check_Port
- *
- * @brief                  - This function check if GPIO port is valid
- * 
- * @param[in]              - base address of the gpio peripheral
- * 
- * @return                 - TRUE or FALSE macros
- * 
- * @Note                   - none
- */
-uint8_t GPIO_Check_Port(GPIO_RegDef_t *pGPIOx)
-{
-    if (pGPIOx == GPIOA || pGPIOx == GPIOB || pGPIOx == GPIOC || pGPIOx == GPIOD || pGPIOx == GPIOE || pGPIOx == GPIOF ||
-        pGPIOx == GPIOA_AHB || pGPIOx == GPIOB_AHB || pGPIOx == GPIOC_AHB || pGPIOx == GPIOD_AHB || pGPIOx == GPIOE_AHB || pGPIOx == GPIOF_AHB)
-        return TRUE;
-    else
-        return FALSE;
-}
-
-/********************************************************************************
- * @fn                     - GPIO_Check_Pin
- *
- * @brief                  - This function check if pin number is valid
- * 
- * @param[in]              - base address of the GPIO port
- * @param[in]              - pin number of the GPIO port
- * 
- * @return                 - TRUE or FALSE macros
- * 
- * @Note                   - none
- */
-uint8_t GPIO_Check_Pin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
-{
-    uint8_t valid = GPIO_Check_Port(pGPIOx);
-
-    if (pGPIOx == GPIOA ||pGPIOx == GPIOB ||pGPIOx == GPIOC || pGPIOx == GPIOD ||
-        pGPIOx == GPIOA_AHB || pGPIOx == GPIOB_AHB || pGPIOx == GPIOC_AHB || pGPIOx == GPIOD_AHB)
-    {
-        if (PinNumber >= 0 && PinNumber <= 7)
-            valid &= TRUE;
-        else
-            valid &= FALSE;
-    }else if (pGPIOx == GPIOE ||pGPIOx == GPIOE_AHB)
-    {
-        if (PinNumber >= 0 && PinNumber <= 5)
-            valid &= TRUE;
-        else
-            valid &= FALSE;
-    }else if (pGPIOx == GPIOF ||pGPIOx == GPIOF_AHB)
-    {
-        if (PinNumber >= 0 && PinNumber <= 4)
-            valid &= TRUE;
-        else
-            valid &= FALSE;
-    }
-    return valid;
-}

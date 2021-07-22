@@ -22,18 +22,20 @@ int main(void)
   GPIO_Handle_t GPIOLed;
   
   GPIOLed.GPIOx = GPIOF;
-  GPIO_CLK_CTRL(GPIOF, ENABLE);
+  GPIOEnableClk(SYSCTL_RCGCGPIO_R5);
  
-  GPIOLed.GPIO_PinConfig.GPIO_PinNumber = 1;
+  GPIOModeSet(GPIOF_P, GPIO_PIN_3, GPIO_OUT);
+  GPIOPadConfig(GPIOF_P, GPIO_PIN_3, GPIO_NO_DR, GPIO_DEN);
+  /*GPIOLed.GPIO_PinConfig.GPIO_PinNumber = 1;
   GPIOLed.GPIO_PinConfig.GPIO_PinDir = GPIO_OUT;
-  GPIOLed.GPIO_PinConfig.GPIO_DEN = GPIO_DEN_SET;
+  GPIOLed.GPIO_PinConfig.GPIO_DEN = GPIO_DEN_SET;*/
 
   GPIO_Init(&GPIOLed);
 
   while (1)
   {
     delay(500000/2);
-    GPIO_ToggleOutputPin(GPIOLed.GPIOx, GPIOLed.GPIO_PinConfig.GPIO_PinNumber);
+    GPIO_ToggleOutputPin(GPIOF_P, GPIO_PIN_3);
   }
   
   return 0;

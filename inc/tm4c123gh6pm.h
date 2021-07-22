@@ -8655,25 +8655,6 @@ typedef struct
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the SYSCTL_GPIOHBCTL
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_GPIOHBCTL_PORTF  0x00000020  // Port F Advanced High-Performance
-                                            // Bus
-#define SYSCTL_GPIOHBCTL_PORTE  0x00000010  // Port E Advanced High-Performance
-                                            // Bus
-#define SYSCTL_GPIOHBCTL_PORTD  0x00000008  // Port D Advanced High-Performance
-                                            // Bus
-#define SYSCTL_GPIOHBCTL_PORTC  0x00000004  // Port C Advanced High-Performance
-                                            // Bus
-#define SYSCTL_GPIOHBCTL_PORTB  0x00000002  // Port B Advanced High-Performance
-                                            // Bus
-#define SYSCTL_GPIOHBCTL_PORTA  0x00000001  // Port A Advanced High-Performance
-                                            // Bus
-
-//*****************************************************************************
-//
 // The following are defines for the bit fields in the SYSCTL_RCC2 register.
 //
 //*****************************************************************************
@@ -9265,13 +9246,6 @@ typedef struct
 //
 // The following are defines for the bit fields in the SYSCTL_SRGPIO register.
 //
-//*****************************************************************************
-#define SYSCTL_SRGPIO_R5        0x00000020  // GPIO Port F Software Reset
-#define SYSCTL_SRGPIO_R4        0x00000010  // GPIO Port E Software Reset
-#define SYSCTL_SRGPIO_R3        0x00000008  // GPIO Port D Software Reset
-#define SYSCTL_SRGPIO_R2        0x00000004  // GPIO Port C Software Reset
-#define SYSCTL_SRGPIO_R1        0x00000002  // GPIO Port B Software Reset
-#define SYSCTL_SRGPIO_R0        0x00000001  // GPIO Port A Software Reset
 
 //*****************************************************************************
 //

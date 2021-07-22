@@ -19,34 +19,27 @@ int main(void)
   memset(&GPIOButton, 0, sizeof(GPIOButton));
   
   GPIOLed.GPIOx = GPIOF;
-  GPIO_CLK_CTRL(GPIOF, ENABLE);
- 
-  GPIOLed.GPIO_PinConfig.GPIO_PinNumber = 1;
-  GPIOLed.GPIO_PinConfig.GPIO_PinDir = GPIO_OUT;
-  GPIOLed.GPIO_PinConfig.GPIO_DEN = GPIO_DEN_SET;
- 
+  GPIOEnableClk(SYSCTL_RCGCGPIO_R5);
 
+  GPIOModeSet(GPIOF_P, GPIO_PIN_1, GPIO_OUT);
+  GPIOPadConfig(GPIOF_P, GPIO_PIN_1, GPIO_NO_DR, GPIO_DEN);
+ 
   GPIOButton.GPIOx = GPIOF;
-  GPIOButton.GPIO_PinConfig.GPIO_PinNumber = 0;
   
   //unlocks pf0
-  GPIO_Unlock(GPIOButton.GPIOx, GPIOButton.GPIO_PinConfig.GPIO_PinNumber);
+  GPIO_Unlock(GPIOF_P, GPIO_PIN_0);
   
-  GPIOButton.GPIO_PinConfig.GPIO_PinDir = GPIO_IN;
-  GPIOButton.GPIO_PinConfig.GPIO_DEN = GPIO_DEN_SET;
-  GPIOButton.GPIO_PinConfig.GPIO_PUR = GPIO_PUR_SET;
+  GPIOModeSet(GPIOF_P, GPIO_PIN_0, GPIO_IN);
+  GPIOPadConfig(GPIOF_P, GPIO_PIN_0, GPIO_NO_DR, GPIO_PUR);
 
   // IRQ configurations
   GPIO_IRQPriorityConfig(INT_GPIOF, 3);
   GPIO_IRQConfig(INT_GPIOF, ENABLE);
 
-  GPIO_Init(&GPIOLed);
-  GPIO_Init(&GPIOButton);
   GPIO_InterruptInit(&GPIOButton);
-
   while (1)
   {
-  
+    
   }
   
   return 0;
@@ -55,5 +48,5 @@ int main(void)
    void GPIOPortF_IRQHandler(void) 
   {
     GPIO_IRQHandling(GPIOF, 0);
-    GPIO_ToggleOutputPin(GPIOF, 1);
+    GPIO_ToggleOutputPin(GPIOF_P, GPIO_PIN_1);
   }

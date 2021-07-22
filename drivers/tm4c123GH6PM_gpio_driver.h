@@ -49,26 +49,79 @@ typedef struct
 **********************************************************************************/
 
 /* 
- * @GPIO_DEN
- * GPIO digital enable or disable
+ * GPIO port definations user can pass on in different APIs function 
+ * 
  */
-#define GPIO_DEN_SET            1                  // Enable digital function for the pin
-#define GPIO_DEN_CLEAR          0                  // Disable digital function for the pin
+ enum Port
+ {
+   GPIOA_P = 0, GPIOA_AHB_P = 1,
+   GPIOB_P = 2, GPIOB_AHB_P = 3, 
+   GPIOC_P = 4, GPIOC_AHB_P = 5, 
+   GPIOD_P = 6, GPIOD_AHB_P = 7, 
+   GPIOE_P = 8, GPIOE_AHB_P = 9, 
+   GPIOF_P = 10, GPIOF_AHB_P = 11
+ };
 
 /* 
- * @GPIO_Pin_Mode
- * GPIO possible pin modes
+ * GPIO pin definations user can pass on in different APIs function 
+ * 
  */
-#define GPIO_OUT                1                  // Sets the GPIO pin as output
+#define GPIO_PIN_0              0x00000001         // GPIO pin 0
+#define GPIO_PIN_1              0x00000002         // GPIO pin 1
+#define GPIO_PIN_2              0x00000004         // GPIO pin 2
+#define GPIO_PIN_3              0x00000008         // GPIO pin 3
+#define GPIO_PIN_4              0x00000010         // GPIO pin 4
+#define GPIO_PIN_5              0x00000020         // GPIO pin 5
+#define GPIO_PIN_6              0x00000040         // GPIO pin 6
+#define GPIO_PIN_7              0x00000080         // GPIO pin 7
+
+/* 
+ * GPIO ports run mode clock gating control
+ * Arguments to GPIO_EnableClk and GPIO_DisableClk functions
+ */
+#define SYSCTL_RCGCGPIO_R5      0x00000020  // GPIO Port F Run Mode Clock Gating Control
+#define SYSCTL_RCGCGPIO_R4      0x00000010  // GPIO Port E Run Mode Clock Gating Control
+#define SYSCTL_RCGCGPIO_R3      0x00000008  // GPIO Port D Run Mode Clock Gating Control
+#define SYSCTL_RCGCGPIO_R2      0x00000004  // GPIO Port C Run Mode Clock Gating Control
+#define SYSCTL_RCGCGPIO_R1      0x00000002  // GPIO Port B Run Mode Clock Gating Control
+#define SYSCTL_RCGCGPIO_R0      0x00000001  // GPIO Port A Run Mode Clock Gating Control
+
+/* 
+ * Select btween AHB and APB
+ * Arguments to GPIO_SelectBus function
+ */
+#define AHB                     1           // Select between APB and AHB
+
+#define SYSCTL_GPIOHBCTL_PORTF  0x00000020  // Port F Advanced High-Performance Bus
+#define SYSCTL_GPIOHBCTL_PORTE  0x00000010  // Port E Advanced High-Performance Bus
+#define SYSCTL_GPIOHBCTL_PORTD  0x00000008  // Port D Advanced High-Performance Bus
+#define SYSCTL_GPIOHBCTL_PORTC  0x00000004  // Port C Advanced High-Performance Bus
+#define SYSCTL_GPIOHBCTL_PORTB  0x00000002  // Port B Advanced High-Performance Bus
+#define SYSCTL_GPIOHBCTL_PORTA  0x00000001  // Port A Advanced High-Performance Bus
+
+
+/* 
+ * Reset GPIO port
+ * Argument to GPIOReset function
+ */
+#define SYSCTL_SRGPIO_R5        0x00000020  // GPIO Port F Software Reset
+#define SYSCTL_SRGPIO_R4        0x00000010  // GPIO Port E Software Reset
+#define SYSCTL_SRGPIO_R3        0x00000008  // GPIO Port D Software Reset
+#define SYSCTL_SRGPIO_R2        0x00000004  // GPIO Port C Software Reset
+#define SYSCTL_SRGPIO_R1        0x00000002  // GPIO Port B Software Reset
+#define SYSCTL_SRGPIO_R0        0x00000001  // GPIO Port A Software Reset
+
+
+/* 
+ * GPIO pin mode
+ * Arguments to GPIOModeSet function
+ */
 #define GPIO_IN                 0                  // Sets the GPIO pin as input
-#define GPIO_AFSEL_SET          1                  // Enable alternate hardware function for the pin
-#define GPIO_AFSEL_CLEAR        0                  // Disable alternate hardware function for the pin
-#define GPIO_AMSEL_SET          1                  // Enable analog function for the pin
-#define GPIO_AMSEL_CLEAR        0                  // Disable analog function for the pin
-#define GPIO_ADCCTL_SET         1                  // Enable pin to be used as ADC trigger
-#define GPIO_ADCCTL_CLEAR       0                  // Disable pin to be used as ADC trigger
-#define GPIO_DMACTL_SET         1                  // Enable pin to be used as uDMA trigger
-#define GPIO_DMACTL_CLEAR       0                  // Disable pin to be used as uDMA trigger
+#define GPIO_OUT                1                  // Sets the GPIO pin as output
+#define GPIO_AFSEL              2                  // Enable alternate hardware function for the pin
+#define GPIO_ADCCTL             3                  // Enable pin to be used as ADC trigger
+#define GPIO_DMACTL             4                  // Enable pin to be used as uDMA trigger
+
 
 /* 
  * @GPIO_INTERRUPT
@@ -82,28 +135,23 @@ typedef struct
 #define GPIO_IEV_CLEAR          0                 // A rising edge or high level trigger interrupt on the pin
 
 /* 
- * @GPIO_DRIVE_SLEW
- * GPIO output pin drive and slew rate config
+ * GPIO Config pad
+ * Arguments to GPIOPadConfig function
  */
-#define GPIO_DR2R_SET            1                // Enable 2mA drive on the pin
-#define GPIO_DR2R_CLEAR          0                // Disable 2mA drive on the pin   
-#define GPIO_DR4R_SET            1                // Enable 4mA drive on the pin
-#define GPIO_DR4R_CLEAR          0                // Disable 4mA drive on the pin
-#define GPIO_DR8R_SET            1                // Enable 8mA drive on the pin
-#define GPIO_DR8R_CLEAR          0                // Disable 2mA drive on the pin
-#define GPIO_SLR_SET             1                // Enable slew rate control on the pin
-#define GPIO_SLR_CLEAR           0                // Disable slew rate control on the pin
+#define GPIO_NO_DR               0                // All drives are disabled
+#define GPIO_DR2R                1                // Enable 2mA drive on the pin
+#define GPIO_DR4R                2                // Enable 4mA drive on the pin
+#define GPIO_DR8R                3                // Enable 8mA drive on the pin
 
 /* 
- * @GPIO_CONFIG
- * GPIO pin config
+ * GPIO Config pad
+ * Arguments to GPIOPadConfig function
  */
-#define GPIO_ODR_SET             1                 // Pin is configured as open drain
-#define GPIO_ODR_CLEAR           0                 // Disable open drain configuration
-#define GPIO_PUR_SET             1                 // Weak pull-up is enabled on pin
-#define GPIO_PUR_CLEAR           0                 // Weak pull-up is disables on pin
-#define GPIO_PDR_SET             1                 // Weak pull-down is enables on pin
-#define GPIO_PDR_CLEAR           0                 // Weak pull-down is disabled on pin
+#define GPIO_ODR                 0x00000009                 // Pin is configured as open drain
+#define GPIO_PUR                 0x0000000A                 // Weak pull-up is enabled on pin
+#define GPIO_PDR                 0x0000000C                 // Weak pull-down is enables on pin
+#define GPIO_DEN                 0x00000008                 // Enable digital function for the pin, push-pull
+#define GPIO_AMSEL               0x00000000                 // Enable analog function for the pin
 
 
 /*
@@ -140,10 +188,8 @@ typedef struct
  * The following are defines for the bit fields in the GPIO_O_LOCK register.
  */
 #define GPIO_LOCK_M             0xFFFFFFFF  // GPIO Lock
-#define GPIO_LOCK_UNLOCKED      0x00000000  // The GPIOCR register is unlocked
-                                            // and may be modified
-#define GPIO_LOCK_LOCKED        0x00000001  // The GPIOCR register is locked
-                                            // and may not be modified
+#define GPIO_LOCK_UNLOCKED      0x00000000  // The GPIOCR register is unlocked and may be modified
+#define GPIO_LOCK_LOCKED        0x00000001  // The GPIOCR register is locked and may not be modified
 #define GPIO_LOCK_KEY           0x4C4F434B  // Unlocks the GPIO_CR register
 
 /*****************************************************************************
@@ -387,15 +433,20 @@ typedef struct
  * Peripheral setup
  *
  */
-uint8_t GPIO_CLK_CTRL(GPIO_RegDef_t *pGPIOx, uint8_t Ctrl);
-uint8_t GPIO_EnableBus(GPIO_RegDef_t *pGPIOx);
+void GPIOEnableClk(uint8_t SYSCTL_RCGCGPIO_PORTx);
+void GPIODisableClk(uint8_t SYSCTL_RCGCGPIO_PORTx);
+void GPIOSelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus);
 
 /*
- * Init and DeInit
+ * Configure port and pin
  *
  */
+void GPIOModeSet(uint8_t GPIOx, uint8_t Pinx, uint8_t PinIO);
+void GPIOPadConfig(uint8_t GPIOx, uint8_t Pinx, uint8_t Strength, uint8_t PinType);
+void GPIOEnableSLR(uint8_t GPIOx, uint8_t Pinx);
+void GPIODisableSLR(uint8_t GPIOx, uint8_t Pinx);
 uint8_t GPIO_Init(GPIO_Handle_t *pGPIOHandle);
-uint8_t GPIO_DeInit(GPIO_RegDef_t *pGPIOx);
+void GPIO_Reset(uint8_t SYSCTL_SRGPIO);
 
 
 /*
@@ -403,19 +454,19 @@ uint8_t GPIO_DeInit(GPIO_RegDef_t *pGPIOx);
  *
  */
 
-uint8_t GPIO_ReadInputPort(GPIO_RegDef_t *pGPIOx);
-uint8_t GPIO_ReadInputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
-uint8_t GPIO_WriteOutputPort(GPIO_RegDef_t *pGPIOx, uint8_t Value);
-uint8_t GPIO_WriteOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber, uint8_t Value);
-uint8_t GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
+uint8_t GPIO_ReadInputPort(uint8_t GPIOx);
+uint8_t GPIO_ReadInputPin(uint8_t GPIOx, uint8_t Pinx);
+void GPIO_WriteOutputPort(uint8_t GPIOx, uint8_t Value);
+void GPIO_WriteOutputPin(uint8_t GPIOx, uint8_t Pinx, uint8_t Value);
+void GPIO_ToggleOutputPin(uint8_t GPIOx, uint8_t Pinx);
 
 /*
  * Locks and  unlocks pin
  *
  */
 
-uint8_t GPIO_Lock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
-uint8_t GPIO_Unlock(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
+void GPIO_Lock(uint8_t GPIOx, uint8_t Pinx);
+void GPIO_Unlock(uint8_t GPIOx, uint8_t Pinx);
 
 /*
  * IRQ Configuration and ISR handling

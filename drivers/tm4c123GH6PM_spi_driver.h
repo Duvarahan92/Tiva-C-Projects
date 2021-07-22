@@ -14,15 +14,10 @@
 // The following are defines for the bit fields in the SYSCTL_RCGCSSI register.
 //
 //*****************************************************************************
-#define SYSCTL_RCGCSSI_R3       0x00000008  // SSI Module 3 Run Mode Clock
-                                         // Gating Control
-#define SYSCTL_RCGCSSI_R2       0x00000004  // SSI Module 2 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCSSI_R1       0x00000002  // SSI Module 1 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCSSI_R0       0x00000001  // SSI Module 0 Run Mode Clock
-                                            // Gating Control
-
+#define SYSCTL_RCGCSSI_R3       0x00000008  // SSI Module 3 Run Mode Clock Gating Control
+#define SYSCTL_RCGCSSI_R2       0x00000004  // SSI Module 2 Run Mode Clock Gating Control
+#define SYSCTL_RCGCSSI_R1       0x00000002  // SSI Module 1 Run Mode Clock Gating Control
+#define SYSCTL_RCGCSSI_R0       0x00000001  // SSI Module 0 Run Mode Clock Gating Control
 
 //*****************************************************************************
 //
