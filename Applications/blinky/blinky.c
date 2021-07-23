@@ -18,19 +18,10 @@ void delay(uint32_t ticks)
 
 int main(void)
 {
-  //GPIO LED
-  GPIO_Handle_t GPIOLed;
-  
-  GPIOLed.GPIOx = GPIOF;
-  GPIOEnableClk(SYSCTL_RCGCGPIO_R5);
+  GPIO_EnableClk(SYSCTL_RCGCGPIO_R5);
  
-  GPIOModeSet(GPIOF_P, GPIO_PIN_3, GPIO_OUT);
-  GPIOPadConfig(GPIOF_P, GPIO_PIN_3, GPIO_NO_DR, GPIO_DEN);
-  /*GPIOLed.GPIO_PinConfig.GPIO_PinNumber = 1;
-  GPIOLed.GPIO_PinConfig.GPIO_PinDir = GPIO_OUT;
-  GPIOLed.GPIO_PinConfig.GPIO_DEN = GPIO_DEN_SET;*/
-
-  GPIO_Init(&GPIOLed);
+  GPIO_ModeSet(GPIOF_P, GPIO_PIN_3, GPIO_OUT);
+  GPIO_PadConfig(GPIOF_P, GPIO_PIN_3, GPIO_NO_DR, GPIO_DEN);
 
   while (1)
   {

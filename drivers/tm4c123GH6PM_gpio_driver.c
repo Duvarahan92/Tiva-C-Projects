@@ -110,7 +110,7 @@ static uint8_t GPIO_Check_Pin(uint8_t GPIOx, uint8_t PinNumber)
  * 
  * @Note                   - none
  */
-void GPIOEnableClk(uint8_t SYSCTL_RCGCGPIO_MODULE)
+void GPIO_EnableClk(uint8_t SYSCTL_RCGCGPIO_MODULE)
 {
     SYSCTL -> RCGCGPIO |= SYSCTL_RCGCGPIO_MODULE;        
 }
@@ -126,7 +126,7 @@ void GPIOEnableClk(uint8_t SYSCTL_RCGCGPIO_MODULE)
  * 
  * @Note                   - none
  */
-void GPIODisableClk(uint8_t SYSCTL_RCGCGPIO_Portx)
+void GPIO_DisableClk(uint8_t SYSCTL_RCGCGPIO_Portx)
  {
      SYSCTL -> RCGCGPIO &= ~(SYSCTL_RCGCGPIO_Portx);
  }
@@ -144,7 +144,7 @@ void GPIODisableClk(uint8_t SYSCTL_RCGCGPIO_Portx)
  * @Note                   - none
  */
 
-void GPIOSelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus)
+void GPIO_SelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus)
 {
     if (Bus == AHB)
         SYSCTL -> GPIOHBCTL |= Bus;
@@ -153,7 +153,7 @@ void GPIOSelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus)
 }
 
 /********************************************************************************
- * @fn                     - GPIOModeSet
+ * @fn                     - GPIO_ModeSet
  *
  * @brief                  - This function set mode for the GPIO pin(s)
  * 
@@ -165,7 +165,7 @@ void GPIOSelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus)
  * 
  * @Note                   - none
  */
- void GPIOModeSet(uint8_t GPIOx, uint8_t Pinx, uint8_t PinIO)
+ void GPIO_ModeSet(uint8_t GPIOx, uint8_t Pinx, uint8_t PinIO)
  {
      // Get pointer to GPIO port
      GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
@@ -178,19 +178,20 @@ void GPIOSelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus)
  }
 
  /********************************************************************************
- * @fn                     - GPIOPadConfig
+ * @fn                     - GPIO_PadConfig
  *
  * @brief                  - This function config GPIO pad(s)
  * 
  * @param[in]              -  GPIO port
  * @param[in]              -  GPIO pin(s)
- * @param[in]              -  GPIO type
+ * @param[in]              -  GPIO drive strength
+ * @param[in]              -  GPIO pin type
  * 
  * @return                 - none
  * 
- * @Note                   - none
+ * @Note                   - none 
  */
- void GPIOPadConfig(uint8_t GPIOx, uint8_t Pinx, uint8_t Strength, uint8_t PinType)
+ void GPIO_PadConfig(uint8_t GPIOx, uint8_t Pinx, uint8_t Strength, uint8_t PinType)
  {
      // Get pointer to GPIO port
      GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
@@ -209,7 +210,27 @@ void GPIOSelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus)
 }
 
 /********************************************************************************
- * @fn                     - GPIOEnableSLR
+ * @fn                     - GPIO_PinConfig
+ *
+ * @brief                  - This function config GPIO pin(s)
+ * 
+ * @param[in]              - GPIO port
+ * @param[in]              - Peripheral signal for a GPIO pin
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - Remember to set pin to alternate function with GPIO_ModeSet function
+ */
+void GPIO_PinConfig(uint8_t GPIOx, uint32_t GPIO_PCTL)
+{
+    // Get pointer to GPIO port
+     GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
+
+     pGPIO -> GPIOPCTL |= GPIO_PCTL;
+}
+
+/********************************************************************************
+ * @fn                     - GPIO_EnableSLR
  *
  * @brief                  - This function enables slew rate control on the pin
  * 
@@ -220,7 +241,7 @@ void GPIOSelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus)
  * 
  * @Note                   - 8-mA drive only
  */
- void GPIOEnableSLR(uint8_t GPIOx, uint8_t Pinx)
+ void GPIO_EnableSLR(uint8_t GPIOx, uint8_t Pinx)
  {
       GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
       
@@ -228,7 +249,7 @@ void GPIOSelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus)
  }
 
  /********************************************************************************
- * @fn                     - GPIODisableSLR
+ * @fn                     - GPIO_DisableSLR
  *
  * @brief                  - This function disables slew rate control on the pin
  * 
@@ -239,112 +260,12 @@ void GPIOSelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus)
  * 
  * @Note                   - 8-mA drive only
  */
- void GPIODisableSLR(uint8_t GPIOx, uint8_t Pinx)
+ void GPIO_DisableSLR(uint8_t GPIOx, uint8_t Pinx)
  {
      GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
       
     pGPIO -> GPIOSLR &= ~(Pinx);
  }
-
-/********************************************************************************
- * @fn                     - GPIO_Init
- *
- * @brief                  - This function initialize GPIO pin
- * 
- * @param[in]              - handle structure for a GPIO pin.
- * 
- * @return                 - TRUE or FALSE macros
- * 
- * @Note                   - none
- */
-uint8_t GPIO_Init(GPIO_Handle_t *pGPIOHandle){
-    
-    uint8_t temp;
-
-    //Check if port and pin number is valid
-  /*  if(!GPIO_Check_Pin(pGPIOHandle->GPIOx, pGPIOHandle->GPIO_PinConfig.GPIO_PinDir))
-      return FALSE; */
-
-    //1. Configure GPIO direction
-   /* temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinDir << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIODIR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIODIR |= temp;
-
-    //2. Confgure Alternate function
-    temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_AFSEL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIOAFSEL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIOAFSEL |= temp;
-
-    //3. Confgure 2mA drive
-    temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DR2R << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIODR2R &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIODR2R |= temp;
-
-    //4. Confgure 4mA drive
-    temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DR4R << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIODR4R &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIODR4R |= temp;
-
-    //5. Confgure 8mA drive
-    temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DR8R << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIODR8R &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); 
-    pGPIOHandle -> GPIOx -> GPIODR8R |= temp;
-
-    //6. Confgure open drain
-    temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_OODR << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIOODR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIOODR |= temp;
-
-    //7. Confgure pull up
-    temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_PUR << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIOPUR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIOPUR |= temp;
-
-    //8. Confgure pull down
-    temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_PDR << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIOPDR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIOPDR |= temp;
-
-    //10. Confgure digital function
-    temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DEN << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIODEN &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIODEN |= temp;
-
-    //12. Confgure analog funtion
-    temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_AMSEL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIOAMSEL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); 
-    pGPIOHandle -> GPIOx -> GPIOAMSEL |= temp; */
-
-    //13. Confgure port control
-    temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_PCTL << (4 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIOPCTL &= ~(0xF << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIOPCTL |= temp;
-
-  /*  //14. Confgure adc trigger
-    temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_ADCCTL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIOADCCTL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIOADCCTL |= temp;
-
-    //15. Confgure dma trigger
-    temp = 0;
-    temp = pGPIOHandle->GPIO_PinConfig.GPIO_DMACTL << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIODMACTL &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-    pGPIOHandle -> GPIOx -> GPIODMACTL |= temp;*/
-
-    return TRUE;
-}
 
 /********************************************************************************
  * @fn                     - GPIO_DeInit
@@ -366,71 +287,103 @@ void GPIO_Reset(uint8_t SYSCTL_SRGPIO)
 }
 
 /********************************************************************************
- * @fn                     - GPIO_InterruptInit
+ * @fn                     - GPIO_InterruptTypeSet
  *
- * @brief                  - This function initialize GPIO interrupt
+ * @brief                  - This function sets the interrupt type
  * 
- * @param[in]              - base address of the gpio peripheral
+ * @param[in]              - GPIO port
+ * @param[in]              - GPIO pin(s)
+ * @param[in]              - Interrupt type
  * 
- * @return                 - TRUE or FALSE macros
+ * @return                 - none
  * 
  * @Note                   - none
  */
 
-uint8_t GPIO_InterruptInit(GPIO_Handle_t *pGPIOHandle)
+void GPIO_InterruptTypeSet(uint8_t GPIOx, uint8_t Pinx, uint8_t IntType)
 {
-    uint32_t temp;
+    // Get pointer to GPIO port
+     GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
 
-    // Prevent false interrupts on edge sensitive detection
-    if(pGPIOHandle->GPIO_PinConfig.GPIO_IS == GPIO_IS_EDGE)
-    {   
-        // Mask GPIOM register
-        pGPIOHandle -> GPIOx -> GPIOIM &= GPIO_IM_GPIO_M;
-        
-        // Configure Interrupt sense
-        temp = 0;
-        temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IS << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
-        pGPIOHandle -> GPIOx -> GPIOIS |= temp;
-        
-        // Configure Interrupt both edge
-        temp = 0;
-        temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IBE << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
-        pGPIOHandle -> GPIOx -> GPIOIBE |= temp;
-        
-        // Clear GPIORIS
-        pGPIOHandle -> GPIOx-> GPIOICR = GPIO_ICR_GPIO_M;
+    // Configure interrupt type on the pin
+    pGPIO -> GPIOIBE = ((IntType & 1) ? (pGPIO -> GPIOIBE | Pinx) : (pGPIO -> GPIOIBE & ~(Pinx)));
+    pGPIO -> GPIOIS = ((IntType & 2) ? (pGPIO -> GPIOIS | Pinx) : (pGPIO -> GPIOIS & ~(Pinx)));
+    pGPIO -> GPIOIEV = ((IntType & 4) ? (pGPIO -> GPIOIEV | Pinx) : (pGPIO -> GPIOIEV & ~(Pinx)));
+}
 
-        // Unmask the port
-        pGPIOHandle -> GPIOx -> GPIOIM |= GPIO_IM_GPIO_S;
+/********************************************************************************
+ * @fn                     - GPIO_EnableInterrupt
+ *
+ * @brief                  - Enables the specified GPIO interrupts
+ * 
+ * @param[in]              - GPIO port
+ * @param[in]              - GPIO pin(s) or interrupt due DMA activity
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
 
-        // Configure Interrupt Event
-        temp = 0;
-        temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IEV << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber;
-        pGPIOHandle -> GPIOx -> GPIOIEV |= temp;
-    }
+void GPIO_EnableInterrupt(uint8_t GPIOx, uint8_t Pinx)
+{
+     GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
 
-    pGPIOHandle -> GPIOx -> GPIOIM &= GPIO_IM_GPIO_S;
+     pGPIO -> GPIOIM |= Pinx;
+}
 
-    temp = 0;
-    temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IS << pGPIOHandle ->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIOIS |= temp;
+/********************************************************************************
+ * @fn                     - GPIO_DisableInterrupt
+ *
+ * @brief                  - Disables the specified GPIO interrupts
+ * 
+ * @param[in]              - GPIO port
+ * @param[in]              - GPIO pin(s) or interrupt due DMA activity
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void GPIO_DisableInterrupt(uint8_t GPIOx, uint8_t Pinx)
+{
+    GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
 
-    temp = 0;
-    temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IBE << pGPIOHandle ->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIOIBE |= temp;
+     pGPIO -> GPIOIM &= ~(Pinx);   
+}
 
-    temp = 0;
-    temp = pGPIOHandle -> GPIO_PinConfig.GPIO_IEV << pGPIOHandle ->GPIO_PinConfig.GPIO_PinNumber;
-    pGPIOHandle -> GPIOx -> GPIOIEV |= temp;
+/********************************************************************************
+ * @fn                     - GPIO_GetInterruptStatus
+ *
+ * @brief                  - Gets interrupt status for the specified GPIO pin 
+ * 
+ * @param[in]              - GPIO port
+ * @param[in]              - GPIO pin(s)
+ * 
+ * @return                 - 1: interrupt occured, 0: not occured
+ * 
+ * @Note                   - none
+ */
+uint8_t GPIO_GetInterruptStatus(uint8_t GPIOx, uint8_t Pinx)
+{
+    GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
+    return(pGPIO -> GPIORIS & Pinx);
+}
 
-    //Clear interrupt
-    pGPIOHandle -> GPIOx -> GPIOICR |= GPIO_ICR_GPIO_M;
-
-    // Unmask the port
-    pGPIOHandle -> GPIOx -> GPIOIM |= (1 << pGPIOHandle -> GPIO_PinConfig.GPIO_PinNumber);
-    
-
-    return TRUE;
+/********************************************************************************
+ * @fn                     - GPIO_ClearInterrupt
+ *
+ * @brief                  - Clears the interrupt for the specified interrupt pin
+ * 
+ * @param[in]              - GPIO port
+ * @param[in]              - GPIO pin(s)
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void GPIO_ClearInterrupt(uint8_t GPIOx, uint8_t Pinx)
+{
+    GPIO_RegDef_t *pGPIO = GPIO_Get_Port(GPIOx);
+    pGPIO -> GPIOICR |= Pinx;
 }
 
 /********************************************************************************
@@ -584,7 +537,6 @@ void GPIO_Unlock(uint8_t GPIOx, uint8_t Pinx)
  *
  * @brief                  - This function enbales or disables interrupt from processor side
  * @param[in]              - IRQ number
- * @param[in]              - IRQ priority
  * @param[in]              - ENABLE or DISABLE macros
  * 
  * @return                 - none
@@ -619,6 +571,7 @@ void GPIO_IRQConfig(uint8_t IRQn, uint8_t Ctrl)
  *
  * @brief                  - This function sets interrupt priority from processor side
  * 
+ * @param[in]              - IRQ number
  * @param[in]              - IRQ priority
  * 
  * @return                 - none
@@ -638,20 +591,43 @@ void GPIO_IRQPriorityConfig(uint8_t IRQn, uint32_t IRQPriority)
 /********************************************************************************
  * @fn                     - GPIO_IRQHandling
  *
- * @brief                  - This function enbales or disables peripheral clock for the given GPIO port
+ * @brief                  - This function handles the IRQ
  * 
- * @param[in]              - base address of the gpio peripheral
- * @param[in]              - ENABLE or DISABLE macros
+ * @param[in]              - GPIO port
+ * @param[in]              - GPIO pin(s)
  * 
- * @return                 - TRUE or FALSE macros
+ * @return                 - none
  * 
  * @Note                   - none
  */
-void GPIO_IRQHandling(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
+void GPIO_IRQHandling(uint8_t GPIOx, uint8_t Pinx)
 {
     // Check if interrupt occurd on the pin
-    if (pGPIOx -> GPIORIS & (1 << PinNumber))
+    if (GPIO_GetInterruptStatus(GPIOx, Pinx))
         // Clear interrupt on the pin
-        pGPIOx -> GPIOICR |= (1 << PinNumber);
+        GPIO_ClearInterrupt(GPIOx, Pinx);
+}
+
+/********************************************************************************
+ * @fn                     - GPIO_SSIType
+ *
+ * @brief                  - Configure GPIO pin(s) to be SSI type
+ * 
+ * @param[in]              - GPIO port
+ * @param[in]              - GPIO pin(s)
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - Consult with table 23-5 (GPIO Pins and Alternate Functions) in
+ *                         - the datasheet Tiva™ TM4C123GH6PM Microcontroller to see which
+ *                         - pins that can be configured as SSI
+ */
+void GPIO_SSIType(uint8_t GPIOx, uint8_t Pinx)
+{
+    // Set the pin(s) to AFSEL
+    GPIO_ModeSet(GPIOx, Pinx, GPIO_AFSEL);
+
+    // Configure the pad(s)
+    GPIO_PadConfig(GPIOx, Pinx, GPIO_DR2R, GPIO_DEN);
 }
 

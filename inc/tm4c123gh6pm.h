@@ -15,11 +15,6 @@
 // Interrupt assignments
 //
 //*****************************************************************************
-#define INT_GPIOA               0          // GPIO Port A
-#define INT_GPIOB               1          // GPIO Port B
-#define INT_GPIOC               2          // GPIO Port C
-#define INT_GPIOD               3          // GPIO Port D
-#define INT_GPIOE               4          // GPIO Port E
 #define INT_UART0               5          // UART0
 #define INT_UART1               6          // UART1
 #define INT_SSI0                7          // SSI0
@@ -43,9 +38,7 @@
 #define INT_COMP0               25          // Analog Comparator 0
 #define INT_COMP1               26          // Analog Comparator 1
 #define INT_SYSCTL              28          // System Control
-#define INT_FLASH               29          // Flash Memory Control and EEPROM
-                                            // Control
-#define INT_GPIOF               30          // GPIO Port F
+#define INT_FLASH               29          // Flash Memory Control and EEPROM Control
 #define INT_UART2               33          // UART2
 #define INT_SSI1                34          // SSI1
 #define INT_TIMER3A             35          // 16/32-Bit Timer 3A

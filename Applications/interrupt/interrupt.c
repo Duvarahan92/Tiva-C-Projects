@@ -11,32 +11,30 @@
 
 int main(void)
 {
+  // Enable clock for port F
+  GPIO_EnableClk(SYSCTL_RCGCGPIO_R5);
 
-  //GPIO LED and GPIO Button
-  GPIO_Handle_t GPIOLed, GPIOButton;
-
-  memset(&GPIOLed, 0, sizeof(GPIOLed));
-  memset(&GPIOButton, 0, sizeof(GPIOButton));
-  
-  GPIOLed.GPIOx = GPIOF;
-  GPIOEnableClk(SYSCTL_RCGCGPIO_R5);
-
-  GPIOModeSet(GPIOF_P, GPIO_PIN_1, GPIO_OUT);
-  GPIOPadConfig(GPIOF_P, GPIO_PIN_1, GPIO_NO_DR, GPIO_DEN);
+  // LED Config
+  GPIO_ModeSet(GPIOF_P, GPIO_PIN_1, GPIO_OUT);
+  GPIO_PadConfig(GPIOF_P, GPIO_PIN_1, GPIO_NO_DR, GPIO_DEN);
  
-  GPIOButton.GPIOx = GPIOF;
-  
-  //unlocks pf0
+  // Button Config
+  //unlocks pin 0 on port F
   GPIO_Unlock(GPIOF_P, GPIO_PIN_0);
   
-  GPIOModeSet(GPIOF_P, GPIO_PIN_0, GPIO_IN);
-  GPIOPadConfig(GPIOF_P, GPIO_PIN_0, GPIO_NO_DR, GPIO_PUR);
+  GPIO_ModeSet(GPIOF_P, GPIO_PIN_0, GPIO_IN);
+  GPIO_PadConfig(GPIOF_P, GPIO_PIN_0, GPIO_NO_DR, GPIO_PUR);
 
   // IRQ configurations
   GPIO_IRQPriorityConfig(INT_GPIOF, 3);
   GPIO_IRQConfig(INT_GPIOF, ENABLE);
 
-  GPIO_InterruptInit(&GPIOButton);
+  // Initialize interrupt
+  GPIO_DisableInterrupt(GPIOF_P, GPIO_PIN_0);
+  GPIO_InterruptTypeSet(GPIOF_P, GPIO_PIN_0, GPIO_FALLING_EDGE);
+  GPIO_ClearInterrupt(GPIOF_P, GPIO_PIN_0);
+  GPIO_EnableInterrupt(GPIOF_P, GPIO_PIN_0);
+  
   while (1)
   {
     
@@ -47,6 +45,6 @@ int main(void)
 
    void GPIOPortF_IRQHandler(void) 
   {
-    GPIO_IRQHandling(GPIOF, 0);
+    GPIO_IRQHandling(GPIOF_P, GPIO_PIN_0);
     GPIO_ToggleOutputPin(GPIOF_P, GPIO_PIN_1);
   }
