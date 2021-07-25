@@ -268,7 +268,7 @@ void GPIO_PinConfig(uint8_t GPIOx, uint32_t GPIO_PCTL)
  }
 
 /********************************************************************************
- * @fn                     - GPIO_DeInit
+ * @fn                     - GPIO_Reset
  *
  * @brief                  - This function reset the GPIO peripheral
  * 
@@ -623,6 +623,29 @@ void GPIO_IRQHandling(uint8_t GPIOx, uint8_t Pinx)
  *                         - pins that can be configured as SSI
  */
 void GPIO_SSIType(uint8_t GPIOx, uint8_t Pinx)
+{
+    // Set the pin(s) to AFSEL
+    GPIO_ModeSet(GPIOx, Pinx, GPIO_AFSEL);
+
+    // Configure the pad(s)
+    GPIO_PadConfig(GPIOx, Pinx, GPIO_DR2R, GPIO_DEN);
+}
+
+/********************************************************************************
+ * @fn                     - GPIO_UARTType
+ *
+ * @brief                  - Configure GPIO pin(s) to be UART type
+ * 
+ * @param[in]              - GPIO port
+ * @param[in]              - GPIO pin(s)
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - Consult with table 23-5 (GPIO Pins and Alternate Functions) in
+ *                         - the datasheet Tiva™ TM4C123GH6PM Microcontroller to see which
+ *                         - pins that can be configured as SSI
+ */
+void GPIO_UARTType(uint8_t GPIOx, uint8_t Pinx)
 {
     // Set the pin(s) to AFSEL
     GPIO_ModeSet(GPIOx, Pinx, GPIO_AFSEL);

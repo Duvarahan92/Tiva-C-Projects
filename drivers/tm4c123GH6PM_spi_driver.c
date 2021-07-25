@@ -53,6 +53,11 @@ static uint8_t SSI_Check_Module(uint8_t SSI_Module)
     return FALSE;
 }
 
+/*********************************************************************************
+*                           API functions
+*
+**********************************************************************************/ 
+
 /********************************************************************************
  * @fn                     - SSI_EnableClk
  *
@@ -65,15 +70,10 @@ static uint8_t SSI_Check_Module(uint8_t SSI_Module)
  * @Note                   - none
  */
 
- /*********************************************************************************
-*                           API functions
-*
-**********************************************************************************/ 
-
  void SSI_EnableClk(uint8_t SYSCTL_RCGCSSI_MODULE)
  {
      
-     SYSCTL_RCGCSSI_MODULE |= SYSCTL_RCGCSSI_MODULE;
+    SYSCTL_RCGCSSI_MODULE |= SYSCTL_RCGCSSI_MODULE;
  }
 
  /********************************************************************************
@@ -105,7 +105,7 @@ static uint8_t SSI_Check_Module(uint8_t SSI_Module)
  * 
  * @Note                   - none
  */
-void SSI_Enable(uint8_t SSIx)
+void SSI_EnableModule(uint8_t SSIx)
 {
     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
     pSSI -> SSICR1 |= SSI_CR1_SSE;
@@ -122,11 +122,30 @@ void SSI_Enable(uint8_t SSIx)
  * 
  * @Note                   - none
  */
- void SSI_Disable(uint8_t SSIx)
+ void SSI_DisableModule(uint8_t SSIx)
  {
     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
     pSSI -> SSICR1 &= ~(SSI_CR1_SSE);
  }
+
+ /********************************************************************************
+ * @fn                     - SSI_Reset
+ *
+ * @brief                  - This function reset the SSI module
+ * 
+ * @param[in]              - SSI port
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+
+void SSI_Reset(uint8_t SYSCTL_SRSSI)
+{
+    SYSCTL -> SRSSI |= SYSCTL_SRSSI;
+    SYSCTL -> SRSSI &= ~(SYSCTL_SRSSI);
+
+}
 
 /********************************************************************************
  * @fn                     - SET_SSIMode

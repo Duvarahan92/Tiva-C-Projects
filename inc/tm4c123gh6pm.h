@@ -1704,12 +1704,6 @@ typedef struct
 // The following are defines for the bit fields in the UART_O_FR register.
 //
 //*****************************************************************************
-#define UART_FR_TXFE            0x00000080  // UART Transmit FIFO Empty
-#define UART_FR_RXFF            0x00000040  // UART Receive FIFO Full
-#define UART_FR_TXFF            0x00000020  // UART Transmit FIFO Full
-#define UART_FR_RXFE            0x00000010  // UART Receive FIFO Empty
-#define UART_FR_BUSY            0x00000008  // UART Busy
-#define UART_FR_CTS             0x00000001  // Clear To Send
 
 //*****************************************************************************
 //
@@ -1735,40 +1729,7 @@ typedef struct
 #define UART_FBRD_DIVFRAC_M     0x0000003F  // Fractional Baud-Rate Divisor
 #define UART_FBRD_DIVFRAC_S     0
 
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the UART_O_LCRH register.
-//
-//*****************************************************************************
-#define UART_LCRH_SPS           0x00000080  // UART Stick Parity Select
-#define UART_LCRH_WLEN_M        0x00000060  // UART Word Length
-#define UART_LCRH_WLEN_5        0x00000000  // 5 bits (default)
-#define UART_LCRH_WLEN_6        0x00000020  // 6 bits
-#define UART_LCRH_WLEN_7        0x00000040  // 7 bits
-#define UART_LCRH_WLEN_8        0x00000060  // 8 bits
-#define UART_LCRH_FEN           0x00000010  // UART Enable FIFOs
-#define UART_LCRH_STP2          0x00000008  // UART Two Stop Bits Select
-#define UART_LCRH_EPS           0x00000004  // UART Even Parity Select
-#define UART_LCRH_PEN           0x00000002  // UART Parity Enable
-#define UART_LCRH_BRK           0x00000001  // UART Send Break
 
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the UART_O_CTL register.
-//
-//*****************************************************************************
-#define UART_CTL_CTSEN          0x00008000  // Enable Clear To Send
-#define UART_CTL_RTSEN          0x00004000  // Enable Request to Send
-#define UART_CTL_RTS            0x00000800  // Request to Send
-#define UART_CTL_RXE            0x00000200  // UART Receive Enable
-#define UART_CTL_TXE            0x00000100  // UART Transmit Enable
-#define UART_CTL_LBE            0x00000080  // UART Loop Back Enable
-#define UART_CTL_HSE            0x00000020  // High-Speed Enable
-#define UART_CTL_EOT            0x00000010  // End of Transmission
-#define UART_CTL_SMART          0x00000008  // ISO 7816 Smart Card Support
-#define UART_CTL_SIRLP          0x00000004  // UART SIR Low-Power Mode
-#define UART_CTL_SIREN          0x00000002  // UART SIR Enable
-#define UART_CTL_UARTEN         0x00000001  // UART Enable
 
 //*****************************************************************************
 //
@@ -9257,30 +9218,6 @@ typedef struct
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the SYSCTL_SRUART register.
-//
-//*****************************************************************************
-#define SYSCTL_SRUART_R7        0x00000080  // UART Module 7 Software Reset
-#define SYSCTL_SRUART_R6        0x00000040  // UART Module 6 Software Reset
-#define SYSCTL_SRUART_R5        0x00000020  // UART Module 5 Software Reset
-#define SYSCTL_SRUART_R4        0x00000010  // UART Module 4 Software Reset
-#define SYSCTL_SRUART_R3        0x00000008  // UART Module 3 Software Reset
-#define SYSCTL_SRUART_R2        0x00000004  // UART Module 2 Software Reset
-#define SYSCTL_SRUART_R1        0x00000002  // UART Module 1 Software Reset
-#define SYSCTL_SRUART_R0        0x00000001  // UART Module 0 Software Reset
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_SRSSI register.
-//
-//*****************************************************************************
-#define SYSCTL_SRSSI_R3         0x00000008  // SSI Module 3 Software Reset
-#define SYSCTL_SRSSI_R2         0x00000004  // SSI Module 2 Software Reset
-#define SYSCTL_SRSSI_R1         0x00000002  // SSI Module 1 Software Reset
-#define SYSCTL_SRSSI_R0         0x00000001  // SSI Module 0 Software Reset
-
-//*****************************************************************************
-//
 // The following are defines for the bit fields in the SYSCTL_SRI2C register.
 //
 //*****************************************************************************
@@ -9433,22 +9370,6 @@ typedef struct
 // register.
 //
 //*****************************************************************************
-#define SYSCTL_RCGCUART_R7      0x00000080  // UART Module 7 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCUART_R6      0x00000040  // UART Module 6 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCUART_R5      0x00000020  // UART Module 5 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCUART_R4      0x00000010  // UART Module 4 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCUART_R3      0x00000008  // UART Module 3 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCUART_R2      0x00000004  // UART Module 2 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCUART_R1      0x00000002  // UART Module 1 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCUART_R0      0x00000001  // UART Module 0 Run Mode Clock
-                                            // Gating Control
 
 //*****************************************************************************
 //

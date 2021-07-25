@@ -374,6 +374,7 @@
 void GPIO_EnableClk(uint8_t SYSCTL_RCGCGPIO_PORTx);
 void GPIO_DisableClk(uint8_t SYSCTL_RCGCGPIO_PORTx);
 void GPIO_SelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus);
+void GPIO_Reset(uint8_t SYSCTL_SRGPIO);
 
 /*
  * Configure port and pin
@@ -384,7 +385,7 @@ void GPIO_PadConfig(uint8_t GPIOx, uint8_t Pinx, uint8_t Strength, uint8_t PinTy
 void GPIO_PinConfig(uint8_t GPIOx, uint32_t GPIO_PCTL);
 void GPIO_EnableSLR(uint8_t GPIOx, uint8_t Pinx);
 void GPIO_DisableSLR(uint8_t GPIOx, uint8_t Pinx);
-void GPIO_Reset(uint8_t SYSCTL_SRGPIO);
+
 
 
 /*
@@ -424,6 +425,7 @@ void GPIO_IRQHandling(uint8_t GPIOx, uint8_t Pinx);
  *
  */
  void GPIO_SSIType(uint8_t GPIOx, uint8_t Pinx);
+ void GPIO_UARTType(uint8_t GPIOx, uint8_t Pinx);
 
 /*
  * Helping macros

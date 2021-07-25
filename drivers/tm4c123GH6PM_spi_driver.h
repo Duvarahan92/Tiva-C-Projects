@@ -60,8 +60,7 @@
 
 /* 
  * Confingure SSI module
- * Arguments to SET_SSIMode function, EnableLoopbackMode 
- * and DisableLoopbackMode functions
+ * Arguments to SET_SSIMode function
  */
 #define SSI_CR1_EOT             0x00000010  // End of Transmission
 #define SSI_CR1_M               0x00000000  // SSI Master Select
@@ -69,6 +68,15 @@
 #define SSI_CR1_SD              0x0000000C  // Slave mode output disabled
 #define SSI_CR1_SSE             0x00000002  // SSI Synchronous Serial Port Enable
 #define SSI_CR1_LBM             0x00000001  // SSI Loopback Mode
+
+/* 
+ * Reset SSI modulese
+ * Arguments to Reset function
+ */
+#define SYSCTL_SRSSI_R3         0x00000008  // SSI Module 3 Software Reset
+#define SYSCTL_SRSSI_R2         0x00000004  // SSI Module 2 Software Reset
+#define SYSCTL_SRSSI_R1         0x00000002  // SSI Module 1 Software Reset
+#define SYSCTL_SRSSI_R0         0x00000001  // SSI Module 0 Software Reset
 
 //*****************************************************************************
 //
@@ -165,6 +173,7 @@ void SSI_EnableClk(uint8_t SYSCTL_RCGCSSI_MODULE);
 void SSI_DisableClk(uint8_t SYSCTL_RCGCSSI_MODULE);
 void SSI_EnableModule(uint8_t SSIx);
 void SSI_DisableModule(uint8_t SSIx);
+void SSI_Reset(uint8_t SYSCTL_SRSSI);
 
 /*
  * Peripheral configure
