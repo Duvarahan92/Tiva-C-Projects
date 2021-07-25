@@ -21,7 +21,7 @@ static GPIO_RegDef_t* MapGPIOBaseAddress[12] =
  *
  * @brief                  - This function gets the struct ptr to a port
  * 
- * @param[in]              - GPIO port enum
+ * @param[in]              - GPIO port
  * 
  * @return                 - Struct ptr to a port
  * 

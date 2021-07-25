@@ -1,27 +1,101 @@
 #include "tm4c123GH6PM_spi_driver.h"
+#include "tm4c123gh6pm.h"
+
+/*********************************************************************************
+*                        Internal functions and variables
+*
+**********************************************************************************/
+
+static SSI_RegDef_t* MapSSIBaseAddress[4] =
+{
+    SSI0, 
+    SSI1,
+    SSI2,
+    SSI3
+};
 
 /********************************************************************************
- * @fn                     - SSI_CLK_CTRL
+ * @fn                     - SSI_Get_Module
  *
- * @brief                  - This function enbales or disables peripheral clock for the given SSI module
+ * @brief                  - This function gets the struct ptr to a module
+ * 
+ * @param[in]              - SSI Module
+ * 
+ * @return                 - Struct ptr to a module
+ * 
+ * @Note                   - none
+ */
+ static SSI_RegDef_t* SSI_Get_Module(uint8_t SSI_Module)
+ {
+     return MapSSIBaseAddress[SSI_Module];
+ }
+
+ /********************************************************************************
+ * @fn                     - SSI_Check_Module
+ *
+ * @brief                  - This function check if SSI module is valid
+ * 
+ * @param[in]              - SSI module
+ * 
+ * @return                 - TRUE or FALSE macros
+ * 
+ * @Note                   - none
+ */
+
+static uint8_t SSI_Check_Module(uint8_t SSI_Module)
+{
+    for (int i = SSI0_P; i <= SSI3_P; i++)
+    {
+        if (i == SSI_Module)
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
+/********************************************************************************
+ * @fn                     - SSI_EnableClk
+ *
+ * @brief                  - This function enables peripheral clock for the given SSI module
  * 
  * @param[in]              - Run mode clock gating control
- * @param[in]              - ENABLE or DISABLE macros
  * 
  * @return                 - none
  * 
  * @Note                   - none
  */
- void SSI_CLK_CTRL(uint32_t SYSCTL_RCGCSSI_MODULE, uint8_t Ctrl)
+
+ /*********************************************************************************
+*                           API functions
+*
+**********************************************************************************/ 
+
+ void SSI_EnableClk(uint8_t SYSCTL_RCGCSSI_MODULE)
  {
-     if (Ctrl == ENABLE)
-        SYSCTL -> RCGCSSI |= SYSCTL_RCGCSSI_MODULE;
+     
+     SYSCTL_RCGCSSI_MODULE |= SYSCTL_RCGCSSI_MODULE;
+ }
+
+ /********************************************************************************
+ * @fn                     - SSI_DisableClk
+ *
+ * @brief                  - This function disables peripheral clock for the given SSI module
+ * 
+ * @param[in]              - Run mode clock gating control
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+ void SSI_DisableClk(uint8_t SYSCTL_RCGCSSI_MODULE)
+ {
      
      SYSCTL_RCGCSSI_MODULE &= ~(SYSCTL_RCGCSSI_MODULE);
  }
 
+
  /********************************************************************************
- * @fn                     - SSIEnable
+ * @fn                     - SSI_Enable
  *
  * @brief                  - This function enables the SSI module
  * 
@@ -31,13 +105,14 @@
  * 
  * @Note                   - none
  */
-void SSIEnable(SSI_RegDef_t *pSSIx)
+void SSI_Enable(uint8_t SSIx)
 {
-    pSSIx -> SSICR1 |= SSI_CR1_SSE;
+    SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+    pSSI -> SSICR1 |= SSI_CR1_SSE;
 }
 
  /********************************************************************************
- * @fn                     - SSIDisable
+ * @fn                     - SSI_Disable
  *
  * @brief                  - This function disables the SSI module
  * 
@@ -47,13 +122,14 @@ void SSIEnable(SSI_RegDef_t *pSSIx)
  * 
  * @Note                   - none
  */
- void SSIDisable(SSI_RegDef_t *pSSIx)
+ void SSI_Disable(uint8_t SSIx)
  {
-      pSSIx -> SSICR1 &= ~(SSI_CR1_SSE);
+    SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+    pSSI -> SSICR1 &= ~(SSI_CR1_SSE);
  }
 
 /********************************************************************************
- * @fn                     - SET_SSI_MODE
+ * @fn                     - SET_SSIMode
  *
  * @brief                  - This function SSI module as master or slave
  * 
@@ -64,15 +140,17 @@ void SSIEnable(SSI_RegDef_t *pSSIx)
  * 
  * @Note                   - none
  */
- void SET_SSI_MODE(SSI_RegDef_t *pSSIx, uint32_t Mode)
+ void SET_SSIMode(uint8_t SSIx, uint32_t Mode)
  {
+     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+
      if (Mode == SSI_CR1_M)
-        pSSIx -> SSICR1 &= ~(SSI_CR1_S); 
-     pSSIx -> SSICR1 |= Mode;
+        pSSI -> SSICR1 &= ~(SSI_CR1_S); 
+     pSSI -> SSICR1 |= Mode;
  }
 
  /********************************************************************************
- * @fn                     - ConfigSSIClk
+ * @fn                     - SSI_ConfigClk
  *
  * @brief                  - This function configure the SSI clock
  * 
@@ -88,8 +166,10 @@ void SSIEnable(SSI_RegDef_t *pSSIx)
  * 
  * @Note                   - none
  */
- void ConfigSSIClk(SSI_RegDef_t *pSSIx, uint32_t SSIClk, uint32_t BitRate)
+ void SSI_ConfigClk(uint8_t SSIx, uint32_t SSIClk, uint32_t BitRate)
  {
+    SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+
      uint32_t MaxBitRate;
      uint32_t PreDiv;
      uint32_t SCR;
@@ -105,12 +185,12 @@ void SSIEnable(SSI_RegDef_t *pSSIx)
     }
     while (SCR > 255);
 
-    pSSIx -> SSICPSR = PreDiv;
-    pSSIx -> SSICR0 = SCR << 8;
+    pSSI -> SSICPSR = PreDiv;
+    pSSI -> SSICR0 = SCR << 8;
 }
 
  /********************************************************************************
- * @fn                     - ConfigSSIModule
+ * @fn                     - SSI_ConfigModule
  *
  * @brief                  - This function configure the SSI module
  * 
@@ -123,16 +203,64 @@ void SSIEnable(SSI_RegDef_t *pSSIx)
  * 
  * @Note                   - none
  */
- void ConfigSSIModule(SSI_RegDef_t *pSSIx, uint32_t PhasePolMode, uint32_t ProtocolMode, uint32_t DSS)
+ void SSI_ConfigModule(uint8_t SSIx, uint32_t PhasePolMode, uint32_t ProtocolMode, uint32_t DSS)
  {
+     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+
      // Set phase and polarity
-     pSSIx -> SSICR0 |= PhasePolMode << 6;
+     pSSI -> SSICR0 |= PhasePolMode;
 
      // Set protocol
-     pSSIx -> SSICR0 |= ProtocolMode;
+     pSSI -> SSICR0 |= ProtocolMode;
 
      // Set data size
-     pSSIx -> SSICR0 |= DSS;
+     pSSI -> SSICR0 |= DSS;
+ }
+ 
+/********************************************************************************
+ * @fn                     - SPI_SendData
+ *
+ * @brief                  - This function sends data while blocking
+ * 
+ * @param[in]              - SSI module
+ * @param[in]              - Data to send
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void SPI_SendData(uint8_t SSIx, uint16_t Data)
+ {
+    SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+
+    // Wait untill there is space in the transmit FIFO
+    while (!(pSSI -> SSISR & SSI_SR_TNF));
+
+    // Write data to the FIFO
+    pSSI -> SSIDR = Data;
+ }
+
+ /********************************************************************************
+ * @fn                     - SPI_ReceiveData
+ *
+ * @brief                  - This function reads data while blocking
+ * 
+ * @param[in]              - SSI module
+ * @param[in]              - pointer to the place where Ddata will get stored
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void SPI_ReceiveData(uint8_t SSIx, uint16_t *Data)
+ {
+    SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+
+    // Wait untill there is space in the transmit FIFO
+    while (!(pSSI -> SSISR & SSI_SR_RNE));
+
+    // Read data from the FIFO
+   *Data = pSSI -> SSIDR;
  }
 
  /********************************************************************************
@@ -146,9 +274,11 @@ void SSIEnable(SSI_RegDef_t *pSSIx)
  * 
  * @Note                   - none
  */
- void EnableLoopbackMode(SSI_RegDef_t *pSSIx)
+ void EnableLoopbackMode(uint8_t SSIx)
  {
-     pSSIx -> SSICR1 |= SSI_CR1_LBM;
+     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+
+     pSSI -> SSICR1 |= SSI_CR1_LBM;
  }
 
  /********************************************************************************
@@ -162,12 +292,29 @@ void SSIEnable(SSI_RegDef_t *pSSIx)
  * 
  * @Note                   - none
  */
- void DisableLoopbackMode(SSI_RegDef_t *pSSIx)
+ void DisableLoopbackMode(uint8_t SSIx)
  {
-     pSSIx -> SSICR1 &= ~(SSI_CR1_LBM);
+     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+
+     pSSI -> SSICR1 &= ~(SSI_CR1_LBM);
  }
 
-/*********************************************************************************
-*                        Internal functions
-*
-**********************************************************************************/
+ /********************************************************************************
+ * @fn                     - SSI_Busy
+ *
+ * @brief                  - SSI is currently transmitting and/or receiving a frame, or
+ *                         - the transmit FIFO is not empty
+ * 
+ * @param[in]              - SSI module
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+ uint8_t SSI_Busy(uint8_t SSIx)
+ {
+    SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+
+    return((pSSI -> SSISR & SSI_SR_BSY) ? TRUE : FALSE);
+ }
+
