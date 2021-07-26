@@ -134,7 +134,7 @@
 #define GPIO_LOCK_KEY            0x4C4F434B        // Unlocks the GPIO_CR register
 
 /*
- *Arguments used in GPIO_PinConfig
+ *Arguments used in GPIO_PinConfig, also can be used by alternate function Configuration
  * The following are defines for the bit fields in the GPIO_PCTL register for
  * port A.
 */
@@ -160,7 +160,7 @@
 #define GPIO_PCTL_PA0_CAN1RX    0x00000008         // CAN1RX on PA0
 
 /*
- *Arguments used in GPIO_PinConfig
+ *Arguments used in GPIO_PinConfig, also can be used by alternate function Configuration
  * The following are defines for the bit fields in the GPIO_PCTL register for
  * port B.
 */
@@ -198,7 +198,7 @@
 #define GPIO_PCTL_PB0_T2CCP0    0x00000007         // T2CCP0 on PB0
 
 /*
- *Arguments used in GPIO_PinConfig
+ *Arguments used in GPIO_PinConfig, also can be used by alternate function Configuration
  * The following are defines for the bit fields in the GPIO_PCTL register for
  * port C.
 */
@@ -239,7 +239,7 @@
 #define GPIO_PCTL_PC0_T4CCP0    0x00000007         // T4CCP0 on PC0
 
 /*
- *Arguments used in GPIO_PinConfig
+ *Arguments used in GPIO_PinConfig, also can be used by alternate function Configuration
  * The following are defines for the bit fields in the GPIO_PCTL register for
  * port D.
 */
@@ -293,7 +293,7 @@
 #define GPIO_PCTL_PD0_WT2CCP0   0x00000007         // WT2CCP0 on PD0
 
 /*
- *Arguments used in GPIO_PinConfig
+ *Arguments used in GPIO_PinConfig, also can be used by alternate function Configuration
  * The following are defines for the bit fields in the GPIO_PCTL register for
  * port E.
 */
@@ -323,7 +323,7 @@
 #define GPIO_PCTL_PE0_U7RX      0x00000001         // U7RX on PE0
 
 /*
- *Arguments used in GPIO_PinConfig
+ *Arguments used in GPIO_PinConfig, also can be used by alternate function Configuration
  * The following are defines for the bit fields in the GPIO_PCTL register for
  * port F.
 */
@@ -421,11 +421,11 @@ void GPIO_IRQPriorityConfig(uint8_t IRQn, uint32_t IRQPriority);
 void GPIO_IRQHandling(uint8_t GPIOx, uint8_t Pinx);
 
 /*
- * Alternate function Configuration and ISR handling
+ * Alternate function Configuration
  *
  */
- void GPIO_SSIType(uint8_t GPIOx, uint8_t Pinx);
- void GPIO_UARTType(uint8_t GPIOx, uint8_t Pinx);
+ void GPIO_SSIType(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL);
+ void GPIO_UARTType(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL);
 
 /*
  * Helping macros

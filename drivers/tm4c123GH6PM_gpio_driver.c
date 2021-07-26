@@ -622,13 +622,16 @@ void GPIO_IRQHandling(uint8_t GPIOx, uint8_t Pinx)
  *                         - the datasheet Tiva™ TM4C123GH6PM Microcontroller to see which
  *                         - pins that can be configured as SSI
  */
-void GPIO_SSIType(uint8_t GPIOx, uint8_t Pinx)
+void GPIO_SSIType(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL)
 {
     // Set the pin(s) to AFSEL
     GPIO_ModeSet(GPIOx, Pinx, GPIO_AFSEL);
 
     // Configure the pad(s)
     GPIO_PadConfig(GPIOx, Pinx, GPIO_DR2R, GPIO_DEN);
+
+    // Configure pin as SSI
+    GPIO_PinConfig(GPIOx, GPIO_PCTL);
 }
 
 /********************************************************************************
@@ -645,12 +648,15 @@ void GPIO_SSIType(uint8_t GPIOx, uint8_t Pinx)
  *                         - the datasheet Tiva™ TM4C123GH6PM Microcontroller to see which
  *                         - pins that can be configured as SSI
  */
-void GPIO_UARTType(uint8_t GPIOx, uint8_t Pinx)
+void GPIO_UARTType(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL)
 {
     // Set the pin(s) to AFSEL
     GPIO_ModeSet(GPIOx, Pinx, GPIO_AFSEL);
 
     // Configure the pad(s)
     GPIO_PadConfig(GPIOx, Pinx, GPIO_DR2R, GPIO_DEN);
+
+    // Configure Pinx as UART
+    GPIO_PinConfig(GPIOx, GPIO_PCTL);
 }
 

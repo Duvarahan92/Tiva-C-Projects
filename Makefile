@@ -3,7 +3,7 @@
 #Makefile, for tm4c programming 
 
 # Target name:
-TARGET = interrupt
+TARGET = uartTest
 
 # Target type
 MCU = tm4c123GH6PM
