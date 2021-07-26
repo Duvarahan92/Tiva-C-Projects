@@ -10,10 +10,7 @@
 
 void delay(uint32_t ticks) 
 {
-  for (size_t i = 0; i < ticks; i++)
-  {
-    
-  }
+  for (size_t i = 0; i < ticks; i++);
 }
 
 int main(void)

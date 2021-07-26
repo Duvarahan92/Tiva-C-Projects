@@ -3,7 +3,7 @@
 #Makefile, for tm4c programming 
 
 # Target name:
-TARGET = uartTest
+TARGET = blinky
 
 # Target type
 MCU = tm4c123GH6PM

@@ -9,7 +9,7 @@
 *                        Macros used to config registers
 *
 **********************************************************************************/
-enum Module
+enum UART_Module
  {
    UART0_P = 0, 
    UART1_P = 1,

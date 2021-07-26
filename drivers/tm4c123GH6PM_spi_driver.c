@@ -73,7 +73,7 @@ static uint8_t SSI_Check_Module(uint8_t SSI_Module)
  void SSI_EnableClk(uint8_t SYSCTL_RCGCSSI_MODULE)
  {
      
-    SYSCTL_RCGCSSI_MODULE |= SYSCTL_RCGCSSI_MODULE;
+    SYSCTL -> RCGCSSI |= SYSCTL_RCGCSSI_MODULE;
  }
 
  /********************************************************************************
@@ -90,7 +90,7 @@ static uint8_t SSI_Check_Module(uint8_t SSI_Module)
  void SSI_DisableClk(uint8_t SYSCTL_RCGCSSI_MODULE)
  {
      
-     SYSCTL_RCGCSSI_MODULE &= ~(SYSCTL_RCGCSSI_MODULE);
+    SYSCTL -> RCGCSSI &= ~(SYSCTL_RCGCSSI_MODULE);
  }
 
 
@@ -248,7 +248,7 @@ void SSI_Reset(uint8_t SYSCTL_SRSSI)
  * 
  * @Note                   - none
  */
-void SPI_SendData(uint8_t SSIx, uint16_t Data)
+void SPI_SendData(uint8_t SSIx, uint8_t Data)
  {
     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
 
@@ -271,7 +271,7 @@ void SPI_SendData(uint8_t SSIx, uint16_t Data)
  * 
  * @Note                   - none
  */
-void SPI_ReceiveData(uint8_t SSIx, uint16_t *Data)
+void SPI_ReceiveData(uint8_t SSIx, uint8_t *Data)
  {
     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
 

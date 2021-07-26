@@ -628,7 +628,7 @@ void GPIO_SSIType(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL)
     GPIO_ModeSet(GPIOx, Pinx, GPIO_AFSEL);
 
     // Configure the pad(s)
-    GPIO_PadConfig(GPIOx, Pinx, GPIO_DR2R, GPIO_DEN);
+    GPIO_PadConfig(GPIOx, Pinx, GPIO_DR2R, GPIO_PUR);
 
     // Configure pin as SSI
     GPIO_PinConfig(GPIOx, GPIO_PCTL);

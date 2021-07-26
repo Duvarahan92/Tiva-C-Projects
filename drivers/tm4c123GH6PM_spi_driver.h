@@ -10,7 +10,7 @@
 *
 **********************************************************************************/
 
- enum Module
+ enum SPI_Module
  {
    SSI0_P = 0, 
    SSI1_P = 1,
@@ -187,8 +187,8 @@ void SSI_Reset(uint8_t SYSCTL_SRSSI);
  * Data read and write
  *
  */
- void SPI_SendData(uint8_t SSIx, uint16_t Data);
- void SPI_ReceiveData(uint8_t SSIx, uint16_t *Data);
+ void SPI_SendData(uint8_t SSIx, uint8_t Data);
+ void SPI_ReceiveData(uint8_t SSIx, uint8_t *Data);
  void EnableLoopbackMode(uint8_t SSIx);
  void DisableLoopbackMode(uint8_t SSIx);
 
