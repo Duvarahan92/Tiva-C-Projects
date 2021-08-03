@@ -259,6 +259,33 @@ void SPI_SendData(uint8_t SSIx, uint8_t Data)
     pSSI -> SSIDR = Data;
  }
 
+/********************************************************************************
+ * @fn                     - SPI_SendNonBlockingData
+ *
+ * @brief                  - This function sends data 
+ * 
+ * @param[in]              - SSI module
+ * @param[in]              - Data to send
+ * 
+ * @return                 - TRUE or FALSE
+ * 
+ * @Note                   - Non Blocking
+ */
+ uint8_t SPI_SendNonBlockingData(uint8_t SSIx, uint8_t Data)
+ {
+      SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+
+     // Checks if the transmit FIFO is not full
+     if (pSSI -> SSISR & SSI_SR_TNF)
+     {
+        // Write data to the FIFO
+        pSSI -> SSIDR = Data;
+        return TRUE;
+     }
+
+     return FALSE;
+ }
+
  /********************************************************************************
  * @fn                     - SPI_ReceiveData
  *
@@ -275,11 +302,37 @@ void SPI_ReceiveData(uint8_t SSIx, uint8_t *Data)
  {
     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
 
-    // Wait untill there is space in the transmit FIFO
+    // Wait untill there is space in the receive FIFO
     while (!(pSSI -> SSISR & SSI_SR_RNE));
 
     // Read data from the FIFO
    *Data = pSSI -> SSIDR;
+ }
+
+  /********************************************************************************
+ * @fn                     - SPI_ReceiveNonBlockingData
+ *
+ * @brief                  - This function reads data
+ * 
+ * @param[in]              - SSI module
+ * @param[in]              - pointer to the place where Ddata will get stored
+ * 
+ * @return                 - TRUE or FALSE
+ * 
+ * @Note                   - Non Blocking
+ */
+ uint8_t SPI_ReceiveNonBlockingData(uint8_t SSIx, uint8_t *Data)
+ {
+     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+
+     // Check if receive FIFO is not empty
+     if (pSSI -> SSISR & SSI_SR_RNE) 
+     {
+         *Data = pSSI -> SSIDR;
+         return TRUE;
+     }
+
+     return FALSE;
  }
 
  /********************************************************************************
@@ -317,6 +370,161 @@ void SPI_ReceiveData(uint8_t SSIx, uint8_t *Data)
 
      pSSI -> SSICR1 &= ~(SSI_CR1_LBM);
  }
+
+  /********************************************************************************
+ * @fn                     - SSI_EnableInterrupt
+ *
+ * @brief                  - This function enables interrupt
+ * @param[in]              - SSI module
+ * @param[in]              - Interrupt to disable
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+ void SSI_EnableInterrupt(uint8_t SSIx, uint8_t InterruptMask)
+ {
+     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+
+     pSSI -> SSIIM |= InterruptMask;
+ }
+
+   /********************************************************************************
+ * @fn                     - SSI_DisableInterrupt
+ *
+ * @brief                  - This function disables interrupt
+ * @param[in]              - SSI module
+ * @param[in]              - Interrupt to disable
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+ void SSI_DisableInterrupt(uint8_t SSIx, uint8_t InterruptMask)
+ {
+     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+
+     pSSI -> SSIIM &= ~(InterruptMask);
+ }
+
+
+ /********************************************************************************
+ * @fn                     - SSI_ClearInterrupt
+ *
+ * @brief                  - This function can clear Time-Out- and Overrun interrupt
+ * @param[in]              - SSI module
+ * @param[in]              - Either Time-out or OVerrun interrupt
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void SSI_ClearInterrupt(uint8_t SSIx, uint8_t Interrupt)
+{
+    SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+
+    pSSI -> SSIICR |= Interrupt;
+}
+
+ /********************************************************************************
+ * @fn                     - SSI_GetInterruptStatus
+ *
+ * @brief                  - Gets raw interrupt status
+ * @param[in]              - SSI module
+ * 
+ * @return                 - Raw interrupts status
+ * 
+ * @Note                   - none
+ */
+uint32_t SSI_GetInterruptStatus(uint8_t SSIx)
+{
+    SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+    
+    return(pSSI -> SSIRIS);
+}
+
+
+ /********************************************************************************
+ * @fn                     - SSI_IRQConfig
+ *
+ * @brief                  - This function enbales or disables interrupt from processor side
+ * @param[in]              - IRQ number
+ * @param[in]              - ENABLE or DISABLE macros
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void SSI_IRQConfig(uint8_t IRQn, uint8_t Ctrl)
+{
+    if (Ctrl == ENABLE)
+    {
+        if (IRQn <= 31)
+        {
+            NVIC_EN0_R |= (1 << IRQn);
+        }else if (IRQn > 31 && IRQn < 64)
+        {
+            NVIC_EN1_R |= (1 << (IRQn % 32));
+        }
+    }else
+    {
+        if (IRQn <= 31)
+        {
+            NVIC_DIS0_R |= (1 << IRQn);
+        }else if (IRQn > 31 && IRQn < 64)
+        {
+            NVIC_DIS1_R |= (1 << (IRQn % 32));
+        }
+    }
+}
+
+/********************************************************************************
+ * @fn                     - SSI_IRQPriorityConfig
+ *
+ * @brief                  - This function sets interrupt priority from processor side
+ * 
+ * @param[in]              - IRQ number
+ * @param[in]              - IRQ priority
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+
+void SSI_IRQPriorityConfig(uint8_t IRQn, uint32_t IRQPriority)
+{
+    uint8_t iprx = IRQn / 4;
+    uint8_t sections = IRQn % 4;
+
+    uint8_t Shift_amount = (8 * sections) + 5;
+    *(NVIC_PRI0_R + iprx) = (IRQPriority << Shift_amount);
+}
+
+/********************************************************************************
+ * @fn                     - SSI_IRQHandling
+ *
+ * @brief                  - Handles different interrupt triggers
+ * 
+ * @param[in]              - SSI module
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void SSI_IRQHandling(uint8_t SSIx, uint8_t TXData, uint8_t *RXData)
+{
+   /* uint32_t interruptStatus = SSI_GetInterruptStatus(SSIx);
+
+    if (interruptStatus == SSI_RIS_TXRIS)
+        while (SPI_SendNonBlockingData(SSIx, TXData));
+    else if (interruptStatus == SSI_IM_RXIM)
+        SSI_ClearInterrupt(SSIx,SSI_ICR_RORIC);
+    else if (interruptStatus == SSI_RIS_RTRIS)
+        SSI_ClearInterrupt(SSIx, SSI_ICR_RTIC);
+    else */
+        while (SPI_ReceiveNonBlockingData(SSIx, RXData));
+
+}
 
  /********************************************************************************
  * @fn                     - SSI_Busy

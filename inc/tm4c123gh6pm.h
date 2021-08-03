@@ -17,7 +17,6 @@
 //*****************************************************************************
 #define INT_UART0               5          // UART0
 #define INT_UART1               6          // UART1
-#define INT_SSI0                7          // SSI0
 #define INT_I2C0                8          // I2C0
 #define INT_PWM0_FAULT          9          // PWM0 Fault
 #define INT_PWM0_0              10          // PWM0 Generator 0
@@ -40,7 +39,6 @@
 #define INT_SYSCTL              28          // System Control
 #define INT_FLASH               29          // Flash Memory Control and EEPROM Control
 #define INT_UART2               33          // UART2
-#define INT_SSI1                34          // SSI1
 #define INT_TIMER3A             35          // 16/32-Bit Timer 3A
 #define INT_TIMER3B             36          // Timer 3B
 #define INT_I2C1                37          // I2C1
@@ -56,8 +54,6 @@
 #define INT_ADC1SS1             49          // ADC1 Sequence 1
 #define INT_ADC1SS2             50          // ADC1 Sequence 2
 #define INT_ADC1SS3             51          // ADC1 Sequence 3
-#define INT_SSI2                57          // SSI2
-#define INT_SSI3                58          // SSI3
 #define INT_UART3               59          // UART3
 #define INT_UART4               60          // UART4
 #define INT_UART5               61          // UART5

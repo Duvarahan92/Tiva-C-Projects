@@ -19,6 +19,16 @@
  };
 
 /* 
+ * Interrupt assignments 
+ * 
+ */
+#define INT_SSI0                7           // SSI0
+#define INT_SSI1                34          // SSI1
+#define INT_SSI2                57          // SSI2
+#define INT_SSI3                58          // SSI3
+
+
+/* 
  * SSI module run mode clock gating control
  *  Arguments to SSI_EnableClk and SSI_DisableClk functions
  */
@@ -135,11 +145,10 @@
 #define SSI_MIS_RTMIS           0x00000002  // SSI Receive Time-Out Masked Interrupt Status
 #define SSI_MIS_RORMIS          0x00000001  // SSI Receive Overrun Masked Interrupt Status
 
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SSI_O_ICR register.
-//
-//*****************************************************************************
+/* 
+ * Clear interrupts
+ * Arguments to SSI_ClearInterrupt function
+ */
 #define SSI_ICR_RTIC            0x00000002  // SSI Receive Time-Out Interrupt Clear
 #define SSI_ICR_RORIC           0x00000001  // SSI Receive Overrun Interrupt  Clear
 
@@ -179,23 +188,45 @@ void SSI_Reset(uint8_t SYSCTL_SRSSI);
  * Peripheral configure
  *
  */
- void SET_SSIMode(uint8_t SSIx, uint32_t Mode);
- void SSI_ConfigClk(uint8_t SSIx, uint32_t SSIClk, uint32_t BitRate);
- void SSI_ConfigModule(uint8_t SSIx, uint32_t PhasePolMode, uint32_t ProtocolMode, uint32_t DSS);
+void SET_SSIMode(uint8_t SSIx, uint32_t Mode);
+void SSI_ConfigClk(uint8_t SSIx, uint32_t SSIClk, uint32_t BitRate);
+void SSI_ConfigModule(uint8_t SSIx, uint32_t PhasePolMode, uint32_t ProtocolMode, uint32_t DSS);
 
  /*
  * Data read and write
  *
  */
- void SPI_SendData(uint8_t SSIx, uint8_t Data);
- void SPI_ReceiveData(uint8_t SSIx, uint8_t *Data);
- void EnableLoopbackMode(uint8_t SSIx);
- void DisableLoopbackMode(uint8_t SSIx);
+void SPI_SendData(uint8_t SSIx, uint8_t Data);
+uint8_t SPI_SendNonBlockingData(uint8_t SSIx, uint8_t Data);
+void SPI_ReceiveData(uint8_t SSIx, uint8_t *Data);
+uint8_t SPI_ReceiveNonBlockingData(uint8_t SSIx, uint8_t *Data);
+void EnableLoopbackMode(uint8_t SSIx);
+void DisableLoopbackMode(uint8_t SSIx);
+
+/*
+ * IRQ Configuration and ISR handling
+ *
+ */
+void SSI_EnableInterrupt(uint8_t SSIX, uint8_t InterruptMask);
+void SSI_DisableInterrupt(uint8_t SSIX, uint8_t InterruptMask);
+void SSI_ClearInterrupt(uint8_t SSIx, uint8_t Interrupt);
+uint32_t SSI_GetInterruptStatus(uint8_t SSIx);
+void SSI_IRQConfig(uint8_t IRQn, uint8_t Ctrl);
+void SSI_IRQPriorityConfig(uint8_t IRQn, uint32_t IRQPriority);
+void SSI_IRQHandling(uint8_t SSIx, uint8_t TXData, uint8_t *RXData);
+
 
  /*
  * Other
  *
  */
  uint8_t SSI_Busy(uint8_t SSIx);
+
+ /*
+ * Helping macros
+ *
+ */
+ #define ENABLE  1
+ #define DISABLE 0
 
 #endif  // __TM4C123GH6PM_GPIO_DRIVER_H__

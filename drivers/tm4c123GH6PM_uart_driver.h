@@ -124,5 +124,5 @@ void UART_FIFODisable(uint8_t UARTx);
  */
  void UART_WriteChar(uint8_t UARTx, unsigned char data);
  void UART_WriteString(uint8_t UARTx, unsigned char buffer[]);
- int32_t UART_ReadChar(uint8_t UARTx);
+ uint8_t UART_ReadChar(uint8_t UARTx);
 #endif  // __TM4C123GH6PM_GPIO_DRIVER_H__

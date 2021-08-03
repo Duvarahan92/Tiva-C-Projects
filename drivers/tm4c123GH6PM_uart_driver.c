@@ -278,7 +278,7 @@ void UART_WriteString(uint8_t UARTx, unsigned char buffer[])
  * 
  * @Note                   - none
  */
- int32_t UART_ReadChar(uint8_t UARTx)
+ uint8_t UART_ReadChar(uint8_t UARTx)
  {
     UART_RegDef_t *pUART = UART_Get_Module(UARTx);
 
