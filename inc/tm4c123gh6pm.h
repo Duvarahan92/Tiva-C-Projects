@@ -17,7 +17,6 @@
 //*****************************************************************************
 #define INT_UART0               5          // UART0
 #define INT_UART1               6          // UART1
-#define INT_I2C0                8          // I2C0
 #define INT_PWM0_FAULT          9          // PWM0 Fault
 #define INT_PWM0_0              10          // PWM0 Generator 0
 #define INT_PWM0_1              11          // PWM0 Generator 1
@@ -41,7 +40,6 @@
 #define INT_UART2               33          // UART2
 #define INT_TIMER3A             35          // 16/32-Bit Timer 3A
 #define INT_TIMER3B             36          // Timer 3B
-#define INT_I2C1                37          // I2C1
 #define INT_QEI1                38          // QEI1
 #define INT_CAN0                39          // CAN0
 #define INT_CAN1                40          // CAN1
@@ -59,8 +57,6 @@
 #define INT_UART5               61          // UART5
 #define INT_UART6               62          // UART6
 #define INT_UART7               63          // UART7
-#define INT_I2C2                68          // I2C2
-#define INT_I2C3                69          // I2C3
 #define INT_TIMER4A             70          // 16/32-Bit Timer 4A
 #define INT_TIMER4B             71          // 16/32-Bit Timer 4B
 #define INT_TIMER5A             92         // 16/32-Bit Timer 5A
@@ -9360,40 +9356,7 @@ typedef struct
 #define SYSCTL_RCGCHIB_R0       0x00000001  // Hibernation Module Run Mode
                                             // Clock Gating Control
 
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_RCGCUART
-// register.
-//
-//*****************************************************************************
 
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_RCGCSSI register.
-//
-//*****************************************************************************
-#define SYSCTL_RCGCSSI_R3       0x00000008  // SSI Module 3 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCSSI_R2       0x00000004  // SSI Module 2 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCSSI_R1       0x00000002  // SSI Module 1 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCSSI_R0       0x00000001  // SSI Module 0 Run Mode Clock
-                                            // Gating Control
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_RCGCI2C register.
-//
-//*****************************************************************************
-#define SYSCTL_RCGCI2C_R3       0x00000008  // I2C Module 3 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCI2C_R2       0x00000004  // I2C Module 2 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCI2C_R1       0x00000002  // I2C Module 1 Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCI2C_R0       0x00000001  // I2C Module 0 Run Mode Clock
-                                            // Gating Control
 
 //*****************************************************************************
 //

@@ -660,3 +660,55 @@ void GPIO_UARTType(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL)
     GPIO_PinConfig(GPIOx, GPIO_PCTL);
 }
 
+/********************************************************************************
+ * @fn                     - GPIO_I2CTypeSDA
+ *
+ * @brief                  - Configure GPIO pin(s) to be SDA
+ * 
+ * @param[in]              - GPIO port
+ * @param[in]              - GPIO pin(s)
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - Consult with table 23-5 (GPIO Pins and Alternate Functions) in
+ *                         - the datasheet Tiva™ TM4C123GH6PM Microcontroller to see which
+ *                         - pins that can be configured as SSI
+ */
+void GPIO_I2CTypeSDA(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL)
+{
+    // Set the pin(s) to AFSEL
+    GPIO_ModeSet(GPIOx, Pinx, GPIO_AFSEL);
+
+    // Configure the pad(s) open-drain with weak pull up
+    GPIO_PadConfig(GPIOx, Pinx, GPIO_DR2R, GPIO_ODR);
+
+    // Configure Pinx as SDA
+    GPIO_PinConfig(GPIOx, GPIO_PCTL);
+}
+
+/********************************************************************************
+ * @fn                     - GPIO_I2CTypeSCL
+ *
+ * @brief                  - Configure GPIO pin(s) to be SCL
+ * 
+ * @param[in]              - GPIO port
+ * @param[in]              - GPIO pin(s)
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - Consult with table 23-5 (GPIO Pins and Alternate Functions) in
+ *                         - the datasheet Tiva™ TM4C123GH6PM Microcontroller to see which
+ *                         - pins that can be configured as SSI
+ */
+void GPIO_I2CTypeSCL(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL)
+{
+    // Set the pin(s) to AFSEL
+    GPIO_ModeSet(GPIOx, Pinx, GPIO_AFSEL);
+
+    // Configure the pad(s) 
+    GPIO_PadConfig(GPIOx, Pinx, GPIO_DR2R, GPIO_DEN);
+
+    // Configure Pinx as SDA
+    GPIO_PinConfig(GPIOx, GPIO_PCTL);
+}
+

@@ -426,7 +426,9 @@ void GPIO_IRQHandling(uint8_t GPIOx, uint8_t Pinx);
  */
  void GPIO_SSIType(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL);
  void GPIO_UARTType(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL);
-
+ void GPIO_I2CTypeSDA(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL);
+ void GPIO_I2CTypeSCL(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL);
+ 
 /*
  * Helping macros
  *
