@@ -35,6 +35,18 @@
 #define SYSCTL_RCGCI2C_R1       0x00000002  // I2C Module 1 Run Mode Clock Gating Control
 #define SYSCTL_RCGCI2C_R0       0x00000001  // I2C Module 0 Run Mode Clock Gating Control
 
+/*
+ *
+ * The following are defines for the bit fields in the I2C_O_MCR register.
+ * Arguments used to enable Glitch filter, Slave function, Master function
+ * and I2C Loopback
+*/
+#define I2C_MCR_GFE             0x00000040  // I2C Glitch Filter Enable
+#define I2C_MCR_SFE             0x00000020  // I2C Slave Function Enable
+#define I2C_MCR_MFE             0x00000010  // I2C Master Function Enable
+#define I2C_MCR_LPBK            0x00000001  // I2C Loopback
+
+
 /*********************************************************************************
 *                        API supported by this driver
 *
