@@ -35,17 +35,36 @@
 #define SYSCTL_RCGCI2C_R1       0x00000002  // I2C Module 1 Run Mode Clock Gating Control
 #define SYSCTL_RCGCI2C_R0       0x00000001  // I2C Module 0 Run Mode Clock Gating Control
 
-/*
- *
- * The following are defines for the bit fields in the I2C_O_MCR register.
- * Arguments used to enable Glitch filter, Slave function, Master function
- * and I2C Loopback
-*/
-#define I2C_MCR_GFE             0x00000040  // I2C Glitch Filter Enable
-#define I2C_MCR_SFE             0x00000020  // I2C Slave Function Enable
-#define I2C_MCR_MFE             0x00000010  // I2C Master Function Enable
-#define I2C_MCR_LPBK            0x00000001  // I2C Loopback
+/* 
+ * I2C module speed mode
+ * Arguments to I2C_MasterInit
+ */
+#define STANDARD_MODE           100000      // 100 Kbps
+#define FAST_MODE               400000      // 400 Kbps
+#define FAST_MODE_PLUS          1000000     // 400 Kbps
 
+/* 
+ * I2C module recevie or send
+ * Arguments to I2C_SetMasterSlaveAddr
+ */
+#define RECEIVE                 1           // Recieve
+#define SEND                    0           // Send  
+
+/* 
+ * I2C module master control 
+ * Arguments to I2C_MasterCTRL
+ */
+#define SINGLE_SEND             0x00000007  // Send only once and stop
+#define SINGLE_RECEIVE          0x00000007  // Receive only once and stop
+#define BURST_SEND_START        0x00000003  // Start sending without stop
+#define BURST_SEND_CONT         0x00000001  // Continue sending without stop
+#define BURST_SEND_FINNISH      0x00000005  // Finish sending after last byte
+#define BURST_SEND_STOP         0x00000004  // Stop sending
+#define BURST_RECEIVE_START     0x0000000b  // Start receiving without stop
+#define BURST_RECEIVE_CONT      0x00000009  // Continue receiving without stop
+#define BURST_RECEIVE_FINNISH   0x00000005  // Finnish receiving after last byte
+#define BURST_RECEIVE_STOP      0x00000004  // Stop receiving
+#define HS_SEND                 0x00000013  // Send in high-speed mode
 
 /*********************************************************************************
 *                        API supported by this driver
@@ -61,6 +80,31 @@ void I2C_EnableMaster(uint8_t I2Cx);
 void I2C_DisableMaster(uint8_t I2Cx);
 void I2C_EnableSlave(uint8_t I2Cx);
 void I2C_DisableSlave(uint8_t I2Cx);
+
+/*
+ * Peripheral configure
+ *
+ */
+void I2C_MasterInit(uint8_t I2Cx, uint32_t Speed_Mode, uint32_t Clk);
+void I2C_SlaveInit(uint8_t I2Cx, uint8_t SlaveAddr);
+void I2C_MasterCTRL(uint8_t I2Cx, uint8_t CtrlCmd);
+
+ /*
+ * Data read and write
+ *
+ */
+void I2C_SetMasterSlaveAddr(uint8_t I2Cx, uint8_t SlaveAddr, uint8_t RS);
+void I2C_MasterSendData(uint8_t I2Cx, uint8_t Data);
+uint8_t I2C_MasterReceiveData(uint8_t I2Cx);
+
+
+ /*
+ * Other functions
+ *
+ */
+uint8_t I2C_SignalLineStatus(uint8_t I2Cx);
+uint8_t I2C_MasterBusy(uint8_t I2Cx);
+uint32_t I2C_MasterGetErrorStatus(uint8_t I2Cx);
 
  /*
  * Helping macros

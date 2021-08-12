@@ -88,58 +88,58 @@
 #define SYSCTL_SRSSI_R1         0x00000002  // SSI Module 1 Software Reset
 #define SYSCTL_SRSSI_R0         0x00000001  // SSI Module 0 Software Reset
 
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SSI_O_DR register.
-//
-//*****************************************************************************
+/*
+ *
+ * The following are defines for the bit fields in the SSI_O_DR register.
+ *
+*/
 #define SSI_DR_DATA_M           0x0000FFFF  // SSI Receive/Transmit Data
 #define SSI_DR_DATA_S           0
 
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SSI_O_SR register.
-//
-//*****************************************************************************
+/*
+ *
+ * The following are defines for the bit fields in the SSI_O_SR register.
+ *
+*/
 #define SSI_SR_BSY              0x00000010  // SSI Busy Bit
 #define SSI_SR_RFF              0x00000008  // SSI Receive FIFO Full
 #define SSI_SR_RNE              0x00000004  // SSI Receive FIFO Not Empty
 #define SSI_SR_TNF              0x00000002  // SSI Transmit FIFO Not Full
 #define SSI_SR_TFE              0x00000001  // SSI Transmit FIFO Empty
 
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SSI_O_CPSR register.
-//
-//*****************************************************************************
+/*
+ *
+ * The following are defines for the bit fields in the SSI_O_CPSR register.
+ *
+*/
 #define SSI_CPSR_CPSDVSR_M      0x000000FF  // SSI Clock Prescale Divisor
 #define SSI_CPSR_CPSDVSR_S      0
 
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SSI_O_IM register.
-//
-//*****************************************************************************
+/*
+ *
+ * The following are defines for the bit fields in the SSI_O_IM register.
+ *
+*/
 #define SSI_IM_TXIM             0x00000008  // SSI Transmit FIFO Interrupt Mask
 #define SSI_IM_RXIM             0x00000004  // SSI Receive FIFO Interrupt Mask
 #define SSI_IM_RTIM             0x00000002  // SSI Receive Time-Out Interrupt Mask
 #define SSI_IM_RORIM            0x00000001  // SSI Receive Overrun Interrupt Mask
 
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SSI_O_RIS register.
-//
-//*****************************************************************************
+/*
+ *
+ * The following are defines for the bit fields in the SSI_O_RIS register.
+ *
+*/
 #define SSI_RIS_TXRIS           0x00000008  // SSI Transmit FIFO Raw Interrupt Status
 #define SSI_RIS_RXRIS           0x00000004  // SSI Receive FIFO Raw Interrupt Status
 #define SSI_RIS_RTRIS           0x00000002  // SSI Receive Time-Out Raw Interrupt Status
 #define SSI_RIS_RORRIS          0x00000001  // SSI Receive Overrun Raw Interrupt Status
 
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SSI_O_MIS register.
-//
-//*****************************************************************************
+/*
+ *
+ * The following are defines for the bit fields in the SSI_O_MIS register.
+ *
+*/
 #define SSI_MIS_TXMIS           0x00000008  // SSI Transmit FIFO Masked Interrupt Status
 #define SSI_MIS_RXMIS           0x00000004  // SSI Receive FIFO Masked Interrupt Status
 #define SSI_MIS_RTMIS           0x00000002  // SSI Receive Time-Out Masked Interrupt Status
@@ -152,19 +152,19 @@
 #define SSI_ICR_RTIC            0x00000002  // SSI Receive Time-Out Interrupt Clear
 #define SSI_ICR_RORIC           0x00000001  // SSI Receive Overrun Interrupt  Clear
 
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SSI_O_DMACTL register.
-//
-//*****************************************************************************
+/*
+ *
+ * The following are defines for the bit fields in the SSI_O_DMACTL register.
+ *
+*/
 #define SSI_DMACTL_TXDMAE       0x00000002  // Transmit DMA Enable
 #define SSI_DMACTL_RXDMAE       0x00000001  // Receive DMA Enable
 
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SSI_O_CC register.
-//
-//*****************************************************************************
+/*
+ *
+ * The following are defines for the bit fields in the SSI_O_CC register.
+ *
+*/
 #define SSI_CC_CS_M             0x0000000F  // SSI Baud Clock Source
 #define SSI_CC_CS_SYSPLL        0x00000000  // System clock (based on clock source and divisor factor)
 #define SSI_CC_CS_PIOSC         0x00000005  // PIOSC

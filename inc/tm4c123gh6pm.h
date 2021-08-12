@@ -1898,6 +1898,18 @@ typedef struct
 #define I2C_MCS_START           0x00000002  // Generate START
 #define I2C_MCS_RUN             0x00000001  // I2C Master Enable
 #define I2C_MCS_BUSY            0x00000001  // I2C Busy
+#define I2C_MCS_NONE_ERROR      0x00000000  // No Error
+
+/*
+ *
+ * The following are defines for the bit fields in the I2C_O_MCR register.
+ * Arguments used to enable Glitch filter, Slave function, Master function
+ * and I2C Loopback
+*/
+#define I2C_MCR_GFE             0x00000040  // I2C Glitch Filter Enable
+#define I2C_MCR_SFE             0x00000020  // I2C Slave Function Enable
+#define I2C_MCR_MFE             0x00000010  // I2C Master Function Enable
+#define I2C_MCR_LPBK            0x00000001  // I2C Loopback
 
 //*****************************************************************************
 //
@@ -1950,16 +1962,6 @@ typedef struct
 //*****************************************************************************
 #define I2C_MICR_CLKIC          0x00000002  // Clock Timeout Interrupt Clear
 #define I2C_MICR_IC             0x00000001  // Master Interrupt Clear
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the I2C_O_MCR register.
-//
-//*****************************************************************************
-#define I2C_MCR_GFE             0x00000040  // I2C Glitch Filter Enable
-#define I2C_MCR_SFE             0x00000020  // I2C Slave Function Enable
-#define I2C_MCR_MFE             0x00000010  // I2C Master Function Enable
-#define I2C_MCR_LPBK            0x00000001  // I2C Loopback
 
 //*****************************************************************************
 //
