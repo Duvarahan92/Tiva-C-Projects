@@ -3,7 +3,7 @@
 #Makefile, for tm4c programming 
 
 # Target name:
-TARGET = spiLoopback
+TARGET = I2CLoopback
 
 # Target type
 MCU = tm4c123GH6PM

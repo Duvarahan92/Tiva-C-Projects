@@ -80,6 +80,8 @@ void I2C_EnableMaster(uint8_t I2Cx);
 void I2C_DisableMaster(uint8_t I2Cx);
 void I2C_EnableSlave(uint8_t I2Cx);
 void I2C_DisableSlave(uint8_t I2Cx);
+void I2C_EnableLoopBack(uint8_t I2Cx);
+void I2C_DisableLoopBack(uint8_t I2Cx);
 
 /*
  * Peripheral configure
@@ -96,6 +98,8 @@ void I2C_MasterCTRL(uint8_t I2Cx, uint8_t CtrlCmd);
 void I2C_SetMasterSlaveAddr(uint8_t I2Cx, uint8_t SlaveAddr, uint8_t RS);
 void I2C_MasterSendData(uint8_t I2Cx, uint8_t Data);
 uint8_t I2C_MasterReceiveData(uint8_t I2Cx);
+void I2c_SlaveSendData(uint8_t I2Cx, uint8_t Data);
+uint8_t I2C_SlaveReceiveData(uint8_t I2Cx);
 
 
  /*
@@ -104,6 +108,7 @@ uint8_t I2C_MasterReceiveData(uint8_t I2Cx);
  */
 uint8_t I2C_SignalLineStatus(uint8_t I2Cx);
 uint8_t I2C_MasterBusy(uint8_t I2Cx);
+uint8_t I2C_SlaveReceiveBusy(uint8_t I2Cx);
 uint32_t I2C_MasterGetErrorStatus(uint8_t I2Cx);
 
  /*

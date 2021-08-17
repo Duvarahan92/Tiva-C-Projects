@@ -83,7 +83,7 @@ static I2C_RegDef_t* MapI2CBaseAddress[4] =
  */
 void I2C_EnableMaster(uint8_t I2Cx)
 {
-    I2C_RegDef_t *pI2C = SSI_Get_Module(SSIx);
+    I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
 
     pI2C->I2CMCR |= I2C_MCR_MFE;
 }
@@ -101,7 +101,7 @@ void I2C_EnableMaster(uint8_t I2Cx)
  */
 void I2C_DisableMaster(uint8_t I2Cx)
 {
-    I2C_RegDef_t *pI2C = SSI_Get_Module(SSIx);
+    I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
 
     pI2C->I2CMCR &= ~(I2C_MCR_MFE);
 }
@@ -119,7 +119,7 @@ void I2C_DisableMaster(uint8_t I2Cx)
  */
 void I2C_EnableSlave(uint8_t I2Cx)
 {
-    I2C_RegDef_t *pI2C = SSI_Get_Module(SSIx);
+    I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
 
     // Enable the clock to the slave block
     pI2C->I2CSCSR |= I2C_SCSR_DA;
@@ -141,14 +141,51 @@ void I2C_EnableSlave(uint8_t I2Cx)
  */
 void I2C_DisableSlave(uint8_t I2Cx)
 {
-    I2C_RegDef_t *pI2C = SSI_Get_Module(SSIx);
+    I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
 
     //Disable slave function
     pI2C->I2CMCR &= ~(I2C_MCR_SFE);
 
     //Disable clock to slave block
-    pI2->I2CSCSR &= ~(I2C_SCSR_DA);
+    pI2C->I2CSCSR &= ~(I2C_SCSR_DA);
 }
+
+   /********************************************************************************
+ * @fn                     - I2C_EnableLoopBack
+ *
+ * @brief                  - This function enables loopback
+ * 
+ * @param[in]              - I2C module
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+ void I2C_EnableLoopBack(uint8_t I2Cx)
+ {
+     I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
+
+     pI2C->I2CMCR |= I2C_MCR_LPBK;
+ }
+
+    /********************************************************************************
+ * @fn                     - I2C_DisableLoopBack
+ *
+ * @brief                  - This function disables loopback
+ * 
+ * @param[in]              - I2C module
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+ void I2C_DisableLoopBack(uint8_t I2Cx)
+ {
+     I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
+
+     pI2C->I2CMCR &= ~(I2C_MCR_LPBK);
+ }
+
 
    /********************************************************************************
  * @fn                     - I2C_MasterInit
@@ -164,9 +201,9 @@ void I2C_DisableSlave(uint8_t I2Cx)
  * 
  * @Note                   - none
  */
-void I2C_MasterInit(uint8_t I2Cx, uint32_t Speed_Mode uint32_t Clk)
+void I2C_MasterInit(uint8_t I2Cx, uint32_t Speed_Mode, uint32_t Clk)
 {
-    I2C_RegDef_t *pI2C = SSI_Get_Module(SSIx);
+    I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
     uint32_t TPR;
 
     // Enable Master function
@@ -175,12 +212,12 @@ void I2C_MasterInit(uint8_t I2Cx, uint32_t Speed_Mode uint32_t Clk)
     // Compute and set the fasted clock divider which is
     // achieves the fastest speed less than or equal 
     // to the desired speed
-    TPR = ((Clk + (2 * 10 * Speed_Mode) - 1) / (2 * 10 Speed_Mode)) - 1;
+    TPR = ((Clk + (2 * 10 * Speed_Mode) - 1) / (2 * 10 * Speed_Mode)) - 1;
     pI2C->I2CMTPR = TPR;
 
     // Check to see if I2C is high speed capable
     if (pI2C->I2CPP & I2C_PP_HS){
-        TPR = ((Clk + (2 * 10 * 3400000) - 1) / (2 * 10 3400000)) - 1;
+        TPR = ((Clk + (2 * 10 * 3400000) - 1) / (2 * 10 * 3400000)) - 1;
         pI2C->I2CMTPR = I2C_MTPR_HS | TPR;
     }
 }
@@ -199,7 +236,7 @@ void I2C_MasterInit(uint8_t I2Cx, uint32_t Speed_Mode uint32_t Clk)
  */
 void I2C_SlaveInit(uint8_t I2Cx, uint8_t SlaveAddr)
 {
-    I2C_RegDef_t *pI2C = SSI_Get_Module(SSIx);
+    I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
 
     //Enable slave function
     I2C_EnableSlave(I2Cx);
@@ -223,7 +260,7 @@ void I2C_SlaveInit(uint8_t I2Cx, uint8_t SlaveAddr)
  */
 void I2C_MasterCTRL(uint8_t I2Cx, uint8_t CtrlCmd)
 {
-    I2C_RegDef_t *pI2C = SSI_Get_Module(SSIx);
+    I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
 
     pI2C->I2CMCS = CtrlCmd;
 }
@@ -242,7 +279,7 @@ void I2C_MasterCTRL(uint8_t I2Cx, uint8_t CtrlCmd)
  */
 void I2C_MasterSendData(uint8_t I2Cx, uint8_t Data)
 {
-    I2C_RegDef_t *pI2C = SSI_Get_Module(SSIx);
+    I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
 
     pI2C->I2CMDR = Data;
 }
@@ -260,9 +297,45 @@ void I2C_MasterSendData(uint8_t I2Cx, uint8_t Data)
  */
 uint8_t I2C_MasterReceiveData(uint8_t I2Cx)
 {
-    I2C_RegDef_t *pI2C = SSI_Get_Module(SSIx);
+    I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
 
     return(pI2C->I2CMDR);
+}
+
+   /********************************************************************************
+ * @fn                     - I2C_SlaveSendData
+ *
+ * @brief                  - Slave sends data
+ * 
+ * @param[in]              - I2C module
+ * @param[in]              - Data to send
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+ void I2c_SlaveSendData(uint8_t I2Cx, uint8_t Data)
+ {
+     I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
+
+     pI2C->I2CSDR = Data;
+ }
+
+    /********************************************************************************
+ * @fn                     - I2C_SlaveReceiveData
+ *
+ * @brief                  - Slave receive data
+ * 
+ * @param[in]              - I2C module
+ * 
+ * @return                 - Data
+ * 
+ * @Note                   - none
+ */
+uint8_t I2C_SlaveReceiveData(uint8_t I2Cx)
+{
+    I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
+    return(pI2C->I2CSDR);
 }
 
    /********************************************************************************
@@ -280,7 +353,7 @@ uint8_t I2C_MasterReceiveData(uint8_t I2Cx)
  */
 void I2C_SetMasterSlaveAddr(uint8_t I2Cx, uint8_t SlaveAddr, uint8_t RS)
 {
-    I2C_RegDef_t *pI2C = SSI_Get_Module(SSIx);
+    I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
 
     pI2C->I2CMSA = (SlaveAddr << 1) | RS; 
 }
@@ -298,7 +371,7 @@ void I2C_SetMasterSlaveAddr(uint8_t I2Cx, uint8_t SlaveAddr, uint8_t RS)
  */
 uint8_t I2C_SignalLineStatus(uint8_t I2Cx)
 {
-    I2C_RegDef_t *pI2C = SSI_Get_Module(SSIx);
+    I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
     return(pI2C->I2CMBMON);
 }
 
@@ -315,9 +388,26 @@ uint8_t I2C_SignalLineStatus(uint8_t I2Cx)
  */
 uint8_t I2C_MasterBusy(uint8_t I2Cx)
 {
-    I2C_RegDef_t *pI2C = SSI_Get_Module(SSIx);
+    I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
     return(pI2C->I2CMCS & I2C_MCS_BUSY);
 }
+
+   /********************************************************************************
+ * @fn                     - I2C_SlaveReceiveBusy
+ *
+ * @brief                  - Check if the slave is able to receive
+ * 
+ * @param[in]              - I2C module
+ * 
+ * @return                 - 1(busy) or 0(not busy)
+ * 
+ * @Note                   - none
+ */
+ uint8_t I2C_SlaveReceiveBusy(uint8_t I2Cx)
+ {
+     I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
+     return(pI2C->I2CSCSR & I2C_SCSR_RREQ);
+ }
 
    /********************************************************************************
  * @fn                     - I2C_MasterGetErrorStatus
@@ -332,13 +422,13 @@ uint8_t I2C_MasterBusy(uint8_t I2Cx)
  */
 uint32_t I2C_MasterGetErrorStatus(uint8_t I2Cx)
 {
-    I2C_RegDef_t *pI2C = SSI_Get_Module(SSIx);
+    I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
     
     //Raw error status
     uint32_t ErrorStatus = pI2C->I2CMCS;
 
     // If master is busy, there is no error to return
-    if(I2C_MasterBusy(I2Cx));
+    if(I2C_MasterBusy(I2Cx))
         return(I2C_MCS_NONE_ERROR);
     
     if (ErrorStatus & (I2C_MCS_ERROR | I2C_MCS_ARBLST))
