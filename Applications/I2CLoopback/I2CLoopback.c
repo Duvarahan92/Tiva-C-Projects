@@ -6,13 +6,13 @@
 
 int main(void)
 {
-    uint32_t SysClk = 16000000;
-    uint32_t BaudRate = 115200;
-    uint8_t SlaveAddr = 59;
-    unsigned char word[]= "Hello World";
-    uint8_t store;
+    static const uint32_t SysClk = 16000000;
+    static const uint32_t BaudRate = 115200;
+    static const uint8_t SlaveAddr = 59;
+    static const unsigned char word[]= "Hello World\r\n";
+    static uint8_t store;
 
-    // Activate clock for UART_0, SPI_0 module and GPIO port B
+    // Activate clock for UART_0, I2C_0 module and GPIO port B
     UART_EnableClk(SYSCTL_RCGCUART_R0);
     I2C_EnableClk(SYSCTL_RCGCI2C_R0);
     GPIO_EnableClk(SYSCTL_RCGCGPIO_R1);
@@ -48,7 +48,7 @@ int main(void)
     I2C_SetMasterSlaveAddr(I2C0_P, SlaveAddr, 0);
 
     //Write-read I2C Master -> Slave
-    UART_WriteString(UART0_P, "Master -> Slave\n");
+    UART_WriteString(UART0_P, (unsigned char*)"Master -> Slave\r\n");
 
     for (int i = 0; i < sizeof(word); i++) {
         I2C_MasterSendData(I2C0_P, word[i]);

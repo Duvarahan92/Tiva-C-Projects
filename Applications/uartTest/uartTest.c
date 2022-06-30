@@ -3,11 +3,12 @@
 #include "tm4c123GH6PM_gpio_driver.h"
 #include "tm4c123GH6PM_uart_driver.h"
 
+#define SysClk              16000000
+#define BaudRate            115200     
+
 int main(void)
 {
-    uint32_t SysClk = 16000000;
-    uint32_t BaudRate = 115200;
-    unsigned char word[] = "Hello world";
+    static unsigned char word[] = "Hello world\r\n";
 
     // Activate clock for UART module 0 and GPIO port A
     UART_EnableClk(SYSCTL_RCGCUART_R0);
