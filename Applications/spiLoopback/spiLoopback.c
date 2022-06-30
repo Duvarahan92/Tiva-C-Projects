@@ -11,11 +11,11 @@ void delay(uint32_t ticks)
 
 int main(void)
 {
-    uint32_t SysClk = 16000000;
-    uint32_t BaudRate = 115200;
-    uint32_t BitRate = 1000000;
-    unsigned char word[] = "The definition of insanity is doing the same thing over and over again and expecting different results.";
-    uint8_t store;
+    static const uint32_t SysClk = 16000000;
+    static const uint32_t BaudRate = 115200;
+    static const uint32_t BitRate = 1000000;
+    static const unsigned char word[] = "The definition of insanity is doing the same thing over and over again and expecting different results.";
+    static uint8_t store;
 
     // Activate clock for UART_0 and SPI module and GPIO port A
     UART_EnableClk(SYSCTL_RCGCUART_R0);
