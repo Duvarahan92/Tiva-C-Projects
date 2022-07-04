@@ -1871,6 +1871,7 @@ typedef struct
                                             // source and divisor factor)
 #define UART_CC_CS_PIOSC        0x00000005  // PIOSC
 
+
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2C_O_MSA register.
@@ -9358,7 +9359,15 @@ typedef struct
 #define SYSCTL_RCGCHIB_R0       0x00000001  // Hibernation Module Run Mode
                                             // Clock Gating Control
 
-
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGCI2 register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGCI2C_R3       0x00000008  // I2C Module 3 Run Mode Clock Gating Control
+#define SYSCTL_RCGCI2C_R2       0x00000004  // I2C Module 2 Run Mode Clock Gating Control
+#define SYSCTL_RCGCI2C_R1       0x00000002  // I2C Module 1 Run Mode Clock Gating Control
+#define SYSCTL_RCGCI2C_R0       0x00000001  // I2C Module 0 Run Mode Clock Gating Control
 
 //*****************************************************************************
 //

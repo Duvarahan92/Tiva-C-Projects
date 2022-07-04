@@ -1,5 +1,6 @@
 /*tm4c123GH6PM_i2c_driver.h*/
 #include <stdint.h>
+#include <stdio.h>
 
 #ifndef INC_TM4C123GH6PM_I2C_DRIVER_H_
 #define INC_TM4C123GH6PM_I2C_DRIVER_H_
@@ -25,15 +26,6 @@
 #define INT_I2C1                37          // I2C1
 #define INT_I2C2                68          // I2C2
 #define INT_I2C3                69          // I2C3
-
-/* 
- * I2C module run mode clock gating control
- * Arguments to I2C_EnableClk and I2C_DisableClk functions
- */
-#define SYSCTL_RCGCI2C_R3       0x00000008  // I2C Module 3 Run Mode Clock Gating Control
-#define SYSCTL_RCGCI2C_R2       0x00000004  // I2C Module 2 Run Mode Clock Gating Control
-#define SYSCTL_RCGCI2C_R1       0x00000002  // I2C Module 1 Run Mode Clock Gating Control
-#define SYSCTL_RCGCI2C_R0       0x00000001  // I2C Module 0 Run Mode Clock Gating Control
 
 /* 
  * I2C module speed mode
@@ -74,12 +66,10 @@
  * Peripheral setup
  *
  */
-void I2C_EnableClk(uint8_t SYSCTL_RCGCI2C_MODULE);
-void I2C_DisableClk(uint8_t SYSCTL_RCGCI2C_MODULE);
-void I2C_EnableMaster(uint8_t I2Cx);
-void I2C_DisableMaster(uint8_t I2Cx);
-void I2C_EnableSlave(uint8_t I2Cx);
-void I2C_DisableSlave(uint8_t I2Cx);
+//void I2C_EnableClk(uint8_t SYSCTL_RCGCI2C_MODULE);
+//void I2C_DisableClk(uint8_t SYSCTL_RCGCI2C_MODULE);
+void I2C_Init(uint8_t I2Cx);
+void I2C_DeInit(uint8_t I2Cx);
 void I2C_EnableLoopBack(uint8_t I2Cx);
 void I2C_DisableLoopBack(uint8_t I2Cx);
 
@@ -88,7 +78,9 @@ void I2C_DisableLoopBack(uint8_t I2Cx);
  *
  */
 void I2C_MasterInit(uint8_t I2Cx, uint32_t Speed_Mode, uint32_t Clk);
+void I2C_MasterDeInit(uint8_t I2Cx);
 void I2C_SlaveInit(uint8_t I2Cx, uint8_t SlaveAddr);
+void I2C_SlaveDeInit(uint8_t I2Cx);
 void I2C_MasterCTRL(uint8_t I2Cx, uint8_t CtrlCmd);
 
  /*
