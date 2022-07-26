@@ -6,31 +6,45 @@
 *
 **********************************************************************************/
 
-static GPIO_RegDef_t* MapGPIOBaseAddress[12] =
+static GPIO_RegDef_t* const MapGPIOBaseAddress[6] =
 {
-    GPIOA, GPIOA_AHB,
-    GPIOB, GPIOB_AHB,
-    GPIOC, GPIOC_AHB,
-    GPIOD, GPIOD_AHB,
-    GPIOE, GPIOE_AHB,
-    GPIOF, GPIOF_AHB
+    GPIOA,
+    GPIOB,
+    GPIOC,
+    GPIOD,
+    GPIOE,
+    GPIOF
 };
 
-/********************************************************************************
- * @fn                     - GPIO_Get_Port
- *
- * @brief                  - This function gets the struct ptr to a port
- * 
- * @param[in]              - GPIO port
- * 
- * @return                 - Struct ptr to a port
- * 
- * @Note                   - none
- */
- static GPIO_RegDef_t* GPIO_Get_Port(uint8_t GPIO_Port)
- {
-     return MapGPIOBaseAddress[GPIO_Port];
- }
+static uint32_t const RCGCGPIOModule[6] =
+{
+    SYSCTL_RCGCGPIO_R0,
+    SYSCTL_RCGCGPIO_R1,
+    SYSCTL_RCGCGPIO_R2,
+    SYSCTL_RCGCGPIO_R3,
+    SYSCTL_RCGCGPIO_R4,
+    SYSCTL_RCGCGPIO_R5
+};
+
+static uint32_t const GPIOHBCTLModule[6] =
+{
+    SYSCTL_GPIOHBCTL_PORTA,
+    SYSCTL_GPIOHBCTL_PORTB,
+    SYSCTL_GPIOHBCTL_PORTC,
+    SYSCTL_GPIOHBCTL_PORTD,
+    SYSCTL_GPIOHBCTL_PORTE,
+    SYSCTL_GPIOHBCTL_PORTF
+};
+
+static uint32_t const SRGPIOModule[6] =
+{
+    SYSCTL_SRGPIO_R0,
+    SYSCTL_SRGPIO_R1,
+    SYSCTL_SRGPIO_R2,
+    SYSCTL_SRGPIO_R3,
+    SYSCTL_SRGPIO_R4,
+    SYSCTL_SRGPIO_R5
+};
 
 /********************************************************************************
  * @fn                     - GPIO_Check_Port
@@ -45,7 +59,7 @@ static GPIO_RegDef_t* MapGPIOBaseAddress[12] =
  */
 static uint8_t GPIO_Check_Port(uint8_t GPIOPort)
 {
-    for (int i = GPIOA_P; i <= GPIOF_AHB_P; i++)
+    for (int i = GPIOA_P; i <= GPIOF_P; i++)
     {
         if (i == GPIOPort)
             return TRUE;
@@ -53,6 +67,25 @@ static uint8_t GPIO_Check_Port(uint8_t GPIOPort)
 
     return FALSE;
 }
+
+/********************************************************************************
+ * @fn                     - GPIO_Get_Port
+ *
+ * @brief                  - This function gets the struct ptr to a port
+ * 
+ * @param[in]              - GPIO port
+ * 
+ * @return                 - Struct ptr to a port
+ * 
+ * @Note                   - none
+ */
+ static GPIO_RegDef_t* GPIO_Get_Port(uint8_t GPIO_Port)
+ {
+    if(GPIO_Check_Port(GPIO_Port))
+        return MapGPIOBaseAddress[GPIO_Port];
+    return 0;
+ }
+
 
 /********************************************************************************
  * @fn                     - GPIO_Check_Pin
@@ -68,36 +101,19 @@ static uint8_t GPIO_Check_Port(uint8_t GPIOPort)
  */
 static uint8_t GPIO_Check_Pin(uint8_t GPIOx, uint8_t PinNumber)
 {
-    uint8_t valid = GPIO_Check_Port(GPIOx);
     GPIO_RegDef_t *pGPIOx = GPIO_Get_Port(GPIOx);
 
-    if (pGPIOx == GPIOA ||pGPIOx == GPIOB ||pGPIOx == GPIOC || pGPIOx == GPIOD ||
-        pGPIOx == GPIOA_AHB || pGPIOx == GPIOB_AHB || pGPIOx == GPIOC_AHB || pGPIOx == GPIOD_AHB)
-    {
-        if (PinNumber >= 0 && PinNumber <= 7)
-            valid &= TRUE;
-        else
-            valid &= FALSE;
-    }else if (pGPIOx == GPIOE ||pGPIOx == GPIOE_AHB)
-    {
-        if (PinNumber >= 0 && PinNumber <= 5)
-            valid &= TRUE;
-        else
-            valid &= FALSE;
-    }else if (pGPIOx == GPIOF ||pGPIOx == GPIOF_AHB)
-    {
-        if (PinNumber >= 0 && PinNumber <= 4)
-            valid &= TRUE;
-        else
-            valid &= FALSE;
-    }
-    return valid;
-}
+    if (pGPIOx == GPIOA ||pGPIOx == GPIOB ||pGPIOx == GPIOC || pGPIOx == GPIOD)
+        return (PinNumber >= 0x01 && PinNumber <= 0x80);
 
-/*********************************************************************************
-*                           API functions
-*
-**********************************************************************************/ 
+    else if (pGPIOx == GPIOE)
+        return (PinNumber >= 0x01 && PinNumber <= 0x20);
+
+    else if (pGPIOx == GPIOF)
+        return (PinNumber >= 0x01 && PinNumber <= 0x10);
+
+    return FALSE;
+}
 
 /********************************************************************************
  * @fn                     - GPIO_EnableClk
@@ -110,9 +126,9 @@ static uint8_t GPIO_Check_Pin(uint8_t GPIOx, uint8_t PinNumber)
  * 
  * @Note                   - none
  */
-void GPIO_EnableClk(uint8_t SYSCTL_RCGCGPIO_MODULE)
+void GPIO_EnableClk(uint8_t GPIOx)
 {
-    SYSCTL -> RCGCGPIO |= SYSCTL_RCGCGPIO_MODULE;        
+    SYSCTL -> RCGCGPIO |= RCGCGPIOModule[GPIOx];        
 }
 
 /********************************************************************************
@@ -126,30 +142,27 @@ void GPIO_EnableClk(uint8_t SYSCTL_RCGCGPIO_MODULE)
  * 
  * @Note                   - none
  */
-void GPIO_DisableClk(uint8_t SYSCTL_RCGCGPIO_Portx)
+void GPIO_DisableClk(uint8_t GPIOx)
  {
-     SYSCTL -> RCGCGPIO &= ~(SYSCTL_RCGCGPIO_Portx);
+     SYSCTL -> RCGCGPIO &= ~(RCGCGPIOModule[GPIOx]);
  }
 
-/********************************************************************************
- * @fn                     - GPIO_SelectBus
+ /********************************************************************************
+ * @fn                     - GPIO_Reset
  *
- * @brief                  - This function selects between bus AHB or APB
+ * @brief                  - This function reset the GPIO peripheral
  * 
  * @param[in]              - GPIO port
- * @param[in]              - AHB or APB macros
  * 
  * @return                 - none
  * 
  * @Note                   - none
  */
 
-void GPIO_SelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus)
+void GPIO_Reset(uint8_t GPIOx)
 {
-    if (Bus == AHB)
-        SYSCTL -> GPIOHBCTL |= Bus;
-     SYSCTL -> GPIOHBCTL &= ~(Bus);
-  
+    SYSCTL -> SRGPIO |= SRGPIOModule[GPIOx];
+    SYSCTL -> SRGPIO &= ~(SRGPIOModule[GPIOx]);
 }
 
 /********************************************************************************
@@ -176,6 +189,84 @@ void GPIO_SelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus)
     pGPIO -> GPIOADCCTL = ((PinIO & 3) ? (pGPIO -> GPIOADCCTL | Pinx) : (pGPIO -> GPIOADCCTL & ~(Pinx)));
     pGPIO -> GPIODMACTL = ((PinIO & 4) ? (pGPIO -> GPIODMACTL | Pinx) : (pGPIO -> GPIODMACTL & ~(Pinx)));
  }
+
+
+/*********************************************************************************
+*                           API functions
+*
+**********************************************************************************/ 
+/********************************************************************************
+ * @fn                     - GPIO_Init
+ *
+ * @brief                  - Initialize GPIO port and pin by enabling corresponding clock.
+ *                           It also set the mode of the pin.
+ * 
+ * @param[in]              - GPIO port and pin
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void GPIO_Init(uint8_t GPIOx, uint8_t Pinx, uint8_t PinIO)
+{
+    if(GPIO_Check_Pin(GPIOx, Pinx))
+    {
+         GPIO_EnableClk(GPIOx);
+         GPIO_ModeSet(GPIOx, Pinx, PinIO);
+    }
+}
+
+/********************************************************************************
+ * @fn                     - GPIO_Deinit
+ *
+ * @brief                  - Deitialize GPIO port and pin
+ * @param[in]              - GPIO port and pin
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+
+void GPIO_Deinit(uint8_t GPIOx, uint8_t Pinx)
+{
+    GPIO_Reset(GPIOx);
+    GPIO_DisableClk(GPIOx);
+}
+
+/********************************************************************************
+ * @fn                     - GPIO_EnableAHB
+ *
+ * @brief                  - This function enables high performance bus for a given port.
+ * 
+ * @param[in]              - GPIO port
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+
+void GPIO_EnableAHB(uint8_t GPIOx)
+{
+    SYSCTL -> GPIOHBCTL |= GPIOHBCTLModule[GPIOx];
+}
+
+/********************************************************************************
+ * @fn                     - GPIO_DisableAHB
+ *
+ * @brief                  - This function disables high performance bus for a given port.
+ * 
+ * @param[in]              - GPIO port
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+
+void GPIO_DisableAHB(uint8_t GPIOx)
+{
+    SYSCTL -> GPIOHBCTL &= ~(GPIOHBCTLModule[GPIOx]);
+}
+
 
  /********************************************************************************
  * @fn                     - GPIO_PadConfig
@@ -266,25 +357,6 @@ void GPIO_PinConfig(uint8_t GPIOx, uint32_t GPIO_PCTL)
       
     pGPIO -> GPIOSLR &= ~(Pinx);
  }
-
-/********************************************************************************
- * @fn                     - GPIO_Reset
- *
- * @brief                  - This function reset the GPIO peripheral
- * 
- * @param[in]              - GPIO port
- * 
- * @return                 - none
- * 
- * @Note                   - none
- */
-
-void GPIO_Reset(uint8_t SYSCTL_SRGPIO)
-{
-    SYSCTL -> SRGPIO |= SYSCTL_SRGPIO;
-    SYSCTL -> SRGPIO &= ~(SYSCTL_SRGPIO);
-
-}
 
 /********************************************************************************
  * @fn                     - GPIO_InterruptTypeSet
@@ -624,8 +696,11 @@ void GPIO_IRQHandling(uint8_t GPIOx, uint8_t Pinx)
  */
 void GPIO_SSIType(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL)
 {
+     // Init GPIO pin
+    GPIO_Init(GPIOx, Pinx, GPIO_AFSEL);
+    
     // Set the pin(s) to AFSEL
-    GPIO_ModeSet(GPIOx, Pinx, GPIO_AFSEL);
+   // GPIO_ModeSet(GPIOx, Pinx, GPIO_AFSEL);
 
     // Configure the pad(s)
     GPIO_PadConfig(GPIOx, Pinx, GPIO_DR2R, GPIO_PUR);
@@ -650,8 +725,8 @@ void GPIO_SSIType(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL)
  */
 void GPIO_UARTType(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL)
 {
-    // Set the pin(s) to AFSEL
-    GPIO_ModeSet(GPIOx, Pinx, GPIO_AFSEL);
+    // Init GPIO pin
+    GPIO_Init(GPIOx, Pinx, GPIO_AFSEL);
 
     // Configure the pad(s)
     GPIO_PadConfig(GPIOx, Pinx, GPIO_DR2R, GPIO_DEN);
@@ -676,8 +751,8 @@ void GPIO_UARTType(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL)
  */
 void GPIO_I2CTypeSDA(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL)
 {
-    // Set the pin(s) to AFSEL
-    GPIO_ModeSet(GPIOx, Pinx, GPIO_AFSEL);
+    // Init GPIO pin
+    GPIO_Init(GPIOx, Pinx, GPIO_AFSEL);
 
     // Configure the pad(s) open-drain with weak pull up
     GPIO_PadConfig(GPIOx, Pinx, GPIO_DR2R, GPIO_ODR);
@@ -702,8 +777,8 @@ void GPIO_I2CTypeSDA(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL)
  */
 void GPIO_I2CTypeSCL(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL)
 {
-    // Set the pin(s) to AFSEL
-    GPIO_ModeSet(GPIOx, Pinx, GPIO_AFSEL);
+    // Init GPIO pin
+    GPIO_Init(GPIOx, Pinx, GPIO_AFSEL);
 
     // Configure the pad(s) 
     GPIO_PadConfig(GPIOx, Pinx, GPIO_DR2R, GPIO_DEN);

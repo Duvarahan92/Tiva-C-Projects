@@ -25,18 +25,18 @@ static uint32_t const RCGCI2CModule[4] =
 
 static uint32_t const I2CSCLGPIOConfig[4][3] =
 {
-    {GPIOB_P, GPIO_PIN_2, GPIO_PCTL_PB2_I2C0SCL},
-    {GPIOA_P, GPIO_PIN_6, GPIO_PCTL_PA6_I2C1SCL},
-    {GPIOE_P, GPIO_PIN_4, GPIO_PCTL_PE4_I2C2SCL},
-    {GPIOD_P, GPIO_PIN_0, GPIO_PCTL_PD0_I2C3SCL},
+    {GPIOB_P, PIN_2, GPIO_PCTL_PB2_I2C0SCL},
+    {GPIOA_P, PIN_6, GPIO_PCTL_PA6_I2C1SCL},
+    {GPIOE_P, PIN_4, GPIO_PCTL_PE4_I2C2SCL},
+    {GPIOD_P, PIN_0, GPIO_PCTL_PD0_I2C3SCL},
 };
 
 static uint32_t const I2CSDAGPIOConfig[4][3] =
 {
-    {GPIOB_P, GPIO_PIN_3, GPIO_PCTL_PB3_I2C0SDA},
-    {GPIOA_P, GPIO_PIN_7, GPIO_PCTL_PA7_I2C1SDA},
-    {GPIOE_P, GPIO_PIN_5, GPIO_PCTL_PE5_I2C2SDA},
-    {GPIOD_P, GPIO_PIN_1, GPIO_PCTL_PD1_I2C3SDA},
+    {GPIOB_P, PIN_3, GPIO_PCTL_PB3_I2C0SDA},
+    {GPIOA_P, PIN_7, GPIO_PCTL_PA7_I2C1SDA},
+    {GPIOE_P, PIN_5, GPIO_PCTL_PE5_I2C2SDA},
+    {GPIOD_P, PIN_1, GPIO_PCTL_PD1_I2C3SDA},
 };
 
 /********************************************************************************
@@ -51,7 +51,7 @@ static uint32_t const I2CSDAGPIOConfig[4][3] =
  * @Note                   - none
  */
 
- void I2C_EnableClk(uint8_t I2Cx)
+ static void I2C_EnableClk(uint8_t I2Cx)
  {
      
     SYSCTL -> RCGCI2C |= RCGCI2CModule[I2Cx];
@@ -68,7 +68,7 @@ static uint32_t const I2CSDAGPIOConfig[4][3] =
  * 
  * @Note                   - none
  */
- void I2C_DisableClk(uint8_t I2Cx)
+ static void I2C_DisableClk(uint8_t I2Cx)
  {
      
     SYSCTL -> RCGCI2C &= ~(RCGCI2CModule[I2Cx]);
@@ -125,11 +125,7 @@ static uint32_t const I2CSDAGPIOConfig[4][3] =
      return MapI2CBaseAddress[I2Cx];
  }
 
-/*********************************************************************************
-*                           API functions
-*
-**********************************************************************************/ 
-   /********************************************************************************
+    /********************************************************************************
  * @fn                     - I2C_Init
  *
  * @brief                  - This function initialize a I2C module
@@ -165,6 +161,12 @@ void I2C_DeInit(uint8_t I2Cx)
     I2C_DisableClk(I2Cx);
     // Add reset
 }
+
+
+/*********************************************************************************
+*                           API functions
+*
+**********************************************************************************/ 
 
 /********************************************************************************
  * @fn                     - I2C_EnableLoopBack
@@ -219,6 +221,7 @@ void I2C_DeInit(uint8_t I2Cx)
  */
 void I2C_MasterInit(uint8_t I2Cx, uint32_t Speed_Mode, uint32_t Clk)
 {
+    I2C_Init(I2Cx);
     I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
     uint32_t TPR;
 
@@ -254,6 +257,7 @@ static void I2C_MasterDeinit(uint8_t I2Cx)
     I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
 
     pI2C->I2CMCR &= ~(I2C_MCR_MFE);
+    I2C_DeInit(I2Cx);
 }
 
  /********************************************************************************
@@ -270,6 +274,7 @@ static void I2C_MasterDeinit(uint8_t I2Cx)
  */
 void I2C_SlaveInit(uint8_t I2Cx, uint8_t SlaveAddr)
 {
+    I2C_Init(I2Cx);
     I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
     
     //Enable slave function
@@ -305,6 +310,8 @@ void I2C_SlaveDeinit(uint8_t I2Cx)
 
     //Disable clock to slave block
     pI2C->I2CSCSR &= ~(I2C_SCSR_DA);
+
+    I2C_DeInit(I2Cx);
 }
 
 /********************************************************************************

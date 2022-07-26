@@ -12,29 +12,16 @@ int main(void)
     static const unsigned char word[]= "Hello World\r\n";
     static uint8_t store;
 
-    // Activate clock for UART_0, I2C_0 module and GPIO port B
-    UART_EnableClk(SYSCTL_RCGCUART_R0);
-    GPIO_EnableClk(SYSCTL_RCGCGPIO_R1);
-    GPIO_EnableClk(SYSCTL_RCGCGPIO_R0);
-    
-    // Initialize I2C_0
-    I2C_Init(I2C0_P);
-
-    //Configure pin 0 and 1 on GPIO port A as UART
-    GPIO_UARTType(GPIOA_P, GPIO_PIN_0, GPIO_PCTL_PA0_U0RX);
-    GPIO_UARTType(GPIOA_P, GPIO_PIN_1, GPIO_PCTL_PA1_U0TX);
-
     //Config UART 0
     // 16 MHz clock, 115200 baud rate, no parity, 8 bit word length and
     // one stop bit
-    UART_ConfigModule(UART0_P, SysClk, BaudRate, UART_LCRH_NONE, UART_LCRH_WLEN_8, UART_LCRH_STP1);
+    UART_Init(UART0_P, SysClk, BaudRate, UART_LCRH_NONE, UART_LCRH_WLEN_8, UART_LCRH_STP1);
 
-    // Enable loopback
-    I2C_EnableLoopBack(I2C0_P);
-    
     //Init master and slave
     I2C_MasterInit(I2C0_P, STANDARD_MODE, SysClk);
     I2C_SlaveInit(I2C0_P, SlaveAddr);
+
+    I2C_EnableLoopBack(I2C0_P);
 
     //Set slave address of the master
     I2C_SetMasterSlaveAddr(I2C0_P, SlaveAddr, 0);
@@ -57,11 +44,6 @@ int main(void)
 
         UART_WriteChar(UART0_P, store);
     }
-
-
-
-
-
 
     return 0;
 }

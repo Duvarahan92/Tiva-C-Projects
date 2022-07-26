@@ -66,10 +66,8 @@
  * Peripheral setup
  *
  */
-//void I2C_EnableClk(uint8_t SYSCTL_RCGCI2C_MODULE);
-//void I2C_DisableClk(uint8_t SYSCTL_RCGCI2C_MODULE);
-void I2C_Init(uint8_t I2Cx);
-void I2C_DeInit(uint8_t I2Cx);
+//void I2C_Init(uint8_t I2Cx);
+//void I2C_DeInit(uint8_t I2Cx);
 void I2C_EnableLoopBack(uint8_t I2Cx);
 void I2C_DisableLoopBack(uint8_t I2Cx);
 

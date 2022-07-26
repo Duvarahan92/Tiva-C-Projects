@@ -1,4 +1,5 @@
 #include "tm4c123GH6PM_uart_driver.h"
+#include "tm4c123GH6PM_gpio_driver.h"
 #include "tm4c123gh6pm.h"
 
 /*********************************************************************************
@@ -18,6 +19,54 @@ static UART_RegDef_t* MapUARTBaseAddress[8] =
     UART7
 };
 
+static uint32_t const RCGCUARTModule[8] =
+{
+   SYSCTL_RCGCUART_R0,
+   SYSCTL_RCGCUART_R1,
+   SYSCTL_RCGCUART_R2,
+   SYSCTL_RCGCUART_R3,
+   SYSCTL_RCGCUART_R4,
+   SYSCTL_RCGCUART_R5,
+   SYSCTL_RCGCUART_R6,
+   SYSCTL_RCGCUART_R7
+};
+
+static uint32_t const SRUARTModule[8] =
+{
+    SYSCTL_SRUART_R0,
+    SYSCTL_SRUART_R1,
+    SYSCTL_SRUART_R2,
+    SYSCTL_SRUART_R3,
+    SYSCTL_SRUART_R4,
+    SYSCTL_SRUART_R5,
+    SYSCTL_SRUART_R6,
+    SYSCTL_SRUART_R7
+};
+
+static uint32_t const UARTRXGPIOConfig[8][3] =
+{
+    {GPIOA_P, PIN_0, GPIO_PCTL_PA0_U0RX},
+    {GPIOB_P, PIN_0, GPIO_PCTL_PB0_U1RX},
+    {GPIOD_P, PIN_6, GPIO_PCTL_PD6_U2RX},
+    {GPIOC_P, PIN_6, GPIO_PCTL_PC6_U3RX},
+    {GPIOC_P, PIN_4, GPIO_PCTL_PC4_U4RX},
+    {GPIOE_P, PIN_4, GPIO_PCTL_PE4_U5RX},
+    {GPIOD_P, PIN_4, GPIO_PCTL_PD4_U6RX},
+    {GPIOE_P, PIN_0, GPIO_PCTL_PE0_U7RX},
+};
+
+static uint32_t const UARTTXGPIOConfig[8][3] =
+{
+    {GPIOA_P, PIN_1, GPIO_PCTL_PA1_U0TX},
+    {GPIOB_P, PIN_1, GPIO_PCTL_PB1_U1TX},
+    {GPIOD_P, PIN_7, GPIO_PCTL_PD7_U2TX},
+    {GPIOC_P, PIN_7, GPIO_PCTL_PC7_U3TX},
+    {GPIOC_P, PIN_5, GPIO_PCTL_PC5_U4TX},
+    {GPIOE_P, PIN_5, GPIO_PCTL_PE5_U5TX},
+    {GPIOD_P, PIN_5, GPIO_PCTL_PD5_U6TX},
+    {GPIOE_P, PIN_1, GPIO_PCTL_PE1_U7TX}
+};
+
 /********************************************************************************
  * @fn                     - UART_Get_Module
  *
@@ -34,12 +83,24 @@ static UART_RegDef_t* MapUARTBaseAddress[8] =
      return MapUARTBaseAddress[UART_Module];
  }
 
-/*********************************************************************************
-*                           API functions
-*
-**********************************************************************************/ 
+ /********************************************************************************
+ * @fn                     - UART_GPIOType
+ *
+ * @brief                  - This function configure the necessary GPIO pins as RX and TX to the right UART module.
+ * 
+ * @param[in]              - UART Module
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+ static void UART_GPIOType(uint8_t UARTx)
+ {
+    GPIO_UARTType(UARTRXGPIOConfig[UARTx][0], UARTRXGPIOConfig[UARTx][1], UARTRXGPIOConfig[UARTx][2]);
+    GPIO_UARTType(UARTTXGPIOConfig[UARTx][0], UARTTXGPIOConfig[UARTx][1], UARTTXGPIOConfig[UARTx][2]);  
+ }
 
-/********************************************************************************
+ /********************************************************************************
  * @fn                     - UART_EnableClk
  *
  * @brief                  - This function enables peripheral clock for the given UART module
@@ -51,10 +112,10 @@ static UART_RegDef_t* MapUARTBaseAddress[8] =
  * @Note                   - none
  */
 
- void UART_EnableClk(uint8_t SYSCTL_RCGCUART_MODULE)
+ void UART_EnableClk(uint8_t UARTx)
  {
      
-    SYSCTL -> RCGCUART |= SYSCTL_RCGCUART_MODULE;
+    SYSCTL -> RCGCUART |= RCGCUARTModule[UARTx];
  }
 
  /********************************************************************************
@@ -69,13 +130,13 @@ static UART_RegDef_t* MapUARTBaseAddress[8] =
  * @Note                   - none
  */
 
- void UART_DisableClk(uint8_t SYSCTL_RCGCUART_MODULE)
+ void UART_DisableClk(uint8_t UARTx)
  {
      
-    SYSCTL -> RCGCUART &= ~(SYSCTL_RCGCUART_MODULE);
+    SYSCTL -> RCGCUART &= ~(RCGCUARTModule[UARTx]);
  }
 
- /********************************************************************************
+  /********************************************************************************
  * @fn                     - UART_EnableModule
  *
  * @brief                  - This function enables UART module
@@ -86,6 +147,41 @@ static UART_RegDef_t* MapUARTBaseAddress[8] =
  * 
  * @Note                   - none
  */
+
+   /********************************************************************************
+ * @fn                     - UART_FIFOEnable
+ *
+ * @brief                  - This function enables FIFO
+ * 
+ * @param[in]              - UART port
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void UART_FIFOEnable(uint8_t UARTx)
+{
+   UART_RegDef_t *pUART = UART_Get_Module(UARTx);
+   pUART -> UARTLCRH |= UART_LCRH_FEN;
+}
+
+/********************************************************************************
+ * @fn                     - UART_FIFOEnable
+ *
+ * @brief                  - This function enables FIFO
+ * 
+ * @param[in]              - UART port
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void UART_FIFODisable(uint8_t UARTx)
+{
+   UART_RegDef_t *pUART = UART_Get_Module(UARTx);
+   pUART -> UARTLCRH &= ~(UART_LCRH_FEN);
+}
+
 
  void UART_EnableModule(uint8_t UARTx)
  {
@@ -124,7 +220,7 @@ static UART_RegDef_t* MapUARTBaseAddress[8] =
    pUART -> UARTCTL &= ~(UART_CTL_UARTEN | UART_CTL_TXE | UART_CTL_RXE);
  }
 
-  /********************************************************************************
+ /********************************************************************************
  * @fn                     - UART_Reset
  *
  * @brief                  - This function reset the UART module
@@ -136,51 +232,40 @@ static UART_RegDef_t* MapUARTBaseAddress[8] =
  * @Note                   - none
  */
 
-void UART_Reset(uint8_t SYSCTL_SRUART)
+void UART_Reset(uint8_t UARTx)
 {
-    SYSCTL -> SRUART |= SYSCTL_SRUART;
-    SYSCTL -> SRUART &= ~(SYSCTL_SRUART);
+    SYSCTL -> SRUART |= SRUARTModule[UARTx];
+    SYSCTL -> SRUART &= ~(SRUARTModule[UARTx]);
 
-}
-
-  /********************************************************************************
- * @fn                     - UART_FIFOEnable
- *
- * @brief                  - This function enables FIFO
- * 
- * @param[in]              - UART port
- * 
- * @return                 - none
- * 
- * @Note                   - none
- */
-void UART_FIFOEnable(uint8_t UARTx)
-{
-   UART_RegDef_t *pUART = UART_Get_Module(UARTx);
-   pUART -> UARTLCRH |= UART_LCRH_FEN;
 }
 
 /********************************************************************************
- * @fn                     - UART_FIFOEnable
+ * @fn                     - UART_Cofig
  *
- * @brief                  - This function enables FIFO
+ * @brief                  - This function enables clock and gpio pin
  * 
- * @param[in]              - UART port
+ * @param[in]              - UART Module
  * 
  * @return                 - none
  * 
  * @Note                   - none
  */
-void UART_FIFODisable(uint8_t UARTx)
-{
-   UART_RegDef_t *pUART = UART_Get_Module(UARTx);
-   pUART -> UARTLCRH &= ~(UART_LCRH_FEN);
-}
+ void UART_Config(uint8_t UARTx)
+ {
+   UART_EnableClk(UARTx);
+   UART_GPIOType(UARTx);
+ }
 
-  /********************************************************************************
- * @fn                     - UART_ConfigModule
+
+/*********************************************************************************
+*                           API functions
+*
+**********************************************************************************/ 
+
+/********************************************************************************
+ * @fn                     - UART_Init
  *
- * @brief                  - This function configure the UART module
+ * @brief                  - This function initialize and configure the UART module
  * 
  * @param[in]              - UART port
  * @param[in]              - System clock
@@ -193,8 +278,9 @@ void UART_FIFODisable(uint8_t UARTx)
  * 
  * @Note                   - none
  */
-void UART_ConfigModule(uint8_t UARTx, uint32_t Clk, uint32_t Baud, uint32_t Parity, uint32_t DataLength, uint32_t StopBits)
+void UART_Init(uint8_t UARTx, uint32_t Clk, uint32_t Baud, uint32_t Parity, uint32_t DataLength, uint32_t StopBits)
 {
+   UART_Config(UARTx);
    UART_RegDef_t *pUART = UART_Get_Module(UARTx);
    uint32_t div;
 
@@ -219,6 +305,25 @@ void UART_ConfigModule(uint8_t UARTx, uint32_t Clk, uint32_t Baud, uint32_t Pari
    // Start the UART module
    UART_EnableModule(UARTx);
 }
+
+/********************************************************************************
+ * @fn                     - UART_Deinit
+ *
+ * @brief                  - This function Deinitialize and configure the UART module
+ * 
+ * @param[in]              - UART port
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+
+ void UART_Deinit(uint8_t UARTx)
+ {
+   UART_Reset(UARTx);
+   UART_DisableModule(UARTx);
+   UART_DisableClk(UARTx);
+ }
 
 /********************************************************************************
  * @fn                     - UART_WriteChar

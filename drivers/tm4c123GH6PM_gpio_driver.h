@@ -15,26 +15,26 @@
  */
  enum Port
  {
-   GPIOA_P = 0, GPIOA_AHB_P = 1,
-   GPIOB_P = 2, GPIOB_AHB_P = 3, 
-   GPIOC_P = 4, GPIOC_AHB_P = 5, 
-   GPIOD_P = 6, GPIOD_AHB_P = 7, 
-   GPIOE_P = 8, GPIOE_AHB_P = 9, 
-   GPIOF_P = 10, GPIOF_AHB_P = 11
+   GPIOA_P = 0, 
+   GPIOB_P = 1, 
+   GPIOC_P = 2,  
+   GPIOD_P = 3, 
+   GPIOE_P = 4, 
+   GPIOF_P = 5, 
  };
 
 /* 
  * GPIO pin definations user can pass on in different APIs function 
  * 
  */
-#define GPIO_PIN_0              0x00000001         // GPIO pin 0
-#define GPIO_PIN_1              0x00000002         // GPIO pin 1
-#define GPIO_PIN_2              0x00000004         // GPIO pin 2
-#define GPIO_PIN_3              0x00000008         // GPIO pin 3
-#define GPIO_PIN_4              0x00000010         // GPIO pin 4
-#define GPIO_PIN_5              0x00000020         // GPIO pin 5
-#define GPIO_PIN_6              0x00000040         // GPIO pin 6
-#define GPIO_PIN_7              0x00000080         // GPIO pin 7
+#define PIN_0              0x00000001         // GPIO pin 0
+#define PIN_1              0x00000002         // GPIO pin 1
+#define PIN_2              0x00000004         // GPIO pin 2
+#define PIN_3              0x00000008         // GPIO pin 3
+#define PIN_4              0x00000010         // GPIO pin 4
+#define PIN_5              0x00000020         // GPIO pin 5
+#define PIN_6              0x00000040         // GPIO pin 6
+#define PIN_7              0x00000080         // GPIO pin 7
 
 /* 
  * Interrupt assignments 
@@ -48,45 +48,8 @@
 #define INT_GPIOF               30                 // GPIO Port F
 
 /* 
- * GPIO ports run mode clock gating control
- * Arguments to GPIO_EnableClk and GPIO_DisableClk functions
- */
-#define SYSCTL_RCGCGPIO_R5      0x00000020  // GPIO Port F Run Mode Clock Gating Control
-#define SYSCTL_RCGCGPIO_R4      0x00000010  // GPIO Port E Run Mode Clock Gating Control
-#define SYSCTL_RCGCGPIO_R3      0x00000008  // GPIO Port D Run Mode Clock Gating Control
-#define SYSCTL_RCGCGPIO_R2      0x00000004  // GPIO Port C Run Mode Clock Gating Control
-#define SYSCTL_RCGCGPIO_R1      0x00000002  // GPIO Port B Run Mode Clock Gating Control
-#define SYSCTL_RCGCGPIO_R0      0x00000001  // GPIO Port A Run Mode Clock Gating Control
-
-/* 
- * Select btween AHB and APB
- * Arguments to GPIO_SelectBus function
- */
-#define AHB                     1           // Select between APB and AHB
-
-#define SYSCTL_GPIOHBCTL_PORTF  0x00000020  // Port F Advanced High-Performance Bus
-#define SYSCTL_GPIOHBCTL_PORTE  0x00000010  // Port E Advanced High-Performance Bus
-#define SYSCTL_GPIOHBCTL_PORTD  0x00000008  // Port D Advanced High-Performance Bus
-#define SYSCTL_GPIOHBCTL_PORTC  0x00000004  // Port C Advanced High-Performance Bus
-#define SYSCTL_GPIOHBCTL_PORTB  0x00000002  // Port B Advanced High-Performance Bus
-#define SYSCTL_GPIOHBCTL_PORTA  0x00000001  // Port A Advanced High-Performance Bus
-
-
-/* 
- * Reset GPIO port
- * Argument to GPIO_Reset function
- */
-#define SYSCTL_SRGPIO_R5        0x00000020  // GPIO Port F Software Reset
-#define SYSCTL_SRGPIO_R4        0x00000010  // GPIO Port E Software Reset
-#define SYSCTL_SRGPIO_R3        0x00000008  // GPIO Port D Software Reset
-#define SYSCTL_SRGPIO_R2        0x00000004  // GPIO Port C Software Reset
-#define SYSCTL_SRGPIO_R1        0x00000002  // GPIO Port B Software Reset
-#define SYSCTL_SRGPIO_R0        0x00000001  // GPIO Port A Software Reset
-
-
-/* 
  * GPIO pin mode
- * Arguments to GPIO_ModeSet function
+ * Arguments to GPIO_Init function
  */
 #define GPIO_IN                 0                  // Sets the GPIO pin as input
 #define GPIO_OUT                1                  // Sets the GPIO pin as output
@@ -371,16 +334,15 @@
  * Peripheral setup
  *
  */
-void GPIO_EnableClk(uint8_t SYSCTL_RCGCGPIO_PORTx);
-void GPIO_DisableClk(uint8_t SYSCTL_RCGCGPIO_PORTx);
-void GPIO_SelectBus(uint8_t SYSCTL_GPIOHBCTL_PORTx, uint8_t Bus);
-void GPIO_Reset(uint8_t SYSCTL_SRGPIO);
+void GPIO_Init(uint8_t GPIOx, uint8_t Pinx, uint8_t PinIO);
+void GPIO_Deinit(uint8_t GPIOx, uint8_t Pinx);
+void GPIO_EnableAHB(uint8_t GPIOx);
+void GPIO_DisableAHB(uint8_t GPIOx);
 
 /*
  * Configure port and pin
  *
  */
-void GPIO_ModeSet(uint8_t GPIOx, uint8_t Pinx, uint8_t PinIO);
 void GPIO_PadConfig(uint8_t GPIOx, uint8_t Pinx, uint8_t Strength, uint8_t PinType);
 void GPIO_PinConfig(uint8_t GPIOx, uint32_t GPIO_PCTL);
 void GPIO_EnableSLR(uint8_t GPIOx, uint8_t Pinx);

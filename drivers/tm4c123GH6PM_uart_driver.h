@@ -23,21 +23,8 @@ enum UART_Module
  };
 
 /* 
- * UART module run mode clock gating control
- * Arguments to UART_EnableClk and UART_DisableClk functions
- */
-#define SYSCTL_RCGCUART_R7      0x00000080  // UART Module 7 Run Mode Clock Gating Control
-#define SYSCTL_RCGCUART_R6      0x00000040  // UART Module 6 Run Mode Clock Gating Control
-#define SYSCTL_RCGCUART_R5      0x00000020  // UART Module 5 Run Mode Clock Gating Control
-#define SYSCTL_RCGCUART_R4      0x00000010  // UART Module 4 Run Mode Clock Gating Control
-#define SYSCTL_RCGCUART_R3      0x00000008  // UART Module 3 Run Mode Clock Gating Control
-#define SYSCTL_RCGCUART_R2      0x00000004  // UART Module 2 Run Mode Clock Gating Control
-#define SYSCTL_RCGCUART_R1      0x00000002  // UART Module 1 Run Mode Clock Gating Control
-#define SYSCTL_RCGCUART_R0      0x00000001  // UART Module 0 Run Mode Clock Gating Control
-
-/* 
  * Configure UART module
- * Arguments to
+ * Arguments to UART_Init
  */
 #define UART_CTL_CTSEN          0x00008000  // Enable Clear To Send
 #define UART_CTL_RTSEN          0x00004000  // Enable Request to Send
@@ -54,7 +41,7 @@ enum UART_Module
 
 /* 
  * Configure UART module
- * Arguments to UART_ConfigModule
+ * Arguments to UART_Init
  */
 #define UART_LCRH_WLEN_M        0x00000060  // UART Word Length
 #define UART_LCRH_WLEN_5        0x00000000  // 5 bits (default)
@@ -76,19 +63,6 @@ enum UART_Module
 #define UART_LCRH_BRK           0x00000001  // UART Send Break
 
 /* 
- * Reset UART Moudles
- * Arguments to UART_RESET
- */
-#define SYSCTL_SRUART_R7        0x00000080  // UART Module 7 Software Reset
-#define SYSCTL_SRUART_R6        0x00000040  // UART Module 6 Software Reset
-#define SYSCTL_SRUART_R5        0x00000020  // UART Module 5 Software Reset
-#define SYSCTL_SRUART_R4        0x00000010  // UART Module 4 Software Reset
-#define SYSCTL_SRUART_R3        0x00000008  // UART Module 3 Software Reset
-#define SYSCTL_SRUART_R2        0x00000004  // UART Module 2 Software Reset
-#define SYSCTL_SRUART_R1        0x00000002  // UART Module 1 Software Reset
-#define SYSCTL_SRUART_R0        0x00000001  // UART Module 0 Software Reset
-
-/* 
  * UART Flags
  * To check status
  */
@@ -104,19 +78,8 @@ enum UART_Module
  * Peripheral setup
  *
  */
-void UART_EnableClk(uint8_t SYSCTL_RCGCUART_MODULE);
-void UART_DisableClk(uint8_t SYSCTL_RCGCUART_MODULE);
-void UART_EnableModule(uint8_t UARTx);
-void UART_DisableModule(uint8_t UARTx);
-void UART_Reset(uint8_t SYSCTL_SRUART);
-void UART_FIFOEnable(uint8_t UARTx);
-void UART_FIFODisable(uint8_t UARTx);
-
-/*
- * Peripheral configure
- *
- */
- void UART_ConfigModule(uint8_t UARTx, uint32_t Clk, uint32_t Baud, uint32_t Parity, uint32_t DataLength, uint32_t StopBits);
+void UART_Init(uint8_t UARTx, uint32_t Clk, uint32_t Baud, uint32_t Parity, uint32_t DataLength, uint32_t StopBits);
+void UART_Deinit(uint8_t UARTx);
 
   /*
  * Data read and write

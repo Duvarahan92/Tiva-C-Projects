@@ -15,15 +15,13 @@ void delay(uint32_t ticks)
 
 int main(void)
 {
-  GPIO_EnableClk(SYSCTL_RCGCGPIO_R5);
- 
-  GPIO_ModeSet(GPIOF_P, GPIO_PIN_3, GPIO_OUT);
-  GPIO_PadConfig(GPIOF_P, GPIO_PIN_3, GPIO_NO_DR, GPIO_DEN);
+  GPIO_Init(GPIOF_P, PIN_3, GPIO_OUT);
+  GPIO_PadConfig(GPIOF_P, PIN_3, GPIO_NO_DR, GPIO_DEN);
 
   while (1)
   {
     delay(500000/2);
-    GPIO_ToggleOutputPin(GPIOF_P, GPIO_PIN_3);
+    GPIO_ToggleOutputPin(GPIOF_P, PIN_3);
   }
   
   return 0;
