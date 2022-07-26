@@ -159,18 +159,14 @@
  * Peripheral setup
  *
  */
-void SSI_Init(uint8_t SSIx);
+void SSI_Init(uint8_t SSIx, uint32_t Mode);
 void SSI_Deinit(uint8_t SSIx);
-void SSI_EnableModule(uint8_t SSIx);
-void SSI_DisableModule(uint8_t SSIx);
 
 /*
  * Peripheral configure
  *
  */
-void SET_SSIMode(uint8_t SSIx, uint32_t Mode);
-void SSI_ConfigClk(uint8_t SSIx, uint32_t SSIClk, uint32_t BitRate);
-void SSI_ConfigModule(uint8_t SSIx, uint32_t PhasePolMode, uint32_t ProtocolMode, uint32_t DSS);
+void SSI_ConfigModule(uint8_t SSIx, uint32_t PhasePolMode, uint32_t ProtocolMode, uint32_t DSS, uint32_t SSIClk, uint32_t BitRate);
 
  /*
  * Data read and write
@@ -194,7 +190,6 @@ uint32_t SSI_GetInterruptStatus(uint8_t SSIx);
 void SSI_IRQConfig(uint8_t IRQn, uint8_t Ctrl);
 void SSI_IRQPriorityConfig(uint8_t IRQn, uint32_t IRQPriority);
 void SSI_IRQHandling(uint8_t SSIx, uint8_t TXData, uint8_t *RXData);
-
 
  /*
  * Other

@@ -170,55 +170,7 @@ static uint8_t SSI_Check_Module(uint8_t SSI_Module)
  * @Note                   - none
  */
 
-void SSI_Reset(uint8_t SSI_Module)
-{
-    SYSCTL -> SRSSI |= SRSSIModule[SSI_Module];
-    SYSCTL -> SRSSI &= ~(SRSSIModule[SSI_Module]);
-
-}
-
-/*********************************************************************************
-*                           API functions
-*
-**********************************************************************************/ 
-
-/********************************************************************************
- * @fn                     - SSI_Init
- *
- * @brief                  - This function initialize a SSI module
- * 
- * @param[in]              - SSI module which need to ne initialize
- * 
- * @return                 - none
- * 
- * @Note                   - none
- */
-
-void SSI_Init(uint8_t SSIx)
-{
-    
-    SSI_EnableClk(SSIx); // Enable I2C Clk
-    SSI_GPIOType(SSIx); // Set GPIO pin to SCL and SDA
-}
-
-/********************************************************************************
- * @fn                     - SSI_DeInit
- *
- * @brief                  - This function deinitialize a SSI module
- * 
- * @param[in]              - SSI module which need to ne deinitialize
- * 
- * @return                 - none
- * 
- * @Note                   - none
- */
-void SSI_DeInit(uint8_t SSIx)
-{
-    SSI_Reset(SSIx);
-    SSI_DisableClk(SSIx);
-}
-
-/********************************************************************************
+ /********************************************************************************
  * @fn                     - SSI_Enable
  *
  * @brief                  - This function enables the SSI module
@@ -252,6 +204,13 @@ void SSI_EnableModule(uint8_t SSIx)
     pSSI -> SSICR1 &= ~(SSI_CR1_SSE);
  }
 
+void SSI_Reset(uint8_t SSI_Module)
+{
+    SYSCTL -> SRSSI |= SRSSIModule[SSI_Module];
+    SYSCTL -> SRSSI &= ~(SRSSIModule[SSI_Module]);
+
+}
+
 /********************************************************************************
  * @fn                     - SET_SSIMode
  *
@@ -273,7 +232,7 @@ void SSI_EnableModule(uint8_t SSIx)
      pSSI -> SSICR1 |= Mode;
  }
 
- /********************************************************************************
+  /********************************************************************************
  * @fn                     - SSI_ConfigClk
  *
  * @brief                  - This function configure the SSI clock
@@ -313,6 +272,50 @@ void SSI_EnableModule(uint8_t SSIx)
     pSSI -> SSICR0 = SCR << 8;
 }
 
+/*********************************************************************************
+*                           API functions
+*
+**********************************************************************************/ 
+
+/********************************************************************************
+ * @fn                     - SSI_Init
+ *
+ * @brief                  - This function initialize a SSI module
+ * 
+ * @param[in]              - SSI module which need to ne initialize
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+
+void SSI_Init(uint8_t SSIx, uint32_t Mode)
+{
+    
+    SSI_EnableClk(SSIx); 
+    SSI_GPIOType(SSIx); 
+    SSI_EnableModule(SSIx); 
+    SET_SSIMode(SSIx, Mode);
+}
+
+/********************************************************************************
+ * @fn                     - SSI_DeInit
+ *
+ * @brief                  - This function deinitialize a SSI module
+ * 
+ * @param[in]              - SSI module which need to ne deinitialize
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void SSI_DeInit(uint8_t SSIx)
+{
+    SSI_Reset(SSIx);
+    SSI_DisableModule(SSIx);
+    SSI_DisableClk(SSIx);
+}
+
  /********************************************************************************
  * @fn                     - SSI_ConfigModule
  *
@@ -327,9 +330,10 @@ void SSI_EnableModule(uint8_t SSIx)
  * 
  * @Note                   - none
  */
- void SSI_ConfigModule(uint8_t SSIx, uint32_t PhasePolMode, uint32_t ProtocolMode, uint32_t DSS)
+ void SSI_ConfigModule(uint8_t SSIx, uint32_t PhasePolMode, uint32_t ProtocolMode, uint32_t DSS, uint32_t SSIClk, uint32_t BitRate)
  {
-     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
+    SSI_ConfigClk(SSIx, SSIClk, BitRate);
+    SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
 
      // Set phase and polarity
      pSSI -> SSICR0 |= PhasePolMode;

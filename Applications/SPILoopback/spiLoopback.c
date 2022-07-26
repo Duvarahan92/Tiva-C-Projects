@@ -21,26 +21,14 @@ int main(void)
     // one stop bit
     UART_Init(UART0_P, SysClk, BaudRate, UART_LCRH_NONE, UART_LCRH_WLEN_8, UART_LCRH_STP1);
 
-    // Init SPI 0
-    SSI_Init(SSI0_P);
-    
-    // Disable SSI_0 module
-    SSI_DisableModule(SSI0_P);
-    
-    // Select master mode
-    SET_SSIMode(SSI0_P, SSI_CR1_M);
-
-    // Configure SPI clock
-    SSI_ConfigClk(SSI0_P, SysClk, BitRate);
+    // Init SPI 0 select master mode
+    SSI_Init(SSI0_P, SSI_CR1_M);
 
     // Configure SSI_0 module
-    SSI_ConfigModule(SSI0_P, SSI_CR0_MODE_0, SSI_CR0_FRF_MOTO, SSI_CR0_DSS_8);
+    SSI_ConfigModule(SSI0_P, SSI_CR0_MODE_0, SSI_CR0_FRF_MOTO, SSI_CR0_DSS_8, SysClk, BitRate);
 
     // Enable loopback
     EnableLoopbackMode(SSI0_P);
-
-    // Enable SSI_0 module
-    SSI_EnableModule(SSI0_P);
 
     // Write-read SPI
     for (int i = 0; i < sizeof(word); i++)
