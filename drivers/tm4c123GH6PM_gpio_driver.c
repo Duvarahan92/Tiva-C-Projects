@@ -698,9 +698,6 @@ void GPIO_SSIType(uint8_t GPIOx, uint8_t Pinx, uint32_t GPIO_PCTL)
 {
      // Init GPIO pin
     GPIO_Init(GPIOx, Pinx, GPIO_AFSEL);
-    
-    // Set the pin(s) to AFSEL
-   // GPIO_ModeSet(GPIOx, Pinx, GPIO_AFSEL);
 
     // Configure the pad(s)
     GPIO_PadConfig(GPIOx, Pinx, GPIO_DR2R, GPIO_PUR);

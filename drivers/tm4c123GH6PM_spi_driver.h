@@ -27,16 +27,6 @@
 #define INT_SSI2                57          // SSI2
 #define INT_SSI3                58          // SSI3
 
-
-/* 
- * SSI module run mode clock gating control
- *  Arguments to SSI_EnableClk and SSI_DisableClk functions
- */
-#define SYSCTL_RCGCSSI_R3       0x00000008  // SSI Module 3 Run Mode Clock Gating Control
-#define SYSCTL_RCGCSSI_R2       0x00000004  // SSI Module 2 Run Mode Clock Gating Control
-#define SYSCTL_RCGCSSI_R1       0x00000002  // SSI Module 1 Run Mode Clock Gating Control
-#define SYSCTL_RCGCSSI_R0       0x00000001  // SSI Module 0 Run Mode Clock Gating Control
-
 /* 
  * Confingure SSI module
  * Arguments to SSI_ConfigModule function
@@ -78,15 +68,6 @@
 #define SSI_CR1_SD              0x0000000C  // Slave mode output disabled
 #define SSI_CR1_SSE             0x00000002  // SSI Synchronous Serial Port Enable
 #define SSI_CR1_LBM             0x00000001  // SSI Loopback Mode
-
-/* 
- * Reset SSI modulese
- * Arguments to Reset function
- */
-#define SYSCTL_SRSSI_R3         0x00000008  // SSI Module 3 Software Reset
-#define SYSCTL_SRSSI_R2         0x00000004  // SSI Module 2 Software Reset
-#define SYSCTL_SRSSI_R1         0x00000002  // SSI Module 1 Software Reset
-#define SYSCTL_SRSSI_R0         0x00000001  // SSI Module 0 Software Reset
 
 /*
  *
@@ -178,11 +159,10 @@
  * Peripheral setup
  *
  */
-void SSI_EnableClk(uint8_t SYSCTL_RCGCSSI_MODULE);
-void SSI_DisableClk(uint8_t SYSCTL_RCGCSSI_MODULE);
+void SSI_Init(uint8_t SSIx);
+void SSI_Deinit(uint8_t SSIx);
 void SSI_EnableModule(uint8_t SSIx);
 void SSI_DisableModule(uint8_t SSIx);
-void SSI_Reset(uint8_t SYSCTL_SRSSI);
 
 /*
  * Peripheral configure
@@ -196,10 +176,10 @@ void SSI_ConfigModule(uint8_t SSIx, uint32_t PhasePolMode, uint32_t ProtocolMode
  * Data read and write
  *
  */
-void SPI_SendData(uint8_t SSIx, uint8_t Data);
-uint8_t SPI_SendNonBlockingData(uint8_t SSIx, uint8_t Data);
-void SPI_ReceiveData(uint8_t SSIx, uint8_t *Data);
-uint8_t SPI_ReceiveNonBlockingData(uint8_t SSIx, uint8_t *Data);
+void SSI_SendData(uint8_t SSIx, uint8_t Data);
+uint8_t SSI_SendNonBlockingData(uint8_t SSIx, uint8_t Data);
+void SSI_ReceiveData(uint8_t SSIx, uint8_t *Data);
+uint8_t SSI_ReceiveNonBlockingData(uint8_t SSIx, uint8_t *Data);
 void EnableLoopbackMode(uint8_t SSIx);
 void DisableLoopbackMode(uint8_t SSIx);
 

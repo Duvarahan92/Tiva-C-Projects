@@ -1,4 +1,5 @@
 #include "tm4c123GH6PM_spi_driver.h"
+#include "tm4c123GH6PM_gpio_driver.h"
 #include "tm4c123gh6pm.h"
 
 /*********************************************************************************
@@ -14,20 +15,71 @@ static SSI_RegDef_t* MapSSIBaseAddress[4] =
     SSI3
 };
 
-/********************************************************************************
- * @fn                     - SSI_Get_Module
+static uint32_t const RCGCSSIModule[4] =
+{
+    SYSCTL_RCGCSSI_R0,
+    SYSCTL_RCGCSSI_R1,
+    SYSCTL_RCGCSSI_R2,
+    SYSCTL_RCGCSSI_R3
+};
+
+static uint32_t const SRSSIModule[4] =
+{
+    SYSCTL_SRSSI_R0,
+    SYSCTL_SRSSI_R1,
+    SYSCTL_SRSSI_R2,
+    SYSCTL_SRSSI_R3
+};
+
+static uint32_t const SSIRXGPIOConfig[4][3] =
+{
+    {GPIOA_P, PIN_4, GPIO_PCTL_PA4_SSI0RX},
+    {GPIOF_P, PIN_0, GPIO_PCTL_PF0_SSI1RX},
+    {GPIOB_P, PIN_6, GPIO_PCTL_PB6_SSI2RX},
+    {GPIOD_P, PIN_2, GPIO_PCTL_PD2_SSI3RX},
+};
+
+static uint32_t const SSITXGPIOConfig[4][3] =
+{
+    {GPIOA_P, PIN_5, GPIO_PCTL_PA5_SSI0TX},
+    {GPIOF_P, PIN_1, GPIO_PCTL_PF1_SSI1TX},
+    {GPIOB_P, PIN_7, GPIO_PCTL_PB7_SSI2TX},
+    {GPIOD_P, PIN_3, GPIO_PCTL_PD3_SSI3TX},
+};
+
+static uint32_t const SSICLKGPIOConfig[4][3] =
+{
+    {GPIOA_P, PIN_2, GPIO_PCTL_PA2_SSI0CLK},
+    {GPIOF_P, PIN_2, GPIO_PCTL_PF2_SSI1CLK},
+    {GPIOB_P, PIN_4, GPIO_PCTL_PB4_SSI2CLK},
+    {GPIOD_P, PIN_0, GPIO_PCTL_PD0_SSI3CLK},
+};
+
+static uint32_t const SSIFSSGPIOConfig[4][3] =
+{
+    {GPIOA_P, PIN_3, GPIO_PCTL_PA3_SSI0FSS},
+    {GPIOF_P, PIN_3, GPIO_PCTL_PF3_SSI1FSS },
+    {GPIOB_P, PIN_5, GPIO_PCTL_PB5_SSI2FSS},
+    {GPIOD_P, PIN_1, GPIO_PCTL_PD1_SSI3FSS},
+};
+
+ /********************************************************************************
+ * @fn                     - SSI_GPIOType
  *
- * @brief                  - This function gets the struct ptr to a module
+ * @brief                  - This function configure the necessary GPIO pins as RX and TX to the right UART module.
  * 
  * @param[in]              - SSI Module
  * 
- * @return                 - Struct ptr to a module
+ * @return                 - none
  * 
  * @Note                   - none
  */
- static SSI_RegDef_t* SSI_Get_Module(uint8_t SSI_Module)
+ static void SSI_GPIOType(uint8_t SSIx)
  {
-     return MapSSIBaseAddress[SSI_Module];
+    GPIO_SSIType(SSIRXGPIOConfig[SSIx][0], SSIRXGPIOConfig[SSIx][1], SSIRXGPIOConfig[SSIx][2]);
+    GPIO_SSIType(SSITXGPIOConfig[SSIx][0], SSITXGPIOConfig[SSIx][1], SSITXGPIOConfig[SSIx][2]); 
+    GPIO_SSIType(SSICLKGPIOConfig[SSIx][0], SSICLKGPIOConfig[SSIx][1], SSICLKGPIOConfig[SSIx][2]); 
+    GPIO_SSIType(SSIFSSGPIOConfig[SSIx][0], SSIFSSGPIOConfig[SSIx][1], SSIFSSGPIOConfig[SSIx][2]);  
  }
 
  /********************************************************************************
@@ -53,12 +105,25 @@ static uint8_t SSI_Check_Module(uint8_t SSI_Module)
     return FALSE;
 }
 
-/*********************************************************************************
-*                           API functions
-*
-**********************************************************************************/ 
-
 /********************************************************************************
+ * @fn                     - SSI_Get_Module
+ *
+ * @brief                  - This function gets the struct ptr to a module
+ * 
+ * @param[in]              - SSI Module
+ * 
+ * @return                 - Struct ptr to a module
+ * 
+ * @Note                   - none
+ */
+ static SSI_RegDef_t* SSI_Get_Module(uint8_t SSI_Module)
+ {
+    if (SSI_Check_Module(SSI_Module))
+        return MapSSIBaseAddress[SSI_Module];
+    return 0;
+ }
+
+ /********************************************************************************
  * @fn                     - SSI_EnableClk
  *
  * @brief                  - This function enables peripheral clock for the given SSI module
@@ -70,10 +135,10 @@ static uint8_t SSI_Check_Module(uint8_t SSI_Module)
  * @Note                   - none
  */
 
- void SSI_EnableClk(uint8_t SYSCTL_RCGCSSI_MODULE)
+ void SSI_EnableClk(uint8_t SSI_Module)
  {
      
-    SYSCTL -> RCGCSSI |= SYSCTL_RCGCSSI_MODULE;
+    SYSCTL -> RCGCSSI |= RCGCSSIModule[SSI_Module];
  }
 
  /********************************************************************************
@@ -87,14 +152,73 @@ static uint8_t SSI_Check_Module(uint8_t SSI_Module)
  * 
  * @Note                   - none
  */
- void SSI_DisableClk(uint8_t SYSCTL_RCGCSSI_MODULE)
+ void SSI_DisableClk(uint8_t SSI_Module)
  {
      
-    SYSCTL -> RCGCSSI &= ~(SYSCTL_RCGCSSI_MODULE);
+    SYSCTL -> RCGCSSI &= ~(RCGCSSIModule[SSI_Module]);
  }
 
+/********************************************************************************
+ * @fn                     - SSI_Reset
+ *
+ * @brief                  - This function reset the SSI module
+ * 
+ * @param[in]              - SSI port
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
 
- /********************************************************************************
+void SSI_Reset(uint8_t SSI_Module)
+{
+    SYSCTL -> SRSSI |= SRSSIModule[SSI_Module];
+    SYSCTL -> SRSSI &= ~(SRSSIModule[SSI_Module]);
+
+}
+
+/*********************************************************************************
+*                           API functions
+*
+**********************************************************************************/ 
+
+/********************************************************************************
+ * @fn                     - SSI_Init
+ *
+ * @brief                  - This function initialize a SSI module
+ * 
+ * @param[in]              - SSI module which need to ne initialize
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+
+void SSI_Init(uint8_t SSIx)
+{
+    
+    SSI_EnableClk(SSIx); // Enable I2C Clk
+    SSI_GPIOType(SSIx); // Set GPIO pin to SCL and SDA
+}
+
+/********************************************************************************
+ * @fn                     - SSI_DeInit
+ *
+ * @brief                  - This function deinitialize a SSI module
+ * 
+ * @param[in]              - SSI module which need to ne deinitialize
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void SSI_DeInit(uint8_t SSIx)
+{
+    SSI_Reset(SSIx);
+    SSI_DisableClk(SSIx);
+}
+
+/********************************************************************************
  * @fn                     - SSI_Enable
  *
  * @brief                  - This function enables the SSI module
@@ -127,25 +251,6 @@ void SSI_EnableModule(uint8_t SSIx)
     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
     pSSI -> SSICR1 &= ~(SSI_CR1_SSE);
  }
-
- /********************************************************************************
- * @fn                     - SSI_Reset
- *
- * @brief                  - This function reset the SSI module
- * 
- * @param[in]              - SSI port
- * 
- * @return                 - none
- * 
- * @Note                   - none
- */
-
-void SSI_Reset(uint8_t SYSCTL_SRSSI)
-{
-    SYSCTL -> SRSSI |= SYSCTL_SRSSI;
-    SYSCTL -> SRSSI &= ~(SYSCTL_SRSSI);
-
-}
 
 /********************************************************************************
  * @fn                     - SET_SSIMode
@@ -237,7 +342,7 @@ void SSI_Reset(uint8_t SYSCTL_SRSSI)
  }
  
 /********************************************************************************
- * @fn                     - SPI_SendData
+ * @fn                     - SSI_SendData
  *
  * @brief                  - This function sends data while blocking
  * 
@@ -248,7 +353,7 @@ void SSI_Reset(uint8_t SYSCTL_SRSSI)
  * 
  * @Note                   - none
  */
-void SPI_SendData(uint8_t SSIx, uint8_t Data)
+void SSI_SendData(uint8_t SSIx, uint8_t Data)
  {
     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
 
@@ -260,7 +365,7 @@ void SPI_SendData(uint8_t SSIx, uint8_t Data)
  }
 
 /********************************************************************************
- * @fn                     - SPI_SendNonBlockingData
+ * @fn                     - SSI_SendNonBlockingData
  *
  * @brief                  - This function sends data 
  * 
@@ -271,7 +376,7 @@ void SPI_SendData(uint8_t SSIx, uint8_t Data)
  * 
  * @Note                   - Non Blocking
  */
- uint8_t SPI_SendNonBlockingData(uint8_t SSIx, uint8_t Data)
+ uint8_t SSI_SendNonBlockingData(uint8_t SSIx, uint8_t Data)
  {
       SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
 
@@ -287,7 +392,7 @@ void SPI_SendData(uint8_t SSIx, uint8_t Data)
  }
 
  /********************************************************************************
- * @fn                     - SPI_ReceiveData
+ * @fn                     - SSI_ReceiveData
  *
  * @brief                  - This function reads data while blocking
  * 
@@ -298,7 +403,7 @@ void SPI_SendData(uint8_t SSIx, uint8_t Data)
  * 
  * @Note                   - none
  */
-void SPI_ReceiveData(uint8_t SSIx, uint8_t *Data)
+void SSI_ReceiveData(uint8_t SSIx, uint8_t *Data)
  {
     SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
 
@@ -310,7 +415,7 @@ void SPI_ReceiveData(uint8_t SSIx, uint8_t *Data)
  }
 
   /********************************************************************************
- * @fn                     - SPI_ReceiveNonBlockingData
+ * @fn                     - SSI_ReceiveNonBlockingData
  *
  * @brief                  - This function reads data
  * 
@@ -321,7 +426,7 @@ void SPI_ReceiveData(uint8_t SSIx, uint8_t *Data)
  * 
  * @Note                   - Non Blocking
  */
- uint8_t SPI_ReceiveNonBlockingData(uint8_t SSIx, uint8_t *Data)
+ uint8_t SSI_ReceiveNonBlockingData(uint8_t SSIx, uint8_t *Data)
  {
      SSI_RegDef_t *pSSI = SSI_Get_Module(SSIx);
 
@@ -516,13 +621,13 @@ void SSI_IRQHandling(uint8_t SSIx, uint8_t TXData, uint8_t *RXData)
    /* uint32_t interruptStatus = SSI_GetInterruptStatus(SSIx);
 
     if (interruptStatus == SSI_RIS_TXRIS)
-        while (SPI_SendNonBlockingData(SSIx, TXData));
+        while (SSI_SendNonBlockingData(SSIx, TXData));
     else if (interruptStatus == SSI_IM_RXIM)
         SSI_ClearInterrupt(SSIx,SSI_ICR_RORIC);
     else if (interruptStatus == SSI_RIS_RTRIS)
         SSI_ClearInterrupt(SSIx, SSI_ICR_RTIC);
     else */
-        while (SPI_ReceiveNonBlockingData(SSIx, RXData));
+        while (SSI_ReceiveNonBlockingData(SSIx, RXData));
 
 }
 

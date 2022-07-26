@@ -75,9 +75,9 @@ static uint32_t const I2CSDAGPIOConfig[4][3] =
  }
 
 /********************************************************************************
- * @fn                     - I2C_GPIOTypeSCL
+ * @fn                     - I2C_GPIOType
  *
- * @brief                  - This function configure the necessary GPIO pins as SCL to the right I2C module.
+ * @brief                  - This function configure the necessary GPIO pins as SCL and SDA to the right I2C module.
  * 
  * @param[in]              - I2C Module
  * 
@@ -85,25 +85,9 @@ static uint32_t const I2CSDAGPIOConfig[4][3] =
  * 
  * @Note                   - none
  */
- static void I2C_GPIOTypeSCL(uint8_t I2Cx)
+ static void I2C_GPIOType(uint8_t I2Cx)
  {
     GPIO_I2CTypeSCL(I2CSCLGPIOConfig[I2Cx][0], I2CSCLGPIOConfig[I2Cx][1], I2CSCLGPIOConfig[I2Cx][2]);
-    
- }
-
- /********************************************************************************
- * @fn                     - I2C_GPIOTypeSDA
- *
- * @brief                  - This function configure the necessary GPIO pins as SDA to the right I2C module.
- * 
- * @param[in]              - I2C Module
- * 
- * @return                 - none
- * 
- * @Note                   - none
- */
- static void I2C_GPIOTypeSDA(uint8_t I2Cx)
- {
     GPIO_I2CTypeSDA(I2CSDAGPIOConfig[I2Cx][0], I2CSDAGPIOConfig[I2Cx][1], I2CSDAGPIOConfig[I2Cx][2]);
     
  }
@@ -141,8 +125,7 @@ void I2C_Init(uint8_t I2Cx)
 {
     
     I2C_EnableClk(I2Cx); // Enable I2C Clk
-    I2C_GPIOTypeSCL(I2Cx); // Set GPIO pin to SCL
-    I2C_GPIOTypeSDA(I2Cx); // Sett GPIO pin to SDA
+    I2C_GPIOType(I2Cx); // Set GPIO pin to SCL and SDA
 }
  
 /********************************************************************************
