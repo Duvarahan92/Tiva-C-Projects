@@ -7,7 +7,7 @@
 
 int main(void)
 {
-    static unsigned char word[] = "Hello world\r\n";
+    static char word[] = "Hello world\r\n";
 
     //Config UART 0
     // 16 MHz clock, 115200 baud rate, no parity, 8 bit word length and
@@ -19,7 +19,7 @@ int main(void)
 
     while (1)
      {
-         int32_t read = UART_ReadChar(UART0_P);
+         char read = UART_ReadChar(UART0_P);
          UART_WriteChar(UART0_P, read);
      }
 

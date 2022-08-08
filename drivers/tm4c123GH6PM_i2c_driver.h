@@ -66,8 +66,6 @@
  * Peripheral setup
  *
  */
-//void I2C_Init(uint8_t I2Cx);
-//void I2C_DeInit(uint8_t I2Cx);
 void I2C_EnableLoopBack(uint8_t I2Cx);
 void I2C_DisableLoopBack(uint8_t I2Cx);
 
@@ -76,7 +74,7 @@ void I2C_DisableLoopBack(uint8_t I2Cx);
  *
  */
 void I2C_MasterInit(uint8_t I2Cx, uint32_t Speed_Mode, uint32_t Clk);
-void I2C_MasterDeInit(uint8_t I2Cx);
+void I2C_MasterDeinit(uint8_t I2Cx);
 void I2C_SlaveInit(uint8_t I2Cx, uint8_t SlaveAddr);
 void I2C_SlaveDeInit(uint8_t I2Cx);
 void I2C_MasterCTRL(uint8_t I2Cx, uint8_t CtrlCmd);

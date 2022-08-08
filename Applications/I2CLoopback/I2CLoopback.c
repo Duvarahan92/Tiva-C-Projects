@@ -27,7 +27,7 @@ int main(void)
     I2C_SetMasterSlaveAddr(I2C0_P, SlaveAddr, 0);
 
     //Write-read I2C Master -> Slave
-    UART_WriteString(UART0_P, (unsigned char*)"Master -> Slave\r\n");
+    UART_WriteString(UART0_P, "Master -> Slave\r\n");
 
     for (int i = 0; i < sizeof(word); i++) {
         I2C_MasterSendData(I2C0_P, word[i]);

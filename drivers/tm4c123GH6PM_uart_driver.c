@@ -337,7 +337,7 @@ void UART_Init(uint8_t UARTx, uint32_t Clk, uint32_t Baud, uint32_t Parity, uint
  * 
  * @Note                   - none
  */
- void UART_WriteChar(uint8_t UARTx, unsigned char data)
+ void UART_WriteChar(uint8_t UARTx, char data)
  {
     UART_RegDef_t *pUART = UART_Get_Module(UARTx);
 
@@ -360,7 +360,7 @@ void UART_Init(uint8_t UARTx, uint32_t Clk, uint32_t Baud, uint32_t Parity, uint
  * 
  * @Note                   - Use NULL termination to end string.
  */
-void UART_WriteString(uint8_t UARTx, unsigned char buffer[])
+void UART_WriteString(uint8_t UARTx, char *buffer)
 {
    uint32_t i = 0;
 
@@ -383,7 +383,7 @@ void UART_WriteString(uint8_t UARTx, unsigned char buffer[])
  * 
  * @Note                   - none
  */
- uint8_t UART_ReadChar(uint8_t UARTx)
+ char UART_ReadChar(uint8_t UARTx)
  {
     UART_RegDef_t *pUART = UART_Get_Module(UARTx);
 

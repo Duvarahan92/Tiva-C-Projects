@@ -235,7 +235,7 @@ void I2C_MasterInit(uint8_t I2Cx, uint32_t Speed_Mode, uint32_t Clk)
  * 
  * @Note                   - none
  */
-static void I2C_MasterDeinit(uint8_t I2Cx)
+void I2C_MasterDeinit(uint8_t I2Cx)
 {
     I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
 
