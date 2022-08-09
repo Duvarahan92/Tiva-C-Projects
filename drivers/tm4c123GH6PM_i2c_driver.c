@@ -315,6 +315,8 @@ void I2C_MasterCTRL(uint8_t I2Cx, uint8_t CtrlCmd)
     I2C_RegDef_t *pI2C = I2C_Get_Module(I2Cx);
 
     pI2C->I2CMCS = CtrlCmd;
+
+    while(I2C_MasterBusy(I2C0_P)); 
 }
 
 /********************************************************************************

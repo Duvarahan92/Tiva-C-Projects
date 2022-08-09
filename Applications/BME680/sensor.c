@@ -5,7 +5,7 @@
 int main ()
 {
     static uint8_t chip_id;
-    static uint8_t chip_id_reg = 0xD0;
+    static uint8_t chip_id_reg = 0x22;
 
     Serial_InterfaceInit();
 

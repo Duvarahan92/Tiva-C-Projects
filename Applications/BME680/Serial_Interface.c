@@ -83,7 +83,6 @@ static const uint8_t SlaveAddr = 0x77;
    while (i <= len) {
          if(i == len) {
             I2C_MasterCTRL(I2C0_P, BURST_SEND_FINNISH);
-            while(I2C_MasterBusy(I2C0_P)); 
             i++;
          }
         /* if(i == len - 1) {
@@ -111,20 +110,16 @@ static const uint8_t SlaveAddr = 0x77;
          else if(i == 0) {
             I2C_MasterSendData(I2C0_P, reg_addr[i]);
             I2C_MasterCTRL(I2C0_P, BURST_SEND_START);
-            while(I2C_MasterBusy(I2C0_P));
             I2C_MasterSendData(I2C0_P, reg_data[i]);
             I2C_MasterCTRL(I2C0_P, BURST_SEND_CONT);
-            while(I2C_MasterBusy(I2C0_P));
             i++;
          }
       
          else {
             I2C_MasterSendData(I2C0_P, reg_addr[i]);
             I2C_MasterCTRL(I2C0_P, BURST_SEND_CONT);
-            while(I2C_MasterBusy(I2C0_P));
             I2C_MasterSendData(I2C0_P, reg_data[i]);
             I2C_MasterCTRL(I2C0_P, BURST_SEND_CONT);
-            while(I2C_MasterBusy(I2C0_P));
             i++; 
          }
       } 
@@ -156,23 +151,19 @@ static const uint8_t SlaveAddr = 0x77;
    I2C_SetMasterSlaveAddr(I2C0_P, SlaveAddr, 0);
    I2C_MasterSendData(I2C0_P, reg_addr);
    I2C_MasterCTRL(I2C0_P, BURST_SEND_START);
-   while(I2C_MasterBusy(I2C0_P));
    I2C_SetMasterSlaveAddr(I2C0_P, SlaveAddr, 1);
    I2C_MasterCTRL(I2C0_P, BURST_RECEIVE_START);
-   while(I2C_MasterBusy(I2C0_P));
 
    while(i < len) {
          if(i == len - 1) {
             reg_data[i] = I2C_MasterReceiveData(I2C0_P);
             I2C_MasterCTRL(I2C0_P, BURST_RECEIVE_FINNISH);
-            while(I2C_MasterBusy(I2C0_P));
             i++;
          }
 
          else {
-            I2C_MasterCTRL(I2C0_P, BURST_RECEIVE_CONT);
-            while(I2C_MasterBusy(I2C0_P));
             reg_data[i] = I2C_MasterReceiveData(I2C0_P);
+            I2C_MasterCTRL(I2C0_P, BURST_RECEIVE_CONT);
             i++;
          }
     }
