@@ -68,6 +68,57 @@ static uint32_t const UARTTXGPIOConfig[8][3] =
 };
 
 /********************************************************************************
+ * @fn                     - UART_Convert_To_Char
+ *
+ * @brief                  - This function converts decimal number to char
+ * 
+ * @param[in]              - number
+ * 
+ * @return                 - Hex as character
+ * 
+ * @Note                   - none
+ */
+
+static char UART_Convert_To_Char(uint8_t dec)
+{
+   switch(dec) {
+      case 0 :
+         return '0';
+      case 1 :
+         return '1';
+      case 2 :
+         return '2';
+      case 3 :
+         return '3';
+      case 4 :
+         return '4';
+      case 5 :
+         return '5';
+      case 6 :
+         return '6';
+      case 7 :
+         return '7';
+      case 8 :
+         return '8';
+      case 9 :
+         return '9';
+      case 10 :
+         return 'A';
+      case 11 :
+         return 'B';
+      case 12 :
+         return 'C';
+      case 13 :
+         return 'D';
+      case 14 :
+         return 'E';
+      case 15 :
+         return 'F';
+   }
+   return 128;
+}
+
+/********************************************************************************
  * @fn                     - UART_Get_Module
  *
  * @brief                  - This function gets the struct ptr to a module
@@ -370,6 +421,30 @@ void UART_WriteString(uint8_t UARTx, char *buffer)
       UART_WriteChar(UARTx, buffer[i]);
       i++;
    }   
+}
+
+/********************************************************************************
+ * @fn                     - UART_WriteHex
+ *
+ * @brief                  - Write a character in hex format to the transmit FIFO
+ * 
+ * @param[in]              - UART port
+ * @param[in]              - Character to be written in hex
+ * 
+ * @return                 - none
+ * 
+ * @Note                   - none
+ */
+void UART_WriteHex(uint8_t UARTx, uint8_t data)
+{
+   uint8_t lb = data % 16; //Last four significant bits that shall be converted to hex
+   uint8_t mb = data / 16; //Most four significant bits that shall be converted to hex
+   char hex_first = UART_Convert_To_Char(mb);
+   char hex_last = UART_Convert_To_Char(lb);
+
+   UART_WriteString(UARTx, "0x");
+   UART_WriteChar(UARTx, hex_first);
+   UART_WriteChar(UARTx, hex_last);
 }
 
  /********************************************************************************

@@ -4,7 +4,8 @@
 #ifndef INC_BME680_H_
 #define INC_BME680_H_
 
-// Can be used inside source file
+//*****Can be used inside source file*****//
+
 #define BME680_CHIP_ID_REG      0xD0         //Chip id address for I2C
 #define BME680_CHIP_ID          0x61         //BME680 unique chip id
 #define BME680_RESET_REG        0xE0         //Reset address for I2C
@@ -30,29 +31,38 @@
 #define BME680_PRESS_MSB_REG    0x1F         //Register used to get press_msb 
 #define BME680_EAS_STATUS0_REG  0x1D         //Register used to get new_data_0, gas_measuring, measuering and gas_meas_index_0
 
-//Data registers
-#define BME680_PRESS_MSB_MSK    0xFF        //Mask for press_msb<7:0>
-#define BME680_PRESS_LSB_MSK    0xFF        //Mask for press_lsb<7:0>
-#define BME680_PRESS_XLSB_MSK   0xF0        //Mask for press_lsb<7:4>
+//*****Data registers*****//
 
-#define BME680_TEMP_MSB_MSK     0xFF        //Mask for temp_msb<7:0>
-#define BME680_TEMP_LSB_MSK     0xFF        //Mask for temp_lsb<7:0>
-#define BME680_TEMP_XLSB_MSK    0xF0        //Mask for temp_xlsb<7:4>
+#define BME680_DATA_MSB_MSK     0xFF        //MSB mask for pressure, temp and humidity data <7:0>
+#define BME680_DATA_LSB_MSK     0xFF        //LSB mask for pressure, temp and humidity data <7:0>
+#define BME680_DATA_XLSB_MSK    0xF0        //XLSB mask for pressure and temp data <7:4>
+#define BME680_GAS_MSB_MSK      0xFF        //MSB mask for gas sensor resistance data <7:0>
+#define BME680_GAS_LSB_MSK      0xC0        //LSB mask for gas sensor resustance data <7:6>
+#define BME680_GAS_RANGE_MSK    0x0F        //Mask for gas sensor resistance range
 
-#define BME680_HUM_MSB_MSK      0xFF        //Mask for hum_msb<7:0>
+//*****Status registers*****//
+
+#define BME680_NEW_DATA_MSK     0x80        //New data flag
+#define BME680_GAS_MEAS_MSK     0x40        //Gas measuring status flag
+#define BME680_MEAS_MSK         0x20        //Measuring status
+#define BME680_GAS_VALID_MSK    0x20        //Gas valid bit
+#define BME680_HEAT_STAB_MSK    0x10        //Heater stability bit
 
 
-// Can be used inside header file
+// *****Can be used inside header file*****//
+
 #define BME680_I2C_LOW_ADDR     0x76        //Low I2C address is set by connecting SDO to GND
 #define BME680_I2C_HIGH_ADDR    0x77        //High I2C address is set by connecting SDO to Vddio
 
-//General control registers
+//*****General control registers*****//
+
 #define BME680_SPI_MEM_PAGE1    0x10        //SPI memory page 1
 #define BME680_SPI_MEM_PAGE0    0x00        //SPI memory page 0
 #define BME680_SPI_3W_EN        0x01        //Enable SPI 3 wire mode
 #define BME680_SPI_3W_INT_EN    0x40        //Enbable SPI 3 wire interrupt
 
-//Temperature, pressure and relative humidty control registers
+//*****Temperature, pressure and relative humidty control registers*****//
+
 #define BME680_FILTER_0         0x00        //Filter coeffcient 0
 #define BME680_FILTER_1         0x04        //Filter coeffcient 1
 #define BME680_FILTER_3         0x08        //Filter coeffcient 3
@@ -86,7 +96,8 @@
 #define BME680_SLEEP_MODE       0x00        //Put the sensor in sleep mode
 #define BME680_FORCE_MODE       0x01        //Put the sensor in force mode
 
-//Gas control registers
+//*****Gas control registers*****//
+
 #define BME680_HEAT_OFF         0x08        //Turn off current injected to heater
 #define BME680_HEAT_ON          0x00        //Turn on current injected to heater
 

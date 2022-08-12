@@ -87,5 +87,6 @@ void UART_Deinit(uint8_t UARTx);
  */
  void UART_WriteChar(uint8_t UARTx, char data);
  void UART_WriteString(uint8_t UARTx, char *buffer);
+ void UART_WriteHex(uint8_t UARTx, uint8_t data);
  char UART_ReadChar(uint8_t UARTx);
 #endif  // __TM4C123GH6PM_GPIO_DRIVER_H__
