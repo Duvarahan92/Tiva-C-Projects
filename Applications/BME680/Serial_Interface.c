@@ -8,7 +8,7 @@
 **********************************************************************************/
 static const uint32_t SysClk = 16000000;
 static const uint32_t BaudRate = 115200;
-static const uint8_t SlaveAddr = 0x77;
+static uint8_t SlaveAddr;
 
 /*********************************************************************************
 *                        User interface functions
@@ -21,18 +21,19 @@ static const uint8_t SlaveAddr = 0x77;
  * @brief                  - This function initialize the necessary serial interfaces needed to communicate
  *                         - with the sensor.
  * 
- * @param[in]              - none
+ * @param[in]              - Slave address for I2C communication. For SPI 0x00 can be sent. 
  * 
  * @return                 - none
  * 
  * @Note                   - none
  */
 
- void Serial_InterfaceInit()
+ void Serial_InterfaceInit(uint8_t addr)
  {
-    //Config UART 0
-    // 16 MHz clock, 115200 baud rate, no parity, 8 bit word length and
-    // one stop bit
+   SlaveAddr = addr;
+   //Config UART 0
+   // 16 MHz clock, 115200 baud rate, no parity, 8 bit word length and
+   // one stop bit
     UART_Init(UART0_P, SysClk, BaudRate, UART_LCRH_NONE, UART_LCRH_WLEN_8, UART_LCRH_STP1);
 
     I2C_MasterInit(I2C0_P, STANDARD_MODE, SysClk);
@@ -77,54 +78,17 @@ static const uint8_t SlaveAddr = 0x77;
 
  void I2C_Write(uint8_t *reg_addr, uint8_t *reg_data, uint8_t len)
  {
-   uint8_t i = 0;
+   uint8_t i;
    I2C_SetMasterSlaveAddr(I2C0_P, SlaveAddr, 0);
 
-   while (i <= len) {
-         if(i == len) {
-            I2C_MasterCTRL(I2C0_P, BURST_SEND_FINNISH);
-            i++;
-         }
-        /* if(i == len - 1) {
-            if(i = 0) { // write to only one register
-            I2C_MasterSendData(I2C0_P, reg_addr[i]);
-            I2C_MasterCTRL(I2C0_P, BURST_SEND_START);
-            while(I2C_MasterBusy(I2C0_P)); 
-            I2C_MasterSendData(I2C0_P, reg_data[i]);
-            I2C_MasterCTRL(I2C0_P, BURST_SEND_FINNISH);
-            while(I2C_MasterBusy(I2C0_P));
-            i++;
-            break;
-         }
+   for(i = 0; i < len; i++) {
+      I2C_MasterSendData(I2C0_P, reg_addr[i]);
+      I2C_MasterCTRL(I2C0_P, (i==0 ? BURST_SEND_START : BURST_SEND_CONT));
+      I2C_MasterSendData(I2C0_P, reg_data[i]);
+      I2C_MasterCTRL(I2C0_P, BURST_SEND_CONT);
+   } 
 
-         I2C_MasterSendData(I2C0_P, reg_addr[i]);
-         I2C_MasterCTRL(I2C0_P, BURST_SEND_CONT);
-         while(I2C_MasterBusy(I2C0_P));
-         I2C_MasterSendData(I2C0_P, reg_data[i]);
-         I2C_MasterCTRL(I2C0_P, BURST_SEND_FINNISH);
-         while(I2C_MasterBusy(I2C0_P));
-         i++;
-         break;
-      }*/
-
-         else if(i == 0) {
-            I2C_MasterSendData(I2C0_P, reg_addr[i]);
-            I2C_MasterCTRL(I2C0_P, BURST_SEND_START);
-            I2C_MasterSendData(I2C0_P, reg_data[i]);
-            I2C_MasterCTRL(I2C0_P, BURST_SEND_CONT);
-            i++;
-         }
-      
-         else {
-            I2C_MasterSendData(I2C0_P, reg_addr[i]);
-            I2C_MasterCTRL(I2C0_P, BURST_SEND_CONT);
-            I2C_MasterSendData(I2C0_P, reg_data[i]);
-            I2C_MasterCTRL(I2C0_P, BURST_SEND_CONT);
-            i++; 
-         }
-      } 
-  
-
+   I2C_MasterCTRL(I2C0_P, BURST_SEND_FINNISH);
  }
 
   /********************************************************************************
@@ -147,25 +111,16 @@ static const uint8_t SlaveAddr = 0x77;
 
  void I2C_Read(uint8_t reg_addr, uint8_t *reg_data, uint8_t len) 
  {
-   uint8_t i = 0;
+   uint8_t i;
    I2C_SetMasterSlaveAddr(I2C0_P, SlaveAddr, 0);
    I2C_MasterSendData(I2C0_P, reg_addr);
    I2C_MasterCTRL(I2C0_P, BURST_SEND_START);
    I2C_SetMasterSlaveAddr(I2C0_P, SlaveAddr, 1);
    I2C_MasterCTRL(I2C0_P, BURST_RECEIVE_START);
 
-   while(i < len) {
-         if(i == len - 1) {
-            reg_data[i] = I2C_MasterReceiveData(I2C0_P);
-            I2C_MasterCTRL(I2C0_P, BURST_RECEIVE_FINNISH);
-            i++;
-         }
-
-         else {
-            reg_data[i] = I2C_MasterReceiveData(I2C0_P);
-            I2C_MasterCTRL(I2C0_P, BURST_RECEIVE_CONT);
-            i++;
-         }
+   for(i = 0; i < len; i++) { 
+      reg_data[i] = I2C_MasterReceiveData(I2C0_P);
+      I2C_MasterCTRL(I2C0_P, (i == (len - 1) ? BURST_RECEIVE_FINNISH : BURST_RECEIVE_CONT));
     }
 }
 

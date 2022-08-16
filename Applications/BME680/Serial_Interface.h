@@ -1,6 +1,5 @@
 /*Serial.h*/
 #include <stdint.h>
-#include <stdio.h>
 
 #ifndef INC_Serial_H_
 #define INC_Serial_H_
@@ -14,7 +13,7 @@
  *
  */
 
-void Serial_InterfaceInit();
+void Serial_InterfaceInit(uint8_t addr);
 void Serial_InterfaceDeInit();
 
  /*

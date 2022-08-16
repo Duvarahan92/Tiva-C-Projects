@@ -5,13 +5,17 @@
 
 int main ()
 {
-    static uint8_t chip_id;
-    static uint8_t chip_id_reg = 0xD0;
+    static const uint8_t addr = 0x77;
+    static uint8_t chip_id[3];
+    static uint8_t chip_id_reg = 0x8A;
 
-    Serial_InterfaceInit();
+    Serial_InterfaceInit(addr);
+    I2C_Read(chip_id_reg, chip_id, 6);
 
-    I2C_Read(chip_id_reg, &chip_id, 1);
-    UART_WriteHex(UART0_P, chip_id);
+    for(uint8_t i = 0; i < 6; i++)
+      {  UART_WriteHex(UART0_P, chip_id[i]);
+        UART_WriteString(UART0_P, "\r\n");
+        }
 
     return 0;
 }
