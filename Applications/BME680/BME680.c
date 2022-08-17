@@ -208,6 +208,7 @@ void BME680_Conf_Heater(uint8_t gas_wait, uint8_t heat_temp)
     uint8_t res_heat_reg = BME680_RES_HEAT0_REG; 
     uint8_t gas_ctrl_regs[2] = {BME680_CTRL_GAS0_REG, BME680_CTRL_GAS1_REG};
     uint8_t gas_ctrl_data[2];
-    
+
     BME680_Conf_Mode(BME680_SLEEP_MODE);
+    
 }
